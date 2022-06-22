@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 
 const Banner = () => {
     const [currentSlide, setCurrentSlide] = useState(0)
     const slides = [
-        { heading: 'hello', image: 'https://i.ibb.co/6rPx6N9/banner1.jpg' },
-        { heading: 'hello', image: 'https://i.ibb.co/w6bYz0W/outdoor1.jpg' },
-        { heading: 'hello', image: 'https://i.ibb.co/CmhDtKr/banner3.jpg' }
+        { heading: 'hello', image: 'https://i.ibb.co/NmQ1pCv/7-F9-A0534-1.jpg' },
+        { heading: 'hello', image: 'https://i.ibb.co/KKQfS5S/IMG-20220407-WA0003.jpg' },
+        { heading: 'hello', image: 'https://i.ibb.co/S08s1ZB/IMG-20220412-104341-735.jpg' }
     ];
 
     const nextSlide = () => {
@@ -19,22 +20,25 @@ const Banner = () => {
     }
 
     useEffect(() => {
-        const slideInterval = setInterval(nextSlide, 7000);
+        const slideInterval = setInterval(nextSlide, 10000);
         return () => clearInterval(slideInterval);
     }, [currentSlide]);
     return (
-        <div className='w-full min-h-screen mx-auto relative overflow-x-hidden'>
+        <div className='w-full min-h-screen mx-auto relative overflow-hidden'>
             {
                 slides.map((slide, index) =>
-                    <div className={`absolute w-full h-full right-0 transform ${index > currentSlide && 'translate-x-full'} ${index < currentSlide && '-translate-x-full'} transition-all duration-700`}>
+                    <div key={index} className={`absolute w-full h-full right-0 transform ${index > currentSlide && 'translate-x-full'} ${index < currentSlide && '-translate-x-full'} transition-all duration-700`}>
 
                         <img className='w-full h-full object-cover' src={slide.image} alt="" />
 
                         <div className='absolute flex justify-center items-center transform -translate-y-1/2 left-0 right-0 top-1/2 bg-black w-full h-full bg-opacity-25'>
-                            <h2 className='text-white font-bold opacity-100 '>Helloo</h2>
+                            <motion.h2 initial='hidden' animate='visible' variants={{
+                                hidden: { opacity: 0, x: 200 },
+                                visible: { opacity: 1, x: 0, transition: { duration: 1 } }
+                            }} className='text-white text-7xl font-bold opacity-100  great-vibes'>Welcome to the hottest Section in the town</motion.h2>
                         </div>
 
-                        <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2 h-full">
+                        <div className="absolute flex justify-between transform -translate-y-1/2 left-0 right-0 top-1/2 h-full">
                             <button onClick={previousSlide} className='btn btn-ghost text-white h-full w-24 hover:bg-transparent'>❮</button>
                             <button onClick={nextSlide} className='btn btn-ghost text-white h-full w-24 hover:bg-transparent'>❯</button>
                         </div>
