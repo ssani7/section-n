@@ -39,12 +39,12 @@ const Header2 = ({ theme, setTheme }) => {
     }
     window.addEventListener('scroll', handleChangeBg)
     return (
-        <div class={`navbar ${changeBg ? 'bg-secondary' : 'bg-transparent'} fixed top-0 z-40 px-6 transition-all duration-700`}>
-            <div class="flex-1">
+        <div className={`navbar ${changeBg ? 'bg-secondary' : 'bg-transparent'} fixed top-0 z-40 px-6 transition-all duration-700`}>
+            <div className="flex-1">
                 <Link to='/' className="font-bold normal-case text-xl">Section N</Link>
             </div>
-            <div class="flex-none">
-                <div class="dropdown dropdown-end flex items-center">
+            <div className="flex-none">
+                <div className="dropdown dropdown-end flex items-center">
                     <label className="swap swap-rotate mx-3">
 
                         <input className='check' defaultChecked={theme === 'dark' ? true : false} onChange={(e) => checked(e)} type="checkbox" />
@@ -56,24 +56,24 @@ const Header2 = ({ theme, setTheme }) => {
                     </label>
                 </div>
                 {
-                    user ? <div class="dropdown dropdown-end">
-                        <label tabindex="0" class="btn btn-ghost btn-circle avatar">
-                            <div class="w-10 rounded-full">
+                    user ? <div className="dropdown dropdown-end">
+                        <label tabindex="0" className="btn btn-ghost btn-circle avatar">
+                            <div className="w-10 rounded-full">
                                 <img src={user.photoURL} alt='' />
                             </div>
                         </label>
-                        <ul tabindex="0" class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
+                        <ul tabindex="0" className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
                             <li>
-                                <Link to='/profile' class="justify-between">
+                                <Link to='/profile' className="justify-between">
                                     Profile
-                                    <span class="badge">New</span>
+                                    <span className="badge">New</span>
                                 </Link>
                             </li>
                             <li><a>Settings</a></li>
                             <li><a onClick={handleSignOut}>Logout</a></li>
                         </ul>
                     </div>
-                        : <div class="dropdown dropdown-end">
+                        : <div className="dropdown dropdown-end">
                             <Link className='text-xl font-bold my-auto' to='/login'>Sign In</Link>
                         </div>
                 }

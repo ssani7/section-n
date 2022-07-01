@@ -9,6 +9,7 @@ import { useState } from 'react';
 import Dummy from './Pages/Home/dummy';
 import Header2 from './Pages/Shared/Header/Header2';
 import Profile from './Pages/Profile/Profile';
+import RequireAuth from './Pages/Login/RequireAuth';
 
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem('theme'));
@@ -22,7 +23,7 @@ function App() {
         <Route path='/home' element={<Home />}></Route>
         <Route path='/register' element={<Register />}></Route>
         <Route path='/login' element={<Login />}></Route>
-        <Route path='/profile' element={<Profile />}></Route>
+        <Route path='/profile' element={<RequireAuth><Profile /></RequireAuth>}></Route>
         <Route path='/dummy' element={<Dummy />}></Route>
       </Routes>
     </div>
