@@ -35,12 +35,12 @@ const Banner = () => {
                             <motion.h2 initial='hidden' animate='visible' variants={{
                                 hidden: { opacity: 0, x: 200 },
                                 visible: { opacity: 1, x: 0, transition: { duration: 1 } }
-                            }} className='text-white text-7xl font-bold opacity-100  great-vibes'>Welcome to the hottest Section in the town</motion.h2>
+                            }} className='text-white text-3xl text-center md:text-7xl font-bold opacity-100  great-vibes'>Welcome to the hottest Section in the town</motion.h2>
                         </div>
 
-                        <div className="absolute flex justify-between transform -translate-y-1/2 left-0 right-0 top-1/2 h-full">
-                            <button onClick={previousSlide} className='btn btn-ghost text-white h-full w-24 hover:bg-transparent'>❮</button>
-                            <button onClick={nextSlide} className='btn btn-ghost text-white h-full w-24 hover:bg-transparent'>❯</button>
+                        <div className="absolute flex justify-center transform right-5 bottom-5">
+                            <button onClick={previousSlide} className='text-white h-fit w-fit px-2 border rounded-full hover:bg-white hover:text-black mr-4'>❮</button>
+                            <button onClick={nextSlide} className='text-white h-fit w-fit px-2 border rounded-full hover:bg-white hover:text-black'>❯</button>
                         </div>
                     </div>)
             }

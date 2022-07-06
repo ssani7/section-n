@@ -14,14 +14,14 @@ const Login = () => {
 
     const from = location.state?.from?.pathname || "/";
 
-    const token = useToken();
-
     const [
         signInWithEmailAndPassword,
         user,
         loading,
         error,
     ] = useSignInWithEmailAndPassword(auth);
+
+    const token = useToken();
 
     if (token) {
         navigate(from, { replace: true });
@@ -34,7 +34,7 @@ const Login = () => {
         signInWithEmailAndPassword(email, password)
     }
     return (
-        <div className='pt-20'>
+        <div className='pt-20 bg-base-100'>
             <div className="card mx-6 bg-base-100 shadow-xl md:max-w-lg md:mx-auto">
                 <div className="card-body items-center text-center">
                     <h2 className="card-title">Log In</h2>

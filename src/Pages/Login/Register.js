@@ -3,6 +3,7 @@ import { useCreateUserWithEmailAndPassword, useUpdateProfile } from 'react-fireb
 import { useForm } from 'react-hook-form';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import auth from '../../firebase.init';
+import useToken from '../../hooks/useToken';
 import Loading from '../Shared/Loading';
 import SocialLogin from './SocialLogin';
 
@@ -21,16 +22,17 @@ const Register = () => {
         error,
     ] = useCreateUserWithEmailAndPassword(auth);
 
-    const [updateProfile, updating, nameError] = useUpdateProfile(auth);
+    const [updateProfile, updating, updateError] = useUpdateProfile(auth);
+
+    const token = useToken();
 
     if (updating || loading) {
         return <Loading></Loading>
     }
 
-    if (user) {
+    if (token) {
         navigate(from, { replace: true });
     }
-
 
     const onSubmit = async (data) => {
         const displayName = data.name;
@@ -40,7 +42,7 @@ const Register = () => {
         await updateProfile({ displayName, photoURL: 'https://i.ibb.co/pzpVdPV/no-user-image-icon-3.jpg' });
     }
     return (
-        <div className='pt-20'>
+        <div className='pt-20 bg-base-100'>
             <div className="card mx-6 bg-base-100 shadow-xl md:max-w-lg md:mx-auto">
                 <div className="card-body items-center text-center">
                     <h2 className="card-title">Sign Up</h2>
@@ -97,7 +99,7 @@ const Register = () => {
                             loading ? <button className="btn btn-primary mt-6 loading normal-case">Creating Account</button> : <input className='btn btn-primary mt-6 normal-case' type="submit" value="Sign Up" />
                         }
 
-                        {error && <small className='text-error'>{error.message}</small>}
+                        {(error || updateError) && <small className='text-error'>{error.message || updateError.message}</small>}
                     </form>
 
                     <SocialLogin></SocialLogin>
