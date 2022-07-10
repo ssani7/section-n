@@ -4,16 +4,14 @@ import Loading from '../../../Shared/Loading';
 import AchvmntReqRow from './AchvmntReqRow';
 
 const AchvmntReq = () => {
-    const { isLoading, data: requests } = useQuery('stars', () => fetch('https://section-n-diu-server.herokuapp.com/achievementsReq').then(res => res.json()));
+    const { isLoading, data: requests, refetch } = useQuery('stars', () => fetch('https://section-n-diu-server.herokuapp.com/achievementsReq').then(res => res.json()));
 
 
     if (isLoading) return <Loading />
     if (requests.length === 0) return <h2 className='w-full text-center text-3xl  font-semibold p-10'>No requests. Lazy day. Chill ;)</h2>
-
-    console.log(requests.length);
     return (
-        <div class="overflow-x-auto w-full">
-            <table class="table w-full">
+        <div className="overflow-x-auto w-full">
+            <table className="table w-full">
                 <thead>
                     <tr>
                         <th className='text-center'>Name</th>
@@ -26,7 +24,9 @@ const AchvmntReq = () => {
                     {
                         requests.map((request, i) => <AchvmntReqRow
                             key={i}
-                            request={request} />)
+                            request={request}
+                            refetch={refetch}
+                        />)
                     }
 
                 </tbody>

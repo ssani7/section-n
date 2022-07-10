@@ -55,42 +55,42 @@ const AddAchievement = () => {
             <h2 className='text-center text-2xl font-bold'>Add Your Achievement</h2>
             <form className='lg:max-w-xl lg:w-full mx-10 lg:mx-auto mt-10' onSubmit={handleSubmit(onSubmit)}>
 
-                <div class="form-control w-full">
-                    <label class="label">
-                        <span class="label-text">Naam Bolo Bro</span>
+                <div className="form-control w-full">
+                    <label className="label">
+                        <span className="label-text">Naam Bolo Bro</span>
                     </label>
-                    <input type="text" placeholder="Type Name here" class="input input-bordered w-full" {...register("name", {
+                    <input type="text" placeholder="Type Name here" className="input input-bordered w-full" {...register("name", {
                         required: "Naam koi bara?"
                     })} />
                     {errors?.name && <span className='text-error text-sm text-center'>{errors?.name?.message}</span>}
                 </div>
 
 
-                <div class="form-control w-full">
-                    <label class="label">
-                        <span class="label-text">ID ki bodda?</span>
+                <div className="form-control w-full">
+                    <label className="label">
+                        <span className="label-text">ID ki bodda?</span>
                     </label>
-                    <input type="text" placeholder="Type Student ID here" class="input input-bordered w-full" {...register("id", {
+                    <input type="text" placeholder="Type Student ID here" className="input input-bordered w-full" {...register("id", {
                         required: "ID na dile tui imposter!"
                     })} />
                     {errors?.id && <span className='text-error text-sm text-center'>{errors?.id?.message}</span>}
                 </div>
 
-                <div class="form-control w-full">
-                    <label class="label">
-                        <span class="label-text">Achivement Ta bole felo</span>
+                <div className="form-control w-full">
+                    <label className="label">
+                        <span className="label-text">Achivement Ta bole felo</span>
                     </label>
-                    <input type="text" placeholder="Type Achievement here" class="input input-bordered w-full" {...register("title", {
+                    <input type="text" placeholder="Type Achievement here" className="input input-bordered w-full" {...register("title", {
                         required: "Achievement e des nai!"
                     })} />
                     {errors?.title && <span className='text-error text-sm text-center'>{errors?.title?.message}</span>}
                 </div>
 
-                <div class="form-control w-full">
-                    <label class="label">
-                        <span class="label-text">Foman ase to? </span>
+                <div className="form-control w-full">
+                    <label className="label">
+                        <span className="label-text">Foman ase to? </span>
                     </label>
-                    <input type="file" class="input input-bordered w-full" {...register("image", {
+                    <input type="file" className="input input-bordered w-full" {...register("image", {
                         required: "Pic dite vule gele hobeee?!"
                     })} />
                     {errors?.image && <span className='text-error text-sm text-center'>{errors?.image?.message}</span>}
@@ -99,7 +99,7 @@ const AddAchievement = () => {
                 {errors.exampleRequired && <span>This field is required</span>}
 
                 {
-                    uploading ? <button class="btn w-full mt-6 normal-case loading">loading</button>
+                    uploading ? <button className="btn w-full mt-6 normal-case loading">loading</button>
                         : <input className='btn btn-primary w-full mt-6 normal-case' type="Submit" />
                 }
             </form>

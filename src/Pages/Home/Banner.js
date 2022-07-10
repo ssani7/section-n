@@ -24,7 +24,7 @@ const Banner = () => {
         return () => clearInterval(slideInterval);
     }, [currentSlide]);
     return (
-        <div className='w-full min-h-screen mx-auto relative overflow-hidden'>
+        <div className='w-full min-h-screen mx-auto relative overflow-x-hidden'>
             {
                 slides.map((slide, index) =>
                     <div key={index} className={`absolute w-full h-full right-0 transform ${index > currentSlide && 'translate-x-full'} ${index < currentSlide && '-translate-x-full'} transition-all duration-700`}>
@@ -35,7 +35,7 @@ const Banner = () => {
                             <motion.h2 initial='hidden' animate='visible' variants={{
                                 hidden: { opacity: 0, x: 200 },
                                 visible: { opacity: 1, x: 0, transition: { duration: 1 } }
-                            }} className='text-white text-3xl text-center md:text-7xl font-bold opacity-100  great-vibes'>Welcome to the hottest Section in the town</motion.h2>
+                            }} className='text-white text-3xl text-center md:text-7xl font-bold opacity-100 capitalize great-vibes'>Welcome to the hottest Section in town</motion.h2>
                         </div>
 
                         <div className="absolute flex justify-center transform right-5 bottom-5">

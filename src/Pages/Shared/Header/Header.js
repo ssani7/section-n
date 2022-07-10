@@ -5,15 +5,20 @@ import { Link } from 'react-router-dom';
 
 import auth from '../../../firebase.init';
 import useAdmin from '../../../hooks/useAdmin';
+import useDBUser from '../../../hooks/useDBUser';
+import useToken from '../../../hooks/useToken';
 import Loading from '../Loading';
 
-const Header2 = ({ theme, setTheme }) => {
+const Header = ({ theme, setTheme }) => {
     const [changeBg, setChangeBg] = useState(false);
 
     const [user, loading] = useAuthState(auth);
+    const [userData, loadingData] = useDBUser();
     const isAdmin = useAdmin();
 
-    if (loading) {
+    const token = useToken();
+
+    if (loading || loadingData) {
         return <Loading />
     }
 
@@ -66,7 +71,7 @@ const Header2 = ({ theme, setTheme }) => {
                     user ? <div className="dropdown dropdown-end">
                         <label tabIndex="0" className="btn btn-ghost btn-circle avatar">
                             <div className="w-10 rounded-full">
-                                <img src={user.photoURL} alt='' />
+                                <img src={userData?.photoURL} alt='' />
                             </div>
                         </label>
                         <ul tabIndex="0" className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
@@ -75,7 +80,7 @@ const Header2 = ({ theme, setTheme }) => {
                                     Profile
                                 </Link>
                             </li>
-                            <li><span>Settings</span></li>
+                            <li><Link to='/settings'><span>Settings</span></Link></li>
                             {
                                 isAdmin && <li><Link to='/manageData'>Manage Data
                                     <span className="badge">Admin</span>
@@ -93,4 +98,4 @@ const Header2 = ({ theme, setTheme }) => {
     );
 };
 
-export default Header2;
+export default Header;

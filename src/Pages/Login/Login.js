@@ -58,7 +58,9 @@ const Login = () => {
                         <p className='text-sm mt-3'>Don't have an account? <Link to='/register' className='text-secondary'>Create an account</Link></p>
 
                         {
-                            loading ? <button className="btn btn-primary mt-6 loading normal-case">Loggin In</button> : <input className='btn btn-primary mt-6 normal-case' type="submit" value="Log In" />
+                            loading
+                                ? <button className="btn mt-6 loading normal-case">Loggin In</button>
+                                : <input className='btn mt-6 normal-case' type="submit" value="Log In" />
                         }
 
                         {error && <small className='text-error'>{error.message}</small>}

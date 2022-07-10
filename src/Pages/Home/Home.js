@@ -5,12 +5,15 @@ import { useInView } from 'react-intersection-observer';
 import { motion } from 'framer-motion'
 import Footer from '../Shared/Footer';
 import Stars from './Stars';
+import { useQuery } from 'react-query';
+import Loading from '../Shared/Loading';
 
 
 const Home = () => {
+    const { isLoading, data: achievementCount } = useQuery('countofAchvment', () => fetch('https://section-n-diu-server.herokuapp.com/achievementCount').then(res => res.json()))
     const preview = [
         { name: 'Students', number: 43 },
-        { name: 'Achievements', number: 10 },
+        { name: 'Achievements', number: achievementCount?.count },
         { name: 'Completed Credit', number: 24 },
     ];
 
@@ -19,10 +22,12 @@ const Home = () => {
         "triggerOnce": true
     })
 
+    if (isLoading) return <Loading />
+
     return (
-        <div className='bg-base-100'>
+        <div className='bg-base-100 overflow-y-hidden'>
             <Banner />
-            <div className='grid grid-cols-3 mx-auto lg:py-3 border w-full' ref={ref}>
+            <div className='grid grid-cols-3 mx-auto lg:py-3 border-y w-full' ref={ref}>
                 {
                     preview.map((info, i) => <CountUp
                         key={i}
