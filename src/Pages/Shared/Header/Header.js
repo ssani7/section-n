@@ -18,7 +18,7 @@ const Header = ({ theme, setTheme }) => {
 
     const token = useToken();
 
-    if (loading || loadingData) {
+    if (loading) {
         return <Loading />
     }
 
