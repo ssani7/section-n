@@ -16,6 +16,8 @@ import AchvmntReq from './Pages/Admin/ManageData/AchvmentReq/AchvmntReq';
 import Settings from './Pages/Settiings/Settings';
 import EditProfile from './Pages/Settiings/EditProfile';
 import Header from './Pages/Shared/Header/Header';
+import NotFound from './Pages/Shared/NotFound/NotFound';
+import AddEvent from './Pages/Admin/ManageData/AddEvent';
 
 function App() {
   // const [theme, setTheme] = useState(localStorage.getItem('theme'));
@@ -35,6 +37,7 @@ function App() {
         <Route path='/manageData' element={<RequireAuth><ManageData /></RequireAuth>}>
           <Route index element={<AddAchievement />}></Route>
           <Route path='achvReq' element={<AchvmntReq />}></Route>
+          <Route path='addEvent' element={<AddEvent />}></Route>
         </Route>
 
         <Route path='/settings' element={<RequireAuth><Settings /></RequireAuth>}>
@@ -42,8 +45,12 @@ function App() {
         </Route>
 
         <Route path='/dummy' element={<Dummy />}></Route>
+        <Route path='*' element={<NotFound />}></Route>
       </Routes>
-      <ToastContainer />
+      <ToastContainer
+        pauseOnFocusLoss={false}
+        pauseOnHover={false}
+      />
     </div>
   );
 }

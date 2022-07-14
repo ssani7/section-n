@@ -18,10 +18,6 @@ const Header = ({ theme, setTheme }) => {
 
     const token = useToken();
 
-    if (loading) {
-        return <Loading />
-    }
-
     const handleSignOut = () => {
         const confirm = window.confirm("Are You Sure To Sign Out?");
         if (confirm) {
@@ -70,15 +66,25 @@ const Header = ({ theme, setTheme }) => {
                 {
                     user ? <div className="dropdown dropdown-end">
                         <label tabIndex="0" className="btn btn-ghost btn-circle avatar">
-                            <div className="w-10 rounded-full">
-                                <img src={userData?.photoURL} alt='' />
-                            </div>
+                            {
+                                loading
+                                    ? <progress className="progress w-10"></progress>
+                                    : <div className="w-10 rounded-full">
+                                        <img src={userData?.photoURL || 'https://i.ibb.co/pzpVdPV/no-user-image-icon-3.jpg'} alt='' />
+                                    </div>
+
+                            }
+
                         </label>
                         <ul tabIndex="0" className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
                             <li>
-                                <Link to='/profile' className="justify-between">
-                                    Profile
-                                </Link>
+                                {
+                                    loading
+                                        ? <progress className="progress w-56"></progress>
+                                        : <Link to='/profile' className="justify-between">
+                                            Profile
+                                        </Link>
+                                }
                             </li>
                             <li><Link to='/settings'><span>Settings</span></Link></li>
                             {

@@ -14,6 +14,7 @@ const ManageData = () => {
                     <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
                     <ul className="menu p-4 overflow-y-auto w-80 bg-base-100 text-base-content">
                         <li><Link to='/manageData'>Add Achievement</Link></li>
+                        <li><Link to='addEvent'>Add Event</Link></li>
                         <li><Link to='achvReq'>Achievement Requests</Link></li>
                     </ul>
 
