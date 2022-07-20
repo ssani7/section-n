@@ -10,6 +10,7 @@ import Loading from '../Shared/Loading';
 import Events from './Events';
 import { useAuthState } from 'react-firebase-hooks/auth'
 import auth from '../../firebase.init';
+import NLoading from '../Shared/NLoading';
 
 
 
@@ -29,12 +30,12 @@ const Home = () => {
         "triggerOnce": true
     })
 
-    if (isLoading || loading) return <Loading />
+    if (isLoading || loading) return <NLoading />
 
     return (
         <div className='bg-base-100 overflow-y-hidden'>
             <Banner />
-            <div className='grid grid-cols-3 mx-auto lg:py-3 border-y w-full' ref={ref}>
+            <div className='grid grid-cols-3 mx-auto lg:py-3 w-full' ref={ref}>
                 {
                     preview.map((info, i) => <CountUp
                         key={i}
@@ -54,11 +55,7 @@ const Home = () => {
 
             <Events />
 
-            <div className='w-full'>
-                <h2 className='text-xl md:text-4xl font-bold text-center py-10'>Our Stars</h2>
-                <Stars />
-            </div>
-
+            <Stars />
 
             <Footer />
         </div>

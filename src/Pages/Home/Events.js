@@ -20,8 +20,8 @@ const Events = () => {
 
         if (data) {
             const validEvents = data.filter(event => {
-                const date = new Date(event.expires)
-                return date >= today
+                const date = new Date(event.expires);
+                return date >= today;
             });
             setEvents(validEvents);
         }
@@ -58,7 +58,7 @@ const Events = () => {
     }
     if (isLoading) return <Loading />
     return (
-        <>
+        <div className='w-full'>
             {
                 (events.length > 0) && <motion.div ref={ref} initial='hidden' animate={`${inView && 'show'}`} variants={container} className='border-y text-center py-5 md:py-10' >
                     <motion.h1 className='text-xl md:text-3xl font-bold' variants={item}>{events.length > 1 ? "Upcoming Events" : "Upcoming Event"}</motion.h1>
@@ -71,7 +71,7 @@ const Events = () => {
                     }
                 </motion.div >
             }
-        </>
+        </div>
 
     );
 };

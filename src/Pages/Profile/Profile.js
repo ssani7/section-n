@@ -29,7 +29,7 @@ const Profile = () => {
 
     return (
         <>
-            <div className='px-5 flex flex-col justify-center items-center bg-base-100 overflow-x-hidden md:px-11 md:pt-36 md:py-0 lg:h-screen lg:pt-0 md:w-full h-full'>
+            <div className='px-5 flex flex-col pt-40 md:pt-60 lg:justify-center items-center bg-base-100 overflow-x-hidden md:px-10 md:py-0 lg:h-screen lg:pt-0 md:w-full h-full'>
                 <motion.div ref={ref}
                     initial="hidden" animate={`${inView && "animate"}`}
                     variants={{
@@ -46,11 +46,11 @@ const Profile = () => {
                             }
                         }
                     }}
-                    className='bg-base-300 w-full lg:w-4/6 lg:py-20 lg:pl-10 text-left rounded-2xl flex items-center md:flex-row relative'>
+                    className='bg-base-300 w-full lg:w-4/6 lg:py-20 lg:pl-10 text-left rounded-2xl flex flex-col-reverse items-center md:flex-row relative '>
 
-                    <div className='w-3/5 text-xs md:text-lg py-6 pl-5 md:p-10 text-base-content lg:w-full'>
+                    <div className='md:w-3/5 text-xs md:text-lg py-6 md:pl-5 md:p-10 text-base-content lg:w-full'>
 
-                        <h1 className="text-2xl md:text-6xl font-bold mb-2">{userFromDb?.displayName}</h1>
+                        <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold mb-2">{userFromDb?.displayName}</h1>
 
                         <p className='mt-1 md:mt-3 flex items-center text-2xs md:text-base w-fit lg:text-2xl lg:mt-5 tooltip' data-tip="Email Addess">
                             <FontAwesomeIcon icon={faAt} className='mr-4 w-3 h-3 md:h-5 md:w-5 lg:w-6 lg:h-6' />
@@ -94,7 +94,7 @@ const Profile = () => {
                         </div>
                     </div>
                     <motion.div initial="hidden" animate={`${inView && "animate"}`} variants={{
-                        hidden: { opacity: 0, x: -200 },
+                        hidden: { opacity: 0, x: -200, scale: .8 },
                         animate: {
                             opacity: 1, x: 0,
                             scale: 1.1,
@@ -104,11 +104,12 @@ const Profile = () => {
                                 duration: 1.5,
                             }
                         }
-                    }} className='w-2/5 lg:max-w-sm h-auto rounded-lg absolute -right-2 md:-right-5 lg:-right-10 group'>
+                    }}
+                        className='drop-shadow-2xl rounded-full md:w-auto md:max-w-xl md:h-full md:rounded-3xl md:absolute md:-right-5 group '>
                         <img
-                            src={(userFromDb?.photoURL)} className="z-20 rounded-lg w-full h-full object-cover" alt=''
+                            src={(userFromDb?.photoURL)} className="rounded-full w-40 h-40 object-cover md:z-20 md:rounded-3xl md:w-full md:h-full md:object-contain" alt=''
                         />
-                        <FontAwesomeIcon onClick={() => navigate('/settings')} icon={faImages} className='absolute hidden bottom-0 right-0 p-1 group-hover:inline-block group-hover:bg-blue-600 hover:scale-105 cursor-pointer rounded-br-lg border-0' />
+                        {/* <FontAwesomeIcon onClick={() => navigate('/settings')} icon={faImages} className='absolute hidden bottom-0 right-0 p-1 group-hover:inline-block group-hover:bg-blue-600 hover:scale-105 cursor-pointer rounded-br-lg border-0' /> */}
                     </motion.div>
 
                 </motion.div>

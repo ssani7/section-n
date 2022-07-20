@@ -35,10 +35,10 @@ const Login = () => {
     }
     return (
         <div className='pt-20 bg-base-100'>
-            <div className="card mx-6 bg-base-100 shadow-xl md:max-w-lg md:mx-auto">
+            <div className="card mx-6 bg-base-100 shadow-xl rounded-2xl border md:max-w-lg md:mx-auto">
                 <div className="card-body items-center text-center">
-                    <h2 className="card-title">Log In</h2>
-                    <form onSubmit={handleSubmit(onSubmit)} className="form-control w-full mx-auto max-w-lg mt-4">
+                    <h2 className="card-title font-bold">Log In</h2>
+                    <form onSubmit={handleSubmit(onSubmit)} className="form-control w-full mx-auto max-w-lg">
                         <label className="label mt-3">
                             <span className="label-text">Email Address</span>
                         </label>

@@ -24,7 +24,7 @@ const Banner = () => {
         return () => clearInterval(slideInterval);
     }, [currentSlide]);
     return (
-        <div className='w-full min-h-screen mx-auto relative overflow-hidden'>
+        <div className='w-full h-72 md:min-h-screen mx-auto relative overflow-hidden'>
             {
                 slides.map((slide, index) =>
                     <div key={index} className={`absolute w-full h-full right-0 transform ${index > currentSlide && 'translate-x-full'} ${index < currentSlide && '-translate-x-full'} transition-all duration-700`}>

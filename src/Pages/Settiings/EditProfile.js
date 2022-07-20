@@ -99,7 +99,7 @@ const EditProfile = () => {
     return (
         <div className='bg-base-100 mx-auto w-full flex flex-col mb-20 md:mb-0 md:overflow-y-hidden'>
             <div className='flex flex-col md:flex-row w-full h-full px-5 md:items-center'>
-                <div className='w-full md:w-2/5 h-auto rounded-3xl'>
+                <div className='w-auto h-auto md:max-w-xl rounded-3xl mx-auto'>
                     <img src={userData?.photoURL} alt="" className='w-full h-full rounded-3xl object-cover' />
                 </div>
 

@@ -14,6 +14,7 @@ const AddEvent = () => {
     const [time, setTime] = useState('');
     let formattedTime = '';
     let expires = '';
+    let timeAmount = 0;
     const [date, setDate] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -95,29 +96,55 @@ const AddEvent = () => {
             meridian = 'PM';
         }
         formattedTime = `${hours}:${timeArr[1]} ${meridian}`;
+        timeAmount = (timeArr[0] * 3.6e6) + (timeArr[1] * 6e4);
     }
 
     const onSubmit = async (data) => {
         let eventDate = '';
         if (type === "single") {
-            eventDate = date;
-            expires = date;
+            if (date) {
+                eventDate = date;
+                const exdate = new Date(date);
+                exdate.setTime(timeAmount + exdate.getTime());
+                expires = exdate;
+            }
+            else {
+                toast.error("Please Select a Date")
+            }
         }
         else if (type === "range") {
-            eventDate = `${format(range.from, 'PP')} to ${format(range.to, 'PP')}`;
-            expires = (format(range.to, 'PP'));
+            if (!range?.from) {
+                toast.error("Please Select a starting date");
+            }
+            else if (!range?.to) {
+                toast.error("Please Select an Ending Date");
+            }
+            else {
+                eventDate = `${format(range.from, 'PP')} to ${format(range.to, 'PP')}`;
+                const dateTemp = range?.to ? (format(range.to, 'PP')) : (format(range.from, 'PP'));
+                const exdate = new Date(dateTemp);
+                exdate.setTime(timeAmount + exdate.getTime());
+                expires = exdate;
+            }
+
         }
         else if (type === "multiple") {
-            const ppDates = days.map(day => format(day, "PP"));
-            eventDate = ppDates.toString().replace(/2022,/g, "2022, ");
-            expires = (days[days.length - 1]);
+            if (days.length > 0) {
+                const ppDates = days.map(day => format(day, "PP"));
+                eventDate = ppDates.toString().replace(/2022,/g, "2022, ");
+                const dateTemp = (days[days.length - 1]);
+                const exdate = new Date(dateTemp);
+                exdate.setTime(timeAmount + exdate.getTime());
+                expires = exdate;
+            }
+            else {
+                toast.error("Please select at least one date");
+            }
         }
 
         const event = {
             name, date: eventDate, time: formattedTime, expires
         }
-
-        console.log(expires);
 
         if (event?.name && event?.date && event?.time) {
             const confirm = window.confirm(`Confirm To Upload event ${event.name} on ${event.date} at ${event.time}`);
@@ -220,8 +247,6 @@ const AddEvent = () => {
                 }
 
             </form>
-
-
         </div >
     );
 };

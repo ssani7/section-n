@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import auth from '../../firebase.init';
 import useToken from '../../hooks/useToken';
-import Loading from '../Shared/Loading';
 import SocialLogin from './SocialLogin';
 
 const Register = () => {
@@ -26,9 +25,9 @@ const Register = () => {
 
     const token = useToken();
 
-    if (updating || loading) {
-        return <Loading></Loading>
-    }
+    // if (updating || loading) {
+    //     return <Loading></Loading>
+    // }
 
     if (token) {
         navigate(from, { replace: true });
@@ -43,10 +42,10 @@ const Register = () => {
     }
     return (
         <div className='pt-20 bg-base-100'>
-            <div className="card mx-6 bg-base-100 shadow-xl md:max-w-lg md:mx-auto">
+            <div className="card mx-6 bg-base-100 shadow-xl rounded-2xl border md:max-w-lg md:mx-auto">
                 <div className="card-body items-center text-center">
-                    <h2 className="card-title">Sign Up</h2>
-                    <form onSubmit={handleSubmit(onSubmit)} className="form-control w-full mx-auto max-w-lg mt-4">
+                    <h2 className="card-title font-bold">Sign Up</h2>
+                    <form onSubmit={handleSubmit(onSubmit)} className="form-control w-full mx-auto max-w-lg">
                         <label className="label mt-3">
                             <span className="label-text">Name</span>
                         </label>
@@ -96,7 +95,9 @@ const Register = () => {
                         <p className='text-sm mt-3'>Already have an account? <Link to='/login' className='text-secondary'>Log in here</Link></p>
 
                         {
-                            loading ? <button className="btn btn-primary mt-6 loading normal-case">Creating Account</button> : <input className='btn btn-primary mt-6 normal-case' type="submit" value="Sign Up" />
+                            (updating || loading)
+                                ? <button className="btn btn-primary mt-6 loading normal-case">Creating Account</button>
+                                : <input className='btn btn-primary mt-6 normal-case' type="submit" value="Sign Up" />
                         }
 
                         {(error || updateError) && <small className='text-error'>{error.message || updateError.message}</small>}

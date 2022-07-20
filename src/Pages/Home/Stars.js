@@ -21,7 +21,7 @@ const Stars = () => {
     const { isLoading, data: stars } = useQuery('stars', () => fetch('https://section-n-diu-server.herokuapp.com/achievements').then(res => res.json()));
 
     const { ref, inView } = useInView({
-        "threshold": 0.5,
+        "threshold": 0.2,
         "triggerOnce": true
     });
 
@@ -31,6 +31,7 @@ const Stars = () => {
 
     return (
         <div className='text-center'>
+            <h2 className='text-xl md:text-4xl font-bold text-center py-10'>Our Stars</h2>
             <div ref={ref} className='pb-10 grid grid-cols-2 gap-2 lg:gap-5 mx-4 lg:mx-auto w-fit'>
                 {
                     stars.map((star, i) => <motion.div key={i} initial='hidden' animate={`${inView && 'visible'}`} className="hero py-2 bg-base-200 max-w-3xl rounded-xl shadow-lg"
@@ -48,7 +49,7 @@ const Stars = () => {
                             }
                         }}>
                         <div className={`hero-content flex-col ${(i + 1) % 2 === 0 ? 'lg:flex-row-reverse' : 'lg:flex-row'} w-full justify-evenly h-full`}>
-                            <motion.div variants={item} className="h-1/2 lg:w-1/2 lg:h-auto">
+                            <motion.div variants={item} className="h-1/2 lg:w-1/2 lg:h-96">
                                 <img src={star.image} className='h-full lg:h-full w-full shadow-2xl object-cover rounded-lg transition-all' alt='' />
                             </motion.div>
 

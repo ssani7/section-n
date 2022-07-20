@@ -4,20 +4,25 @@ import {
     Navigate
 } from "react-router-dom";
 import auth from "../../firebase.init";
+import useAdmin from "../../hooks/useAdmin";
 import NLoading from '../Shared/NLoading';
 
-function RequireAuth({ children }) {
+function RequireAdmin({ children }) {
     const [user, loading] = useAuthState(auth);
+    const isAdmin = useAdmin();
     let location = useLocation();
 
     if (loading) {
         return <NLoading />
     }
 
-    if (!user) {
-        return <Navigate to="/login" state={{ from: location }} replace />;
+    if (!isAdmin) {
+        if (!user) {
+            return <Navigate to="/login" state={{ from: location }} replace />;
+        }
+        return <Navigate to="/notfound" state={{ from: location }} replace />
     }
 
     return children;
 }
-export default RequireAuth;
+export default RequireAdmin;
