@@ -1,4 +1,3 @@
-// import logo from './logo.svg';
 import './App.css';
 import { Route, Routes } from 'react-router-dom';
 import Home from './Pages/Home/Home';
@@ -22,6 +21,11 @@ import RequireAdmin from './Pages/Login/RequireAdmin';
 import Courses from './Pages/Courses/Courses';
 import SemesterView from './Pages/Courses/SemesterView';
 import ContactCR from './Pages/Shared/ContactCR';
+import VerifyAcc from './Pages/Settiings/VerifyAcc';
+import VerificationReq from './Pages/Admin/ManageData/VerificationReq/VerificationReq';
+import Students from './Pages/Informations/Students';
+import UserProfile from './Pages/Informations/UserProfile';
+import Stars from './Pages/Home/Stars';
 
 function App() {
   // const [theme, setTheme] = useState(localStorage.getItem('theme'));
@@ -33,6 +37,9 @@ function App() {
       <Routes>
         <Route path='/' element={<Home />}></Route>
         <Route path='/home' element={<Home />}></Route>
+        <Route path='/students' element={<Students />}></Route>
+        <Route path='/userProfile/:email' element={<UserProfile />}></Route>
+        <Route path='/achievements/:length' element={<Stars />}></Route>
         <Route path='/register' element={<Register />}></Route>
         <Route path='/login' element={<Login />}></Route>
         <Route path='/contactCR' element={<ContactCR />}></Route>
@@ -48,10 +55,13 @@ function App() {
           <Route index element={<AddAchievement />}></Route>
           <Route path='achvReq' element={<AchvmntReq />}></Route>
           <Route path='addEvent' element={<AddEvent />}></Route>
+          <Route path='verifyReq' element={<VerificationReq />}></Route>
         </Route>
 
         <Route path='/settings' element={<RequireAuth><Settings /></RequireAuth>}>
           <Route index element={<EditProfile />}></Route>
+          <Route path='verify' element={<VerifyAcc />}></Route>
+          <Route path='addAchvmnt' element={<AddAchievement />}></Route>
         </Route>
 
         <Route path='/dummy' element={<Dummy />}></Route>

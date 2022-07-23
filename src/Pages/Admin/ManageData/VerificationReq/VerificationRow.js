@@ -1,20 +1,19 @@
 import axios from 'axios';
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { toast } from 'react-toastify';
 
-const AchvmntReqRow = ({ request, refetch, index }) => {
+const VerificationRow = ({ user, refetch }) => {
     const [removing, setRemoving] = useState(false);
     const [accepting, setAccepting] = useState(false);
 
     const removeReq = () => {
         setRemoving(true);
-        axios.delete(`https://section-n-diu-server.herokuapp.com/achievements/${request._id}`)
+        axios.put(`https://section-n-diu-server.herokuapp.com/achievements/${user._id}`)
             .then(res => {
-                if (res.data.deletedCount >= 1) {
+                if (res.data.deletedCount > 0) {
                     setRemoving(false);
-                    toast.success("Removed Request Succefully")
+                    toast.success("Removed user Succefully")
                     refetch();
                 }
             })
@@ -22,45 +21,29 @@ const AchvmntReqRow = ({ request, refetch, index }) => {
 
     const acceptReq = () => {
         setAccepting(true);
-        axios.put(`https://section-n-diu-server.herokuapp.com/achievements/${request._id}`)
+        axios.put(`https://section-n-diu-server.herokuapp.com/verification/approve/${user._id}`)
             .then(res => {
-                if (res) {
+                if (res.data.modifiedCount > 0) {
                     setAccepting(false);
                     toast.success("Achivement is one of ours. Uraa!!!")
                     refetch();
                 }
             })
     }
-
     return (
         <tr>
-            <th>
-                {
-                    index + 1
-                }
-            </th>
             <td>
                 <div className="flex items-center space-x-3 text-center mx-auto w-fit">
-                    <div className="avatar">
-                        <div className="mask mask-squircle w-12 h-12">
-                            <img src={request.senderDp} alt="sender pic" />
-                        </div>
-                    </div>
                     <div>
-                        <div className="font-bold">{request.sender}</div>
-                        <div className="text-sm opacity-50">{request.id}</div>
+                        <div className="font-bold">{user?.displayName}</div>
+                        <div className="text-sm opacity-50">{user?.id}</div>
                     </div>
                 </div>
             </td>
             <td>
-                {request.achievement}
-                <br />
-                <span className="text-sm opacity-50">{request.name}</span>
-            </td>
-            <td>
                 <div className="avatar">
                     <div className="mask mask-square w-28 h-28">
-                        <img src={request.image} alt="Avatar Tailwind CSS Component" />
+                        <img src={user?.photoURL} alt="sender pic" />
                     </div>
                 </div>
             </td>
@@ -82,4 +65,4 @@ const AchvmntReqRow = ({ request, refetch, index }) => {
     );
 };
 
-export default AchvmntReqRow;
+export default VerificationRow;

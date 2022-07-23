@@ -14,7 +14,7 @@ const Header = ({ theme, setTheme }) => {
 
     const [user, loading] = useAuthState(auth);
     const [userData, loadingData] = useDBUser();
-    const isAdmin = useAdmin();
+    const [isAdmin, adminLoading] = useAdmin();
 
     const token = useToken();
 
@@ -85,6 +85,9 @@ const Header = ({ theme, setTheme }) => {
                                 </li>
                                 <li>
                                     <Link to='/courses'>Courses</Link>
+                                </li>
+                                <li>
+                                    <Link to='/students'>Us</Link>
                                 </li>
                                 <li><Link to='/settings'><span>Settings</span></Link></li>
                                 {

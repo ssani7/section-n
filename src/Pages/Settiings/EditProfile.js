@@ -6,21 +6,23 @@ import { useQuery } from 'react-query'
 import auth from '../../firebase.init';
 import Loading from '../Shared/Loading';
 import { toast } from 'react-toastify'
+import { async } from '@firebase/util';
 
 const EditProfile = () => {
     const { register, handleSubmit, formState: { errors }, reset } = useForm();
     const [user, loading] = useAuthState(auth);
     const [updating, setUpdating] = useState(false);
     const [updateProfile, pUpdating, pError] = useUpdateProfile(auth);
-    const [updateEmail, emUpdating, emError] = useUpdateEmail(auth);
+    const [updateEmail, emUpdating, emError] = useUpdateEmail(auth)
     const [fetchError, setFetchErr] = useState('');
+    // console.log(emUpdating, emError)
 
-    const { isLoading, data: userData, refetch } = useQuery(['update', user], () => fetch(`https://section-n-diu-server.herokuapp.com/user/${user?.email}`).then(res =>
+    const { isLoading, data: userData, refetch } = useQuery(['update'], () => fetch(`https://section-n-diu-server.herokuapp.com/user/${user?.email}`).then(res =>
         res.json()));
 
-    const updateUserDb = async (newUser) => {
+    const updateUserDb = async (oldUser, newUser) => {
         setUpdating(true);
-        await axios.put(`https://section-n-diu-server.herokuapp.com/users/${user?.email}`, newUser, {
+        await axios.put(`https://section-n-diu-server.herokuapp.com/users/${oldUser?.email}`, newUser, {
             headers: {
                 "content-type": "application/json"
             }
@@ -35,10 +37,24 @@ const EditProfile = () => {
             .catch(err => setFetchErr(err))
     }
 
+    const checkEmail = async (updatedUser) => {
+        if (user?.email !== userData.email) {
+            // console.log(userData.email, user.email, updatedUser.email)
+            updateUserDb(userData?.email, updatedUser);
+            await axios.delete(`https://section-n-diu-server.herokuapp.com/users/${userData?.email}`)
+                .then(res => console.log(res))
+            toast.success("Updated Email");
+            refetch();
+        }
+        else {
+            toast.error("Something went wrong, Please try again later")
+        }
+    }
+
     const onSubmit = async (data) => {
         setUpdating(true);
         const displayName = data.name;
-        let email = data.email;
+        const email = data.email;
         const varsity = data.varsity;
         const degree = data.degree;
         const id = data.id;
@@ -50,7 +66,6 @@ const EditProfile = () => {
         formData.append('image', data.image[0]);
         const imageApiKey = "906bfdafb7a4a5b92021d570714ff50f";
         let updatedUser = { displayName, varsity, degree, id, blood, fb, linkedin, twitter };
-        const previousUser = { displayName: userData?.displayName, varsity: userData?.varsity, degree: userData?.degree, id: userData?.id, blood: userData?.blood, fb: userData?.fb, linkedin: userData?.linkedin, twitter: userData?.twitter }
 
         if (data.image[0]) {
             await axios.post(`https://api.imgbb.com/1/upload?key=${imageApiKey}`, formData)
@@ -60,37 +75,35 @@ const EditProfile = () => {
                         const photoURL = res.data.data.url;
                         updateProfile({ photoURL });
                         updatedUser = { ...updatedUser, photoURL }
-                        updateUserDb(updatedUser)
+                        updateUserDb(user, updatedUser)
                         toast.success("Updated DP");
                     }
                 })
         }
-        // else if (email !== userData?.email) {
-        //     console.log(email)
-        //     await updateEmail(email);
-        //     // updatedUser = { ...updatedUser, email };
-        //     // await updateUserDb(updatedUser);
-        //     toast.success("Updated Email");
-        //     refetch();
-        // }
+        else if (email !== userData?.email) {
+            await updateEmail(email);
+            updatedUser = { ...updatedUser, email };
+            await checkEmail(updatedUser);
+            setUpdating(false)
+
+        }
 
         else if (userData?.displayName !== displayName) {
             updateProfile({ displayName });
             if (!pError) {
-                updateUserDb(updatedUser);
+                updateUserDb(user, updatedUser);
             }
             toast.success("Updated Name")
         }
 
         else if (userData?.varsity !== varsity || userData?.degree !== degree || userData?.id !== id || userData?.blood !== blood || userData?.fb !== fb || userData?.linkedin !== linkedin || userData?.twitter !== twitter) {
-            updateUserDb(updatedUser);
+            updateUserDb(user, updatedUser);
             toast.success("Updated Profile");
         }
         else {
             toast.warn("Nothing To Update")
             setUpdating(false);
         }
-        console.log(user)
     }
 
 
@@ -99,7 +112,7 @@ const EditProfile = () => {
     return (
         <div className='bg-base-100 mx-auto w-full flex flex-col mb-20 md:mb-0 md:overflow-y-hidden'>
             <div className='flex flex-col md:flex-row w-full h-full px-5 md:items-center'>
-                <div className='w-auto h-auto md:max-w-xl rounded-3xl mx-auto'>
+                <div className='w-auto h-auto md:max-w-sm rounded-3xl mx-auto'>
                     <img src={userData?.photoURL} alt="" className='w-full h-full rounded-3xl object-cover' />
                 </div>
 
@@ -108,7 +121,7 @@ const EditProfile = () => {
                     <div className='grid md:grid-cols-2 gap-6'>
                         <div className="form-control w-full h-24">
                             <label className="label">
-                                <span className="label-text">Foman ase to? </span>
+                                <span className="label-text">Shundor Ekta Pic Den </span>
                             </label>
                             <input type="file" className="input input-bordered w-full" {...register("image")} />
                             {errors?.image && <span className='text-error text-sm text-center'>{errors?.image?.message}</span>}
@@ -116,19 +129,25 @@ const EditProfile = () => {
 
                         <div className="form-control w-full h-24">
                             <label className="label">
-                                <span className="label-text">Agika Charai Naam Update Korun</span>
+                                <span className="label-text">Akika Charai Naam Update Korun</span>
                             </label>
                             <input type="text" defaultValue={userData?.displayName} placeholder="Update Name here" className="input input-bordered w-full" {...register("name")} />
                             {errors?.name && <span className='text-error text-sm text-center'>{errors?.name?.message}</span>}
                         </div>
 
-                        {/* <div className="form-control w-full h-24">
-                        <label className="label">
-                            <span className="label-text capitalize">Email Address. Currentlty Under Development</span>
-                        </label>
-                        <input type="text" disabled defaultValue={userData?.email} placeholder="Update Email Address here" className="input input-bordered w-full" {...register("email")} />
-                        {errors?.email && <span className='text-error text-sm text-center'>{errors?.email?.message}</span>}
-                    </div> */}
+                        <div className="form-control w-full h-24">
+                            <label className="label">
+                                <span className="label-text capitalize">Email Address</span>
+                            </label>
+                            <input type="text" defaultValue={userData?.email} placeholder="Update Email Address here" className="input input-bordered w-full" {...register("email", {
+                                required: 'Email address is required to update profile',
+                                pattern: {
+                                    value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                                    message: "Provide a valid email"
+                                }
+                            })} />
+                            {errors?.email && <span className='text-error text-sm text-center'>{errors?.email?.message}</span>}
+                        </div>
 
                         <div className="form-control w-full h-24">
                             <label className="label">

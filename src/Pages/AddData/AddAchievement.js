@@ -11,7 +11,7 @@ const AddAchievement = () => {
     const { register, handleSubmit, formState: { errors }, reset } = useForm();
     const [uploading, setUploading] = useState(false)
 
-    const isAdmin = useAdmin();
+    const [isAdmin, adminLoading] = useAdmin();
     const [user, loading] = useAuthState(auth);
 
     const onSubmit = async (data) => {

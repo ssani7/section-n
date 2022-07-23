@@ -1,32 +1,29 @@
 import React from 'react';
-import { useQuery } from 'react-query';
 import Loading from '../../../Shared/Loading';
-import AchvmntReqRow from './AchvmntReqRow';
+import { useQuery } from 'react-query';
+import VerificationRow from './VerificationRow';
 
-const AchvmntReq = () => {
-    const { isLoading, data: requests, refetch } = useQuery('stars', () => fetch('https://section-n-diu-server.herokuapp.com/achievementsReq').then(res => res.json()));
+const VerificationReq = () => {
+    const { isLoading, data: users, refetch } = useQuery('stars', () => fetch('https://section-n-diu-server.herokuapp.com/verifyReq').then(res => res.json()));
 
 
     if (isLoading) return <Loading />
-    if (requests.length === 0) return <h2 className='w-full text-center text-3xl  font-semibold p-10'>No requests. Lazy day. Chill ;)</h2>
+    if (users.length === 0) return <h2 className='w-full text-center text-3xl  font-semibold p-10'>No Requests. Lazy day. Chill ;)</h2>
     return (
         <div className="overflow-x-auto w-full">
             <table className="table w-full">
                 <thead>
                     <tr>
-                        <th></th>
                         <th className='text-center'>Name</th>
-                        <th>Achievement</th>
                         <th>Photo</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     {
-                        requests.map((request, i) => <AchvmntReqRow
+                        users.map((user, i) => <VerificationRow
                             key={i}
-                            index={i}
-                            request={request}
+                            user={user}
                             refetch={refetch}
                         />)
                     }
@@ -34,10 +31,8 @@ const AchvmntReq = () => {
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th></th>
                         <th className='text-center'>Name</th>
-                        <th>Job</th>
-                        <th>Favorite Color</th>
+                        <th>Photo</th>
                         <th></th>
                     </tr>
                 </tfoot>
@@ -47,4 +42,4 @@ const AchvmntReq = () => {
     );
 };
 
-export default AchvmntReq;
+export default VerificationReq;

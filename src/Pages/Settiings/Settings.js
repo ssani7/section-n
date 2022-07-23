@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 
 
 const Settings = () => {
+    useEffect(() => {
+        window.scrollTo(0, 0)
+    }, [])
     return (
         <div className='pt-20'>
             <div className="drawer drawer-mobile">
@@ -15,6 +18,8 @@ const Settings = () => {
                     <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
                     <ul className="menu p-4 overflow-y-auto w-80 bg-base-100 text-base-content">
                         <li><Link to='/settings'>Edit Your Profile</Link></li>
+                        <li><Link to='verify'>Verify Account</Link></li>
+                        <li><Link to='addAchvmnt'>Add Achievements</Link></li>
                     </ul>
 
                 </div>

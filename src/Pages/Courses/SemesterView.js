@@ -12,12 +12,10 @@ const SemesterView = () => {
     const { semesterName } = useParams();
     const [userData, loadingData] = useDBUser();
     const [unlockedIndex, setUnlocked] = useState();
-    console.log("semsensert", semesterName);
 
     const { isLoading, data: semester } = useQuery(['semester', semesterName],
         () => fetch(`https://section-n-diu-server.herokuapp.com/courses/${semesterName || "Fall-2022"}`).then(res => res.json()));
 
-    console.log("semsensert", semesterName);
     const container = {
         hidden: { opacity: 1, scale: 0 },
         visible: {
@@ -45,15 +43,9 @@ const SemesterView = () => {
     if (isLoading || loadingData) return <Loading />
 
     const handleUnlock = (index) => {
-        axios.get(`https://section-n-diu-server.herokuapp.com/matchId/${userData?.id}`)
-            .then(res => {
-                if (res.data) {
-                    setUnlocked(index);
-                }
-                else {
-                    toast.error("Your ID does not belong to Section N")
-                }
-            });
+        userData?.verification === "verified"
+            ? setUnlocked(index)
+            : toast.error("You have to be a verified member of Section N")
     }
 
     return (

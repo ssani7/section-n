@@ -2,31 +2,24 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAt, faIdCard, faGraduationCap, faBuildingColumns, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
+import { faImages, faAt, faIdCard, faGraduationCap, faBuildingColumns, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import { faFacebookF, faLinkedin, faTwitter } from '@fortawesome/free-brands-svg-icons';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import auth from '../../firebase.init';
-import Loading from '../Shared/Loading';
-import useToken from '../../hooks/useToken';
-import { useNavigate } from 'react-router-dom';
-import useDBUser from '../../hooks/useDBUser';
+import { useQuery } from "react-query"
+import NLoading from '../Shared/NLoading';
+import { useParams } from 'react-router-dom';
 
-const Profile = () => {
-    const [user, loading] = useAuthState(auth);
 
-    const navigate = useNavigate();
-    const token = useToken();
-
-    const [userFromDb, loadingData] = useDBUser(user);
+const UserProfile = () => {
+    const { email } = useParams();
+    const { isLoading, data: userFromDb } = useQuery(['user', email], () => fetch(`https://section-n-diu-server.herokuapp.com/user/${email}`).then(res => res.json()))
 
     const { ref, inView } = useInView({
         triggerOnce: true
     })
 
-    if (loading || loadingData) {
-        return <Loading></Loading>
+    if (isLoading) {
+        return <NLoading />
     }
-
     return (
         <>
             <div className='px-5 flex flex-col pt-40 md:pt-60 lg:justify-center items-center bg-base-100 overflow-x-hidden md:px-10 md:py-0 lg:h-screen lg:pt-0 md:w-full h-full'>
@@ -123,4 +116,4 @@ const Profile = () => {
     );
 };
 
-export default Profile;
+export default UserProfile;

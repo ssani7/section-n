@@ -16,6 +16,7 @@ const ManageData = () => {
                         <li><Link to='/manageData'>Add Achievement</Link></li>
                         <li><Link to='addEvent'>Add Event</Link></li>
                         <li><Link to='achvReq'>Achievement Requests</Link></li>
+                        <li><Link to='verifyReq'>Verification Requests</Link></li>
                     </ul>
 
                 </div>

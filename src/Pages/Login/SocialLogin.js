@@ -14,8 +14,8 @@ const SocialLogin = () => {
         <>
             {
                 loading
-                    ? <button className='btn btn-primary hover:bg-gray-400 bg-base-100 w-full normal-case text-primary-content loading'>Hold on mate</button>
-                    : <button onClick={() => signInWithGoogle()} className="btn btn-primary hover:bg-gray-400 bg-base-100 w-full normal-case text-primary-content">
+                    ? <button className='btn btn-primary hover:bg-gray-300 bg-gray-100 text-black w-full normal-case loading'>Hold on mate</button>
+                    : <button onClick={() => signInWithGoogle()} className="btn btn-primary hover:bg-gray-300 bg-gray-100 text-black w-full normal-case">
                         <img src={google} alt="" className='h-6 w-6 mr-3' />
                         Continue With Google</button>
             }

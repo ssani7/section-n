@@ -1,4 +1,5 @@
 import React from 'react';
+import { useEffect } from 'react';
 
 const ContactCR = () => {
     const crs = [
@@ -16,7 +17,11 @@ const ContactCR = () => {
             phone: "+8801774476304",
             image: "https://i.ibb.co/KwCMvz8/shifa-star.jpg"
         }
-    ]
+    ];
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [])
     return (
         <div className='pt-20 min-h-screen flex flex-col justify-center items-center bg-base-100'>
             {

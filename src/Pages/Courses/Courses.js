@@ -12,6 +12,10 @@ const Courses = () => {
 
     // const [semester, setSemester] = useState(semesters?.length > 0 ? semesters[semesters.length - 1] : {});
 
+    useEffect(() => {
+        window.scrollTo(0, 0)
+    }, [])
+
     if (isLoading) return <NLoading />
 
     return (

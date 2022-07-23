@@ -97,7 +97,7 @@ const Register = () => {
                         {
                             (updating || loading)
                                 ? <button className="btn btn-primary mt-6 loading normal-case">Creating Account</button>
-                                : <input className='btn btn-primary mt-6 normal-case' type="submit" value="Sign Up" />
+                                : <input className='btn mt-6 normal-case' type="submit" value="Sign Up" />
                         }
 
                         {(error || updateError) && <small className='text-error'>{error.message || updateError.message}</small>}

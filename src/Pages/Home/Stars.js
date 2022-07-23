@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useQuery } from 'react-query';
 import Loading from '../Shared/Loading';
 import { useInView } from 'react-intersection-observer';
 import { motion } from 'framer-motion'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import Footer from '../Shared/Footer';
 
 
 const Stars = () => {
     const navigate = useNavigate();
+    const { length } = useParams();
+
     const item = {
         hidden: { y: 20, opacity: 0 },
         visible: {
@@ -18,20 +21,28 @@ const Stars = () => {
             }
         }
     };
-    const { isLoading, data: stars } = useQuery('stars', () => fetch('https://section-n-diu-server.herokuapp.com/achievements').then(res => res.json()));
+
+    let { isLoading, data: stars } = useQuery('stars', () => fetch('https://section-n-diu-server.herokuapp.com/achievements').then(res => res.json()));
 
     const { ref, inView } = useInView({
         "threshold": 0.2,
         "triggerOnce": true
     });
 
+    useEffect(() => {
+        window.scrollTo(0, 0)
+    }, [])
+
     if (isLoading) return <Loading />
+
+    stars = length ? stars : stars.slice(0, 4);
+
 
 
 
     return (
-        <div className='text-center'>
-            <h2 className='text-xl md:text-4xl font-bold text-center py-10'>Our Stars</h2>
+        <div className={`text-center ${length === "all" && "pt-20"}`}>
+            <h2 className='text-xl md:text-4xl font-bold text-center py-10'>Our Achievements</h2>
             <div ref={ref} className='pb-10 grid grid-cols-2 gap-2 lg:gap-5 mx-4 lg:mx-auto w-fit'>
                 {
                     stars.map((star, i) => <motion.div key={i} initial='hidden' animate={`${inView && 'visible'}`} className="hero py-2 bg-base-200 max-w-3xl rounded-xl shadow-lg"
@@ -61,7 +72,15 @@ const Stars = () => {
                     </motion.div>)
                 }
             </div>
-            <button onClick={() => navigate('/addAchievement')} className='btn btn-primary mb-6 normal-case'>Add Your Achievements</button>
+            {
+                length === "all"
+                    ? <button onClick={() => navigate('/addAchievement')} className='btn btn-primary mb-6 normal-case'>Add Your Achievements</button>
+                    : <button onClick={() => navigate('/achievements/all')} className='btn btn-primary mb-6 normal-case'>Show All Achievements</button>
+            }
+
+            {
+                length === "all" && <Footer />
+            }
         </div>
     );
 };

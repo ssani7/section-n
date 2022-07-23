@@ -24,7 +24,7 @@ const NLoading = () => {
     };
     return (
         <div className='cbody bg-base-100'>
-            <div className="container w-72 h-72 bg-base-200">
+            <div className="container w-72 h-72 bg-base-300">
                 <motion.svg
                     xmlns="http://www.w3.org/2000/svg" viewBox="16.897 95.742 578.207 600.517"
                     className="item"
