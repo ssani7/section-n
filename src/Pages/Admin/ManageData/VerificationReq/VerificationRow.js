@@ -1,6 +1,5 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { useQuery } from 'react-query';
 import { toast } from 'react-toastify';
 
 const VerificationRow = ({ user, refetch }) => {

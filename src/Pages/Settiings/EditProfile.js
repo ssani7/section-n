@@ -15,9 +15,17 @@ const EditProfile = () => {
     const [updating, setUpdating] = useState(false);
     const [visible, setvisible] = useState(false);
     const [password, setPassword] = useState('');
-    const [fb, setFb] = useState('');
-    const [linkedin, setlinkedin] = useState('');
-    const [twitter, setTwitter] = useState('');
+    const [currentUser, setCurrentUser] = useState({
+        displayName: "",
+        email: "",
+        varsity: "",
+        degree: "",
+        id: "",
+        blood: "",
+        fb: "",
+        twitter: "",
+        linkedin: ""
+    })
 
     const [updateProfile, pUpdating, pError] = useUpdateProfile(auth);
     const [updateEmail, emUpdating, emError] = useUpdateEmail(auth);
@@ -77,11 +85,7 @@ const EditProfile = () => {
     }
 
     useEffect(() => {
-        if (!password) {
-            reset({ ...getValues(), password: undefined });
-            unregister("password");
-        }
-        else {
+        if (password) {
             register("password", {
                 validate: {
                     size: p => p.length >= 6 || 'minimum 6 chatacter password required',
@@ -90,25 +94,32 @@ const EditProfile = () => {
                     special: p => /[ `!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~]/.test(p) || 'Must contain a special character',
                 }
             })
+
+        }
+        else if (!password) {
+            reset({ ...getValues(), password: undefined });
+            unregister("password");
         }
 
-        setFb(userData?.fb);
-        setlinkedin(userData?.linkedin);
-        setTwitter(userData?.twitter);
 
-    }, [password, unregister, getValues, register, reset, userData]);
 
+    }, [password, unregister, getValues, register, reset]);
+
+    useEffect(() => {
+        setCurrentUser(userData);
+    }, [userData])
 
     const handlePassword = async () => {
         const confirm = window.confirm("Password Change Korlam Kintu?!");
         if (confirm) {
+
             updatePassword(password);
+
             if (passError) {
-                toast.success(passError.message)
+                toast.error(passError.message)
             }
             else {
-                toast.success("Password changed bodda!!!");
-                reset();
+                toast.success("Changed Password")
             }
         }
         setUpdating(false)
@@ -116,18 +127,12 @@ const EditProfile = () => {
 
     const onSubmit = async (data) => {
         setUpdating(true);
-        const displayName = data.name;
-        const email = data.email;
-        const varsity = data.varsity;
-        const degree = data.degree;
-        const id = data.id;
-        const blood = data.blood;
 
         const formData = new FormData();
         formData.append('image', data.image[0]);
         const imageApiKey = "906bfdafb7a4a5b92021d570714ff50f";
 
-        let updatedUser = { displayName, varsity, degree, id, blood, fb, linkedin, twitter };
+        let updatedUser = { displayName: currentUser?.displayName, varsity: currentUser?.varsity, degree: currentUser?.degree, id: currentUser?.id, blood: currentUser?.blood, fb: currentUser?.fb, linkedin: currentUser?.linkedin, twitter: currentUser?.twitter };
 
         if (data.image[0]) {
             await axios.post(`https://api.imgbb.com/1/upload?key=${imageApiKey}`, formData)
@@ -143,25 +148,25 @@ const EditProfile = () => {
                     }
                 })
         }
-        else if (email !== userData?.email) {
-            await updateEmail(email);
-            updatedUser = { ...updatedUser, email };
+        else if (currentUser?.email !== userData?.email) {
+            await updateEmail(currentUser?.email);
+            updatedUser = { ...updatedUser, email: currentUser?.email };
             await checkEmail(updatedUser);
             setUpdating(false)
 
         }
 
-        else if (userData?.displayName !== displayName) {
-            updateProfile({ displayName });
-            if (!pError) {
-                updateUserDb(userData, updatedUser);
-            }
-            toast.success("Updated Name")
+        else if (userData?.displayName !== currentUser?.displayName) {
+            updateProfile({ displayName: currentUser?.displayName }).then(() => {
+                if (!pError) {
+                    updateUserDb(userData, updatedUser);
+                }
+                toast.success("Updated Name")
+            })
         }
 
-        else if (userData?.varsity !== varsity || userData?.degree !== degree || userData?.id !== id || userData?.blood !== blood || userData?.fb !== fb || userData?.linkedin !== linkedin || userData?.twitter !== twitter) {
+        else if (userData?.varsity !== currentUser?.varsity || userData?.degree !== currentUser?.degree || userData?.id !== currentUser?.id || userData?.blood !== currentUser?.blood || userData?.fb !== currentUser?.fb || userData?.linkedin !== currentUser?.linkedin || userData?.twitter !== currentUser?.twitter) {
             updateUserDb(userData, updatedUser);
-            // window.location.reload(false);
         }
         else if (password) {
             handlePassword();
@@ -173,7 +178,7 @@ const EditProfile = () => {
     }
 
 
-    if (loading || isLoading || emUpdating || pUpdating || passUpdating) return <Loading />
+    if (loading || isLoading) return <Loading />
 
     return (
         <div className='bg-base-100 mx-auto w-full flex flex-col mb-20 md:mb-0 md:overflow-y-hidden'>
@@ -197,7 +202,9 @@ const EditProfile = () => {
                             <label className="label">
                                 <span className="label-text">Akika Charai Naam Update Korun</span>
                             </label>
-                            <input type="text" defaultValue={userData?.displayName} placeholder="Update Name here" className="input input-bordered w-full" {...register("name")} />
+                            <input type="text" value={currentUser?.displayName} placeholder="Update Name here" className="input input-bordered w-full" {...register("name", {
+                                onChange: e => setCurrentUser({ ...currentUser, displayName: e.target.value })
+                            })} />
                             {errors?.name && <span className='text-error text-sm text-center'>{errors?.name?.message}</span>}
                         </div>
 
@@ -205,8 +212,8 @@ const EditProfile = () => {
                             <label className="label">
                                 <span className="label-text capitalize">Email Address</span>
                             </label>
-                            <input type="text" defaultValue={userData?.email} placeholder="Update Email Address here" className="input input-bordered w-full" {...register("email", {
-                                required: 'Email address is required to update profile',
+                            <input type="text" value={currentUser?.email} placeholder="Update Email Address here" className="input input-bordered w-full" {...register("email", {
+                                onChange: e => setCurrentUser({ ...currentUser, email: e.target.value }),
                                 pattern: {
                                     value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
                                     message: "Provide a valid email"
@@ -235,7 +242,9 @@ const EditProfile = () => {
                             <label className="label">
                                 <span className="label-text">Kon Varsity? Daffodil na?</span>
                             </label>
-                            <input type="text" defaultValue={userData?.varsity} placeholder="Update University Name here" className="input input-bordered w-full" {...register("varsity")} />
+                            <input type="text" value={currentUser?.varsity} placeholder="Update University Name here" className="input input-bordered w-full" {...register("varsity", {
+                                onChange: e => setCurrentUser({ ...currentUser, varsity: e.target.value })
+                            })} />
                             {errors?.varsity && <span className='text-error text-sm text-center'>{errors?.varsity?.message}</span>}
                         </div>
 
@@ -243,7 +252,9 @@ const EditProfile = () => {
                             <label className="label">
                                 <span className="label-text capitalize">Degree. Please CSE boilen na bhai :')</span>
                             </label>
-                            <input type="text" defaultValue={userData?.degree} placeholder="Update Degree here" className="input input-bordered w-full" {...register("degree")} />
+                            <input type="text" value={currentUser?.degree} placeholder="Update Degree here" className="input input-bordered w-full" {...register("degree", {
+                                onChange: e => setCurrentUser({ ...currentUser, degree: e.target.value })
+                            })} />
                             {errors?.degree && <span className='text-error text-sm text-center'>{errors?.degree?.message}</span>}
                         </div>
 
@@ -251,7 +262,9 @@ const EditProfile = () => {
                             <label className="label">
                                 <span className="label-text">ID Likhun Ekhane</span>
                             </label>
-                            <input type="text" defaultValue={userData?.id} placeholder="Update Student ID here" className="input input-bordered w-full" {...register("id")} />
+                            <input type="text" value={currentUser?.id} placeholder="Update Student ID here" className="input input-bordered w-full" {...register("id", {
+                                onChange: e => setCurrentUser({ ...currentUser, id: e.target.value })
+                            })} />
                             {errors?.id && <span className='text-error text-sm text-center'>{errors?.id?.message}</span>}
                         </div>
 
@@ -259,7 +272,9 @@ const EditProfile = () => {
                             <label className="label">
                                 <span className="label-text capitalize">Blood Group. Rokto din, jibon bachan</span>
                             </label>
-                            <select type="text" defaultValue={userData?.blood} placeholder="Update Blood Group here" className="input input-bordered w-full" {...register("blood")} >
+                            <select type="text" value={currentUser?.blood} placeholder="Update Blood Group here" className="input input-bordered w-full" {...register("blood", {
+                                onChange: e => setCurrentUser({ ...currentUser, blood: e.target.value })
+                            })} >
                                 <option value="A+">A positive</option>
                                 <option value="A-">A negative</option>
                                 <option value="B+">B positive</option>
@@ -277,8 +292,8 @@ const EditProfile = () => {
                             <label className="label">
                                 <span className="label-text capitalize">Facebook id ta dibaaaa?</span>
                             </label>
-                            <input type="text" value={fb} placeholder="Update Facebook Profile Link here" className="input input-bordered w-full" {...register("fb", {
-                                onChange: e => setFb(e.target.value),
+                            <input type="text" value={currentUser?.fb} placeholder="Update Facebook Profile Link here" className="input input-bordered w-full" {...register("fb", {
+                                onChange: e => setCurrentUser({ ...currentUser, fb: e.target.value }),
                                 pattern: {
                                     value: /[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/,
                                     message: "Provide a valid url"
@@ -291,8 +306,8 @@ const EditProfile = () => {
                             <label className="label">
                                 <span className="label-text capitalize">LinkedIn er Link Din</span>
                             </label>
-                            <input type="text" value={linkedin} placeholder="Update LinkedIn Profile here" className="input input-bordered w-full" {...register("linkedin", {
-                                onChange: e => setlinkedin(e.target.value),
+                            <input type="text" value={currentUser?.linkedin} placeholder="Update LinkedIn Profile here" className="input input-bordered w-full" {...register("linkedin", {
+                                onChange: e => setCurrentUser({ ...currentUser, linkedin: e.target.value }),
                                 pattern: {
                                     value: /[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/,
                                     message: "Provide a valid url"
@@ -305,8 +320,8 @@ const EditProfile = () => {
                             <label className="label">
                                 <span className="label-text capitalize">Twitter Profile Ta Dibaaa?</span>
                             </label>
-                            <input type="text" value={twitter} placeholder="Update Twitter Profile Link here" className="input input-bordered w-full" {...register("twitter", {
-                                onChange: e => setTwitter(e.target.value),
+                            <input type="text" value={currentUser?.twitter} placeholder="Update Twitter Profile Link here" className="input input-bordered w-full" {...register("twitter", {
+                                onChange: e => setCurrentUser({ ...currentUser, twitter: e.target.value }),
                                 pattern: {
                                     value: /[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/,
                                     message: "Provide a valid url"
@@ -317,7 +332,7 @@ const EditProfile = () => {
                     </div>
 
                     {
-                        updating ? <button className="btn w-full mt-6 normal-case loading">Updating Profile</button>
+                        (updating || emUpdating || pUpdating || passUpdating) ? <button className="btn w-full mt-6 normal-case loading">Updating Profile</button>
                             : <input className='btn btn-primary w-full mt-6 normal-case' type="Submit" />
                     }
                 </form>

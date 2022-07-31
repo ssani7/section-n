@@ -8,7 +8,7 @@ const AchvmntReq = () => {
 
 
     if (isLoading) return <Loading />
-    if (requests.length === 0) return <h2 className='w-full text-center text-3xl  font-semibold p-10'>No requests. Lazy day. Chill ;)</h2>
+    if (requests.length === 0) return <h2 className='w-full text-center text-3xl  font-semibold p-10'>No Achievement Request. Lazy day. Chill ;)</h2>
     return (
         <div className="overflow-x-auto w-full">
             <table className="table w-full">
