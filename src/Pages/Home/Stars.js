@@ -41,7 +41,7 @@ const Stars = () => {
 
 
     return (
-        <div className={`text-center ${length === "all" && "pt-20"}`}>
+        <div className={`text-center ${length === "all" && "pt-20"} bg-base-100`}>
             <h2 className='text-xl md:text-4xl font-bold text-center py-10'>Our Achievements</h2>
             <div ref={ref} className='pb-10 grid grid-cols-2 gap-2 lg:gap-5 mx-4 lg:mx-auto w-fit'>
                 {

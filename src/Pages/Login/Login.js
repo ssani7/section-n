@@ -1,16 +1,20 @@
 import React from 'react';
-import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { useState } from 'react';
+import { useSendPasswordResetEmail, useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { useForm } from 'react-hook-form';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import auth from '../../firebase.init';
 import useToken from '../../hooks/useToken';
 import SocialLogin from './SocialLogin';
+import NLoading from '../Shared/NLoading'
+import { toast } from 'react-toastify';
 
 const Login = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
 
     const navigate = useNavigate();
     const location = useLocation();
+    const [email, setEmail] = useState('');
 
     const from = location.state?.from?.pathname || "/";
 
@@ -21,14 +25,22 @@ const Login = () => {
         error,
     ] = useSignInWithEmailAndPassword(auth);
 
+    const [sendPasswordResetEmail, sending, resetError] = useSendPasswordResetEmail(auth);
+
     const token = useToken();
 
     if (token) {
         navigate(from, { replace: true });
     }
 
+    if (sending) return <NLoading />
+
+    const handleReset = async () => {
+        await sendPasswordResetEmail(email);
+        toast.success(`Sent reset email to ${email}`)
+    }
+
     const onSubmit = async (data) => {
-        const email = data.email;
         const password = data.password;
 
         signInWithEmailAndPassword(email, password)
@@ -38,12 +50,14 @@ const Login = () => {
             <div className="card mx-6 bg-base-100 shadow-xl rounded-2xl border md:max-w-lg md:mx-auto">
                 <div className="card-body items-center text-center">
                     <h2 className="card-title font-bold">Log In</h2>
+
                     <form onSubmit={handleSubmit(onSubmit)} className="form-control w-full mx-auto max-w-lg">
                         <label className="label mt-3">
                             <span className="label-text">Email Address</span>
                         </label>
                         <input type="email" placeholder="Your Email Address" className="input input-bordered w-full focus:outline-none focus:ring-2" {...register('email', {
-                            required: 'Email is required'
+                            required: 'Email is required',
+                            onChange: e => setEmail(e.target.value)
                         })} />
                         {errors?.email && <small className='text-error'>{errors.email.message}</small>}
 
@@ -55,7 +69,11 @@ const Login = () => {
                         })} />
                         {errors?.password && <small className='text-error'>{errors.password.message}</small>}
 
-                        <p className='text-sm mt-3'>Don't have an account? <Link to='/register' className='text-secondary'>Create an account</Link></p>
+                        <p className='text-sm mt-3 font-semibold'>Forgot Password? <button className='text-secondary' onClick={handleSubmit(handleReset)}>Reset Password</button></p>
+
+                        {resetError && <small className='text-error mt-2'>{resetError.message}</small>}
+
+                        <p className='text-sm mt-3 font-semibold'>Don't have an account? <Link to='/register' className='text-secondary'>Create an account</Link></p>
 
                         {
                             loading

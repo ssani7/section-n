@@ -9,11 +9,11 @@ const VerificationRow = ({ user, refetch }) => {
 
     const removeReq = () => {
         setRemoving(true);
-        axios.put(`https://section-n-diu-server.herokuapp.com/achievements/${user._id}`)
+        axios.put(`https://section-n-diu-server.herokuapp.com/verification/delete/${user._id}`)
             .then(res => {
-                if (res.data.deletedCount > 0) {
+                if (res.data.modifiedCount > 0) {
                     setRemoving(false);
-                    toast.success("Removed user Succefully")
+                    toast.success("Removed request Succefully")
                     refetch();
                 }
             })
@@ -25,7 +25,7 @@ const VerificationRow = ({ user, refetch }) => {
             .then(res => {
                 if (res.data.modifiedCount > 0) {
                     setAccepting(false);
-                    toast.success("Achivement is one of ours. Uraa!!!")
+                    toast.success("Celebrity is one of us. Uraa!!!")
                     refetch();
                 }
             })

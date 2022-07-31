@@ -1,13 +1,12 @@
 import { signOut } from 'firebase/auth';
 import React, { useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { Link } from 'react-router-dom';
+import { Link, useMatch, useResolvedPath } from 'react-router-dom';
 
 import auth from '../../../firebase.init';
 import useAdmin from '../../../hooks/useAdmin';
 import useDBUser from '../../../hooks/useDBUser';
 import useToken from '../../../hooks/useToken';
-import Loading from '../Loading';
 
 const Header = ({ theme, setTheme }) => {
     const [changeBg, setChangeBg] = useState(false);
@@ -16,7 +15,24 @@ const Header = ({ theme, setTheme }) => {
     const [userData, loadingData] = useDBUser();
     const [isAdmin, adminLoading] = useAdmin();
 
-    const token = useToken();
+    // const token = useToken();
+
+    function CustomLink({ children, to, ...props }) {
+        let resolved = useResolvedPath(to);
+        let match = useMatch({ path: resolved.pathname, end: true });
+
+        return (
+            <div>
+                <Link
+                    style={{ textDecoration: match ? "underline" : "none" }}
+                    to={to}
+                    {...props}
+                >
+                    {children}
+                </Link>
+            </div>
+        );
+    }
 
     const handleSignOut = () => {
         const confirm = window.confirm("Are You Sure To Sign Out?");
@@ -51,9 +67,20 @@ const Header = ({ theme, setTheme }) => {
             <div className="flex-1">
                 <Link to='/' className="font-bold normal-case text-base md:text-2xl great-vibes">Section N</Link>
             </div>
-            <div className="flex-none">
+            <div className="flex justify-end w-2/3 md:w-1/2 xl:w-1/4">
+
+                <div className="flex justify-evenly w-full">
+                    <CustomLink to='/students'>
+                        <p className='hover:scale-105 active:scale-90 font-bold text-sm md:text-xl  my-auto'>Students</p>
+                    </CustomLink>
+
+                    <CustomLink to='/courses'>
+                        <p className='hover:scale-105 active:scale-90 font-bold text-sm md:text-xl  my-auto'>Courses</p>
+                    </CustomLink>
+                </div>
+
                 <div className="dropdown dropdown-end flex items-center">
-                    <label className="swap swap-rotate mx-3">
+                    <label className="swap swap-rotate mr-1 md:mr-5">
 
                         <input className='check' defaultChecked={theme === 'black' ? true : false} onChange={(e) => checked(e)} type="checkbox" />
 
@@ -68,7 +95,7 @@ const Header = ({ theme, setTheme }) => {
                         ? <div className="dropdown dropdown-end">
                             <label tabIndex="0" className="btn btn-ghost btn-circle avatar">
                                 {
-                                    loading
+                                    (loading || loadingData || adminLoading)
                                         ? <progress className="progress w-10"></progress>
                                         : <div className="w-10 md:w-16 rounded-full">
                                             <img src={userData?.photoURL || 'https://i.ibb.co/pzpVdPV/no-user-image-icon-3.jpg'} alt='' />
@@ -83,12 +110,6 @@ const Header = ({ theme, setTheme }) => {
                                         Profile
                                     </Link>
                                 </li>
-                                <li>
-                                    <Link to='/courses'>Courses</Link>
-                                </li>
-                                <li>
-                                    <Link to='/students'>Us</Link>
-                                </li>
                                 <li><Link to='/settings'><span>Settings</span></Link></li>
                                 {
                                     isAdmin && <li><Link to='/manageData'>Manage Data
@@ -101,7 +122,7 @@ const Header = ({ theme, setTheme }) => {
 
 
                         : <div className="dropdown dropdown-end">
-                            <Link className='ml-2 text-sm md:text-xl font-bold my-auto' to='/login'>Sign In</Link>
+                            <Link className='text-sm md:text-xl font-bold my-auto whitespace-nowrap' to='/login'>Sign In</Link>
                         </div>
                 }
             </div>

@@ -6,17 +6,17 @@ import { Link } from 'react-router-dom';
 const Footer = () => {
     return (
         <div className='w-full h-fit'>
-            <footer className="footer grid-cols-3 p-10 bg-base-200 text-base-content mt-16">
-                <div className='w-fit mx-auto'>
+            <footer className="footer grid-cols-2 p-10 bg-base-200 text-base-content mt-16">
+                {/* <div className='w-fit mx-auto'>
                     <span className="footer-title">Services</span>
                     <a className="link link-hover">Branding</a>
                     <a className="link link-hover">Design</a>
                     <a className="link link-hover">Marketing</a>
                     <a className="link link-hover">Advertisement</a>
-                </div>
-                <div className='w-fit mx-auto'>
+                </div> */}
+                <div className='w-fit mx-auto '>
                     <span className="footer-title">Contact</span>
-                    <a className="link link-hover">About us</a>
+                    <Link to='/students' className="link link-hover">About Us</Link>
                     <Link to='/contactCR' className="link link-hover">Contact CR</Link>
                 </div>
                 <div className='w-fit mx-auto'>

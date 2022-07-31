@@ -6,9 +6,16 @@ import auth from '../firebase.init';
 const useDBUser = () => {
     const [userFromDb, setUserFromDb] = useState('');
     const [user, loading] = useAuthState(auth);
-    const [loadingData, setLoadingData] = useState(loading)
+    const [loadingData, setLoadingData] = useState(false);
 
     useEffect(() => {
+        if (loading) {
+            setLoadingData(true);
+        }
+        else if (!loading) {
+            setLoadingData(false);
+        }
+
         if (user) {
             setLoadingData(true);
             axios.get(`https://section-n-diu-server.herokuapp.com/user/${user?.email}`)
@@ -18,8 +25,12 @@ const useDBUser = () => {
                         setLoadingData(false);
                     }
                 })
+                .catch(err => {
+                    console.log(err)
+                    setLoadingData(false)
+                })
         }
-    }, [user])
+    }, [user, loading])
 
     return [userFromDb, loadingData]
 };

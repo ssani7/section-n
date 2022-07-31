@@ -44,7 +44,7 @@ function App() {
         <Route path='/login' element={<Login />}></Route>
         <Route path='/contactCR' element={<ContactCR />}></Route>
         <Route path='/profile' element={<RequireAuth><Profile /></RequireAuth>}></Route>
-        <Route path='/courses' element={<RequireAuth><Courses /></RequireAuth>}>
+        <Route path='/courses' element={<Courses />}>
           <Route index element={<SemesterView />}></Route>
           <Route index path="/courses/:semesterName" element={<SemesterView />}></Route>
         </Route>

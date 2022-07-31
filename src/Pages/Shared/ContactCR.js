@@ -15,7 +15,7 @@ const ContactCR = () => {
             hsc: "New Govt. Degree College, Rajshahi",
             address: "DSC Hall, Ashulia",
             phone: "+8801774476304",
-            image: "https://i.ibb.co/KwCMvz8/shifa-star.jpg"
+            image: "https://i.ibb.co/NrGFCsQ/inbound1279201891595438188.jpg"
         }
     ];
 
@@ -26,13 +26,13 @@ const ContactCR = () => {
         <div className='pt-20 min-h-screen flex flex-col justify-center items-center bg-base-100'>
             {
                 crs.map((cr, i) => (
-                    <div class={`hero-content justify-evenly flex-col ${(i % 2 === 0) ? 'lg:flex-row' : 'lg:flex-row-reverse'} bg-base-200 mt-6 p-12 rounded-xl w-5/6`}>
-                        <img src={cr.image} class="h-64 w-56 md:w-80 md:h-96 rounded-lg shadow-2xl object-cover" alt='' />
+                    <div className={`hero-content justify-evenly flex-col ${(i % 2 === 0) ? 'lg:flex-row' : 'lg:flex-row-reverse'} bg-base-200 mt-6 p-12 rounded-xl w-5/6`}>
+                        <img src={cr.image} className="h-64 w-56 md:w-80 md:h-96 rounded-lg shadow-2xl object-cover" alt='' />
                         <div className={`text-center ${(i % 2 === 0) ? 'md:text-left' : 'md:text-right'} `}>
-                            <h1 class="text-2xl md:text-5xl font-bold mb-2">{cr.name}</h1>
-                            <p class="text-lg pt-2">Lives in : {cr.address}</p>
-                            <p class="text-lg pt-2">College : {cr.hsc}</p>
-                            <p class="text-lg pt-2">Phone : {cr.phone}</p>
+                            <h1 className="text-2xl md:text-5xl font-bold mb-2">{cr.name}</h1>
+                            <p className="text-lg pt-2">Lives in : {cr.address}</p>
+                            <p className="text-lg pt-2">College : {cr.hsc}</p>
+                            <p className="text-lg pt-2">Phone : {cr.phone}</p>
                         </div>
                     </div>
                 ))

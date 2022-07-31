@@ -25,7 +25,7 @@ const Home = () => {
     const preview = [
         { name: 'Students', number: 43, path: "students" },
         { name: 'Achievements', number: achievementCount?.count, path: "achievements/all" },
-        { name: 'Completed Credit', number: 24 },
+        { name: 'Completed Credit', number: 20, path: "courses" },
     ];
 
     const { ref, inView } = useInView({

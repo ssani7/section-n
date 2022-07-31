@@ -3,7 +3,6 @@ import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
 import Loading from '../Shared/Loading';
 import { motion } from "framer-motion";
-import axios from 'axios';
 import useDBUser from '../../hooks/useDBUser';
 import { toast } from 'react-toastify';
 import { useState } from 'react';

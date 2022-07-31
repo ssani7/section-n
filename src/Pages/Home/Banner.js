@@ -64,7 +64,7 @@ const Banner = () => {
                 }
             }} className='text-white text-3xl text-center md:text-7xl  opacity-100 capitalize great-vibes absolute bottom-5 lg:bottom-28 left-0 right-0 z-30 drop-shadow-lg shadow-black'>Welcome To The Coolest Section in Town
             </motion.h2>
-            <div className="absolute flex justify-center transform md:right-5 right-2 bottom-1 md:bottom-5 z-50">
+            <div className="absolute flex justify-center transform md:right-5 right-2 bottom-1 md:bottom-5 z-30">
                 <button onClick={previousSlide} className='text-white h-fit w-fit px-2 border rounded-full hover:bg-white hover:text-black mr-1 md:mr-4'>❮</button>
                 <button onClick={nextSlide} className='text-white h-fit w-fit px-2 border rounded-full hover:bg-white hover:text-black'>❯</button>
             </div>

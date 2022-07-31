@@ -17,8 +17,8 @@ const Students = () => {
     if (isLoading) return <NLoading />
 
     return (
-        <div class="overflow-x-auto pt-28 lg:px-16 w-full">
-            <table class="table w-full">
+        <div className="overflow-x-auto pt-28 lg:px-16 w-full bg-base-100">
+            <table className="table w-full">
                 <thead>
                     <tr>
                         <th></th>
@@ -29,17 +29,20 @@ const Students = () => {
                 </thead>
                 <tbody>
                     {
-                        students?.map((student, i) => <tr onClick={student.userData ? () => navigate(`/userProfile/${student.userData?.email}`) : undefined} class="hover cursor-pointer">
+                        students?.map((student, i) => <tr
+                            key={i}
+                            onClick={student.userData ? () => navigate(`/userProfile/${student.userData?.email}`) : undefined}
+                            className="hover cursor-pointer">
                             <th>{i + 1}</th>
                             <td>
-                                <div class="flex items-center space-x-3">
-                                    <div class="avatar">
-                                        <div class="mask mask-squircle w-12 h-12">
+                                <div className="flex items-center space-x-3">
+                                    <div className="avatar">
+                                        <div className="mask mask-squircle w-12 h-12">
                                             <img src={student?.userData?.photoURL || 'https://i.ibb.co/pzpVdPV/no-user-image-icon-3.jpg'} alt="Avatar Tailwind CSS Component" />
                                         </div>
                                     </div>
                                     <div>
-                                        <div class="font-bold">{student.name}</div>
+                                        <div className="font-bold">{student.name}</div>
                                     </div>
                                     {
                                         student.userData && <FontAwesomeIcon icon={faCheckCircle} className="text-blue-600" />

@@ -14,7 +14,7 @@ const AchvmntReqRow = ({ request, refetch, index }) => {
             .then(res => {
                 if (res.data.deletedCount >= 1) {
                     setRemoving(false);
-                    toast.success("Removed Request Succefully")
+                    toast.success("Removed Request Succefully");
                     refetch();
                 }
             })

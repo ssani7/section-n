@@ -22,7 +22,10 @@ const VerifyAcc = () => {
         </>
     }
     else if (userData?.verification === "pending") {
-        return <h1 className='text-2xl font-bold'>Hold your horses mate. Your account verification is in process.</h1>
+        return <>
+            <h1 className='text-2xl font-bold text-center'>Hold your horses mate. Your account verification is in process.</h1>
+            <img className='mt-12 max-w-xs' src="https://i.ibb.co/SvC2J81/waiting.gif" alt="" srcset="" />
+        </>
     }
 
     if (multipleErr) return multipleErr;
