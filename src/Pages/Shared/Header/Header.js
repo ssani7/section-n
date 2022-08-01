@@ -96,7 +96,8 @@ const Header = ({ theme, setTheme }) => {
                             <label tabIndex="0" className="btn btn-ghost btn-circle avatar">
                                 {
                                     (loading || loadingData)
-                                        ? <progress className="progress w-10"></progress>
+                                        ? <div className="animate-pulse w-10 md:w-16 rounded-full bg-slate-700 ">
+                                        </div>
                                         : <div className="w-10 md:w-16 rounded-full">
                                             <img src={userData?.photoURL || 'https://i.ibb.co/pzpVdPV/no-user-image-icon-3.jpg'} alt='' />
                                         </div>
