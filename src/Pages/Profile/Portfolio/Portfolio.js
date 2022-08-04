@@ -298,57 +298,53 @@ const Portfolio = ({ reference }) => {
                 }
 
             }}
-                className='w-full h-72 md:min-h-screen mx-auto relative overflow-hidden'>
+                className='w-full min-h-screen mx-auto overflow-hidden relative'>
 
-                <div className={`absolute w-full h-full right-0`}>
+                <motion.img initial="hidden" animate="visible" variants={{
+                    hidden: {
+                        opacity: 0,
+                        transition: {
+                            duration: 2
+                        }
+                    },
+                    visible: { opacity: 1 }
+                }} className='w-full h-full object-cover absolute' src={about?.banner?.image} alt="" />
 
-                    <motion.img initial="hidden" animate="visible" variants={{
-                        hidden: {
-                            opacity: 0,
+                <div className='absolute flex flex-col justify-center items-center transform left-0 right-0 bottom-0 bg-black w-full h-full bg-opacity-50 whitespace-nowrap z-30'>
+                    <motion.h2 initial='hidden' animate='visible' variants={{
+                        hidden: { opacity: 0, x: 200 },
+                        visible: {
+                            opacity: 1, x: 0,
                             transition: {
-                                duration: 2
+                                type: "spring", stiffness: 100,
+                                duration: 4
                             }
-                        },
-                        visible: { opacity: 1 }
-                    }} className='w-full h-full object-cover' src={about?.banner?.image} alt="" />
+                        }
+                    }} className='text-white text-2xl text-center md:text-5xl 2xl:text-8xl opacity-100 capitalize great-vibes drop-shadow-lg shadow-black'>{about?.banner?.heading1}
+                    </motion.h2>
 
-                    <div className='absolute flex flex-col justify-end items-center transform left-0 right-0 bottom-1/3  bg-black w-full h-full bg-opacity-50 whitespace-nowrap'>
-                        <motion.h2 initial='hidden' animate='visible' variants={{
-                            hidden: { opacity: 0, x: 200 },
-                            visible: {
-                                opacity: 1, x: 0,
-                                transition: {
-                                    type: "spring", stiffness: 100,
-                                    duration: 4
-                                }
+                    <motion.h2 initial='hidden' animate='visible' variants={{
+                        hidden: { opacity: 0, x: -200 },
+                        visible: {
+                            opacity: 1, x: 0,
+                            transition: {
+                                type: "spring", stiffness: 100,
+                                duration: 4
                             }
-                        }} className='text-white text-2xl text-center md:text-5xl 2xl:text-8xl opacity-100 capitalize great-vibes drop-shadow-lg shadow-black'>{about?.banner?.heading1}
-                        </motion.h2>
-
-                        <motion.h2 initial='hidden' animate='visible' variants={{
-                            hidden: { opacity: 0, x: -200 },
-                            visible: {
-                                opacity: 1, x: 0,
-                                transition: {
-                                    type: "spring", stiffness: 100,
-                                    duration: 4
-                                }
-                            }
-                        }} className='text-white text-xl text-right md:text-4xl 2xl:text-7xl opacity-100 capitalize great-vibes md:mt-5 drop-shadow-lg shadow-black'>
-                            {about?.banner?.heading2}
-                        </motion.h2>
-                    </div>
-
-
+                        }
+                    }} className='text-white text-xl text-right md:text-4xl 2xl:text-7xl opacity-100 capitalize great-vibes md:mt-5 drop-shadow-lg shadow-black'>
+                        {about?.banner?.heading2}
+                    </motion.h2>
                 </div>
+
 
             </motion.div>
 
             {/* about */}
             <div className='my-20 lg:pt-0 md:w-full lg:w-full flex flex-col justify-center items-center'>
-                <h1 className='text-3xl font-bold mb-28 text-center'>About </h1>
+                <h1 className='text-3xl font-bold mb-10 text-center'>About </h1>
 
-                <InView threshold={.6}>
+                <InView threshold={.15} triggerOnce={false}>
                     {({ inView, ref, entry }) => (
                         <div className='flex justify-center' ref={ref}>
                             <motion.div
@@ -366,9 +362,9 @@ const Portfolio = ({ reference }) => {
                                 className='bg-base-300 mx-6 xl:w-9/12 lg:mx-32 text-center md:text-left rounded-2xl flex flex-col-reverse items-center md:flex-row md:relative'>
                                 <div className='lg:w-2/3 md:pl-12 md:py-10 p-8 text-base-content'>
 
-                                    <h1 className="text-5xl lg:text-7xl font-bold">{about?.name}</h1>
+                                    <h1 className="text-4xl lg:text-7xl font-bold">{about?.name}</h1>
 
-                                    <h1 className="text-2xl lg:text-3xl font-bold mt-4 poppins">#{about?.designation}</h1>
+                                    <h1 className="text-xl lg:text-3xl font-bold mt-4 poppins">#{about?.designation}</h1>
 
                                     <p className='my-5 md:w-4/6 text-lg'>{about?.bio}</p>
 
@@ -403,7 +399,7 @@ const Portfolio = ({ reference }) => {
             </div>
 
             {/* summary */}
-            <InView threshold={.9}>
+            <InView threshold={.6}>
                 {
                     ({ inView, ref, entry }) => (
                         <div className='grid grid-cols-1 lg:grid-cols-3 justify-center gap-10 mx-auto w-full my-20 py-10 border-y' ref={ref}>
@@ -432,14 +428,14 @@ const Portfolio = ({ reference }) => {
             </InView>
 
             {/* services */}
-            <InView threshold={.8}>
-                {({ inView, ref }) => (
-                    <motion.div ref={ref} initial="hidden" animate={`${inView && "visible"}`} variants={container}>
-                        <motion.h1 variants={item} className='text-3xl font-bold mb-28 text-center'>Services</motion.h1>
-                        <div className='grid grid-cols-1 md:grid-cols-4 w-fit md:mx-28 gap-20 mx-6'>
-                            {
-                                about?.services?.map((service) => (
-                                    <div class="card bg-base-100 shadow-xl py-6">
+            <h1 className='text-3xl font-bold mb-28 text-center'>Services</h1>
+            <motion.div className="scroll-smooth">
+                <motion.div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 w-fit md:mx-28 gap-20 mx-6'>
+                    {
+                        about?.services?.map((service) => (
+                            <InView threshold={0.1} triggerOnce={false}>
+                                {({ inView, ref }) => (
+                                    <motion.div ref={ref} initial="hidden" animate={`${inView && "visible"}`} variants={container} class="card bg-base-100 shadow-xl py-6">
                                         <figure class="h-32 w-32 mx-auto">
                                             <motion.img variants={item} src={service.icon} alt="Shoes" class="rounded-xl" />
                                         </figure>
@@ -447,30 +443,33 @@ const Portfolio = ({ reference }) => {
                                             <motion.h2 variants={item} class="card-title">{service.name}</motion.h2>
                                             <motion.p variants={item}>{service.info}</motion.p>
                                         </div>
-                                    </div>
-                                ))
-                            }
-                        </div>
-                    </motion.div>
-                )}
-            </InView>
+                                    </motion.div>
+                                )}
+                            </InView>
+
+                        ))
+                    }
+                </motion.div>
+            </motion.div>
 
             {/* skills */}
-            <div className='my-20'>
-                <h2 className='text-3xl font-bold text-center '>Technology Experties</h2>
-                <InView threshold={1}>
+            <div className='my-20 flex flex-col md:flex-row w-full justify-center items-center'>
+                <h2 className='text-3xl font-bold text-center md:text-right md:w-2/5 mb-10 px-6 capitalize'>Technologies I use & my expertise</h2>
+                <InView threshold={.5}>
                     {({ inView, ref, entry }) => (
-                        <div ref={ref} className='py-10'>
+                        <div ref={ref} className='w-full md:w-2/5 px-6'>
                             {
                                 about?.skills?.map((skill) => (
-                                    <div className='w-full' >
-                                        <div className='flex mt-4 mx-10 md:w-3/5 md:mx-auto items-center'>
-                                            <h1 className='text-xl md:text-3xl text-left pr-5'>
+                                    <div className='border max-w-xl mx-auto p-6' >
+                                        <div className='flex items-center justify-between'>
+
+                                            <h1 className='text-xl md:text-2xl text-left pr-5 poppins'>
                                                 {skill.name}
                                             </h1>
-                                            <progress class={`progress progress-primary transform transition-all duration-700 ${inView ? 'w-full' : "w-0"}`} value={skill.percentage} max="100"></progress>
                                             <h1 className='ml-2'>{inView ? skill.percentage : 0}%</h1>
+
                                         </div>
+                                        <progress class={`progress progress-primary transform transition-all duration-700 ${inView ? 'w-full' : "w-0"}`} value={skill.percentage} max="100"></progress>
                                     </div>
                                 ))
                             }
@@ -521,7 +520,7 @@ const Portfolio = ({ reference }) => {
 
             {/* contact */}
             <h1 className='text-3xl font-bold text-center '>Contact Me</h1>
-            <InView threshold={.8}>
+            <InView threshold={.8} triggerOnce={true}>
                 {({ inView, ref }) => (
                     <motion.div >
                         <motion.div ref={ref} initial="hidden" animate={`${inView && "visible"}`} variants={container} className='w-full flex justify-center items-center my-20'>

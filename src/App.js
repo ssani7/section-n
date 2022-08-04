@@ -27,6 +27,7 @@ import Students from './Pages/Informations/Students';
 import UserProfile from './Pages/Informations/UserProfile';
 import Stars from './Pages/Home/Stars';
 import Portfolio from './Pages/Profile/Portfolio/Portfolio';
+import EditPortfolio from './Pages/Settiings/EditPortfolio';
 
 function App() {
   // const [theme, setTheme] = useState(localStorage.getItem('theme'));
@@ -65,6 +66,7 @@ function App() {
           <Route path='addAchvmnt' element={<AddAchievement />}></Route>
         </Route>
         <Route path='/portfolio' element={<Portfolio />}></Route>
+        <Route path='/edit' element={<EditPortfolio />}></Route>
         <Route path='/dummy' element={<Dummy />}></Route>
         <Route path='*' element={<NotFound />}></Route>
       </Routes>
