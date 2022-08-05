@@ -1,5 +1,5 @@
 import { faFacebookF, faLinkedin, faTwitter } from '@fortawesome/free-brands-svg-icons';
-import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
+import { faFileArrowDown, faPhone } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useRef, useState } from 'react';
 // import git from '../../Images/icons/git.png'
@@ -18,16 +18,19 @@ import { InView } from 'react-intersection-observer';
 import CountUp from 'react-countup';
 import { useForm } from 'react-hook-form';
 import emailjs from '@emailjs/browser'
+import { useQuery } from "react-query"
+import useDBUser from '../../../hooks/useDBUser';
+import NLoading from '../../Shared/NLoading';
 
 const container = {
-    hidden: { opacity: 1, scale: 0 },
+    hidden: { opacity: 0, scale: 0 },
     visible: {
         opacity: 1,
         scale: 1,
         transition: {
-            delayChildren: 0.3,
-            staggerChildren: 0.2,
-            duration: .3
+            delayChildren: 0.5,
+            staggerChildren: 0.5,
+            duration: .5
         }
     }
 }
@@ -38,7 +41,7 @@ const item = {
         y: 0,
         opacity: 1,
         transition: {
-            duration: .3
+            duration: .5
         }
     }
 }
@@ -46,6 +49,13 @@ const item = {
 
 const Portfolio = ({ reference }) => {
     const navigate = useNavigate();
+
+    const [userData, loading] = useDBUser();
+
+    const { portfolio } = userData;
+    // if (userData) {
+    // }
+    console.log(portfolio);
 
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
 
@@ -282,6 +292,8 @@ const Portfolio = ({ reference }) => {
             .then(res => console.log(res))
     };
 
+    if (loading) return <NLoading />
+
     return (
         <div className='bg-base-100 overflow-x-hidden  scroll-smooth'>
 
@@ -346,7 +358,7 @@ const Portfolio = ({ reference }) => {
 
                 <InView threshold={.15} triggerOnce={false}>
                     {({ inView, ref, entry }) => (
-                        <div className='flex justify-center' ref={ref}>
+                        <div className='flex justify-center w-full h-full' ref={ref}>
                             <motion.div
                                 initial="hidden" animate={`${inView && "animate"}`}
                                 variants={{
@@ -359,24 +371,19 @@ const Portfolio = ({ reference }) => {
                                         }
                                     }
                                 }}
-                                className='bg-base-300 mx-6 xl:w-9/12 lg:mx-32 text-center md:text-left rounded-2xl flex flex-col-reverse items-center md:flex-row md:relative'>
+                                className='bg-base-300 mx-6 w-full xl:w-9/12 lg:mx-32 text-center md:text-left rounded-2xl flex flex-col-reverse items-center md:flex-row md:relative'>
+
                                 <div className='lg:w-2/3 md:pl-12 md:py-10 p-8 text-base-content'>
 
-                                    <h1 className="text-4xl lg:text-7xl font-bold">{about?.name}</h1>
+                                    <h1 className="text-4xl lg:text-7xl font-bold">{portfolio?.name}</h1>
 
-                                    <h1 className="text-xl lg:text-3xl font-bold mt-4 poppins">#{about?.designation}</h1>
+                                    <h1 className="text-xl lg:text-3xl font-bold mt-4 poppins">#{portfolio?.designation}</h1>
 
-                                    <p className='my-5 md:w-4/6 text-lg'>{about?.bio}</p>
+                                    <p className='my-5 md:w-4/6 text-lg h-52'>{portfolio?.bio}</p>
 
-                                    <p className="my-5 md:w-4/6">I am fluent in #HTML, #CSS and use #TailwindCSS and #Bootstrap for UI design. I have good ability in #javaScript and use #Reactjs for most of my projects. For backend I use #mongoDB and #javaScript using #node.js and #express.js</p>
+                                    <p className="my-5 md:w-4/6">{portfolio?.experience}</p>
 
-                                    <a href='https://drive.google.com/file/d/12PtFY9TNixXj-_3DA9vFBRCihGJK3xFf/view?usp=sharing' target='_blank' className="cursor-pointer link-hover" rel="noreferrer"><FontAwesomeIcon className='mr-2' icon={faFileArrowDown} />My Resume</a>
-
-                                    <div className='my-5'>
-                                        <a target='_blank' href='fas' rel="noreferrer"><FontAwesomeIcon className='h-8 m-3 hover:text-blue-600 hover:scale-125 transition-all' icon={faFacebookF} /></a>
-                                        <a target='_blank' href={faLinkedin} rel="noreferrer"><FontAwesomeIcon className='h-8 m-3 hover:text-blue-600 hover:scale-125 transition-all' icon={faLinkedin} /></a>
-                                        <a target='_blank' href="sdaf" rel="noreferrer"><FontAwesomeIcon className='h-8 m-3 hover:text-blue-600 hover:scale-125 transition-all' icon={faTwitter} /></a>
-                                    </div>
+                                    <a href={portfolio?.cv || undefined} target='_blank' className="cursor-pointer link-hover" rel="noreferrer"><FontAwesomeIcon className='mr-2' icon={faFileArrowDown} />My Resume</a>
                                 </div>
                                 <motion.img initial="hidden" animate={`${inView && "animate"}`} variants={{
                                     hidden: { opacity: 0, x: -300 },
@@ -398,24 +405,24 @@ const Portfolio = ({ reference }) => {
 
             </div>
 
-            {/* summary */}
+            {/* statistics */}
             <InView threshold={.6}>
                 {
                     ({ inView, ref, entry }) => (
                         <div className='grid grid-cols-1 lg:grid-cols-3 justify-center gap-10 mx-auto w-full my-20 py-10 border-y' ref={ref}>
                             {
-                                about?.summary?.map((info, i) =>
+                                portfolio?.statistics?.map((stat, i) =>
                                     <CountUp
                                         key={i}
-                                        end={inView ? info.number : 0}
+                                        end={inView ? stat.number : 0}
                                         duration={1.8}
                                     >
                                         {({ countUpRef }) => (
-                                            <div onClick={info.path ? () => navigate(`/${info?.path}`) : undefined} className='text-xl text-center  lg:text-4xl poppins cursor-pointer group'>
+                                            <div onClick={stat.path ? () => navigate(`/${stat?.path}`) : undefined} className='text-xl text-center  lg:text-4xl poppins cursor-pointer group'>
                                                 <h1 className='transition-all duration-300 group-hover:scale-110'>
                                                     <span ref={countUpRef} ></span>
                                                 </h1>
-                                                <h1 className='group-hover: transition-all duration-300 group-hover:scale-110 font-semibold '>{info.name}</h1>
+                                                <h1 className='group-hover: transition-all duration-300 group-hover:scale-110 font-semibold '>{stat.name}</h1>
                                             </div>
                                         )}
                                     </CountUp>)
@@ -432,16 +439,16 @@ const Portfolio = ({ reference }) => {
             <motion.div className="scroll-smooth">
                 <motion.div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 w-fit md:mx-28 gap-20 mx-6'>
                     {
-                        about?.services?.map((service) => (
+                        portfolio?.services?.map((service) => (
                             <InView threshold={0.1} triggerOnce={false}>
                                 {({ inView, ref }) => (
-                                    <motion.div ref={ref} initial="hidden" animate={`${inView && "visible"}`} variants={container} class="card bg-base-100 shadow-xl py-6">
+                                    <motion.div ref={ref} initial="hidden" animate={`${inView && "visible"}`} variants={container} class="card max-w-sm bg-base-200 shadow-xl py-10 px-5 mx-auto h-full w-full">
                                         <figure class="h-32 w-32 mx-auto">
-                                            <motion.img variants={item} src={service.icon} alt="Shoes" class="rounded-xl" />
+                                            <motion.img variants={item} src={service.serviceIcon} alt="Shoes" class="rounded-xl w-full h-full object-cover" />
                                         </figure>
                                         <div class="card-body items-center text-center">
-                                            <motion.h2 variants={item} class="card-title">{service.name}</motion.h2>
-                                            <motion.p variants={item}>{service.info}</motion.p>
+                                            <motion.h2 variants={item} class="card-title">{service.serviceName}</motion.h2>
+                                            <motion.p variants={item}>{service.serviceInfo}</motion.p>
                                         </div>
                                     </motion.div>
                                 )}
@@ -459,12 +466,12 @@ const Portfolio = ({ reference }) => {
                     {({ inView, ref, entry }) => (
                         <div ref={ref} className='w-full md:w-2/5 px-6'>
                             {
-                                about?.skills?.map((skill) => (
+                                portfolio?.skills?.map((skill) => (
                                     <div className='border max-w-xl mx-auto p-6' >
                                         <div className='flex items-center justify-between'>
 
                                             <h1 className='text-xl md:text-2xl text-left pr-5 poppins'>
-                                                {skill.name}
+                                                {skill.skillName}
                                             </h1>
                                             <h1 className='ml-2'>{inView ? skill.percentage : 0}%</h1>
 
@@ -484,7 +491,7 @@ const Portfolio = ({ reference }) => {
                 <h2 className='text-3xl font-bold text-center '>Projects</h2>
                 <div className='my-20 grid grid-cols-1 lg:grid-cols-3  gap-10 mx-6 lg:mx-20'>
                     {
-                        about?.projects?.map((project, i) => <InView threshold={.3} triggerOnce={false}>
+                        portfolio?.projects?.map((project, i) => <InView threshold={.3} triggerOnce={false}>
                             {({ inView, ref, entry }) => (
                                 <div ref={ref}>
                                     <motion.div variants={container}
@@ -497,17 +504,20 @@ const Portfolio = ({ reference }) => {
 
 
                                             <div className=''>
-                                                <h1 className="text-3xl md:text-3xl lg:text-5xl font-bold">{project.title}</h1>
-                                                <p className="py-6">Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem quasi</p>
+                                                <h1 className="text-3xl md:text-3xl lg:text-5xl font-bold">{project.projectName}</h1>
+                                                <p className="py-6">{project.projectInfo}</p>
                                                 <div className='flex flex-wrap'>
-                                                    {
+                                                    <h2>{project.techs}</h2>
+                                                    {/* {
                                                         project.technology.map((tech, i) => <div key={i} className='mx-2 flex items-center wrap'>
                                                             <img className='h-5 mr-1 ' src={tech.image} alt="" srcSet="" />
                                                             <span>{tech.name}</span>
                                                         </div>)
-                                                    }
+                                                    } */}
                                                 </div>
-                                                <button className="btn btn-primary mt-6 normal-case">See Details</button>
+                                                <a href={project.link || undefined}>
+                                                    <button className="btn btn-primary mt-6 normal-case">See Details</button>
+                                                </a>
                                             </div>
                                         </div>
                                     </motion.div>
@@ -525,7 +535,7 @@ const Portfolio = ({ reference }) => {
                     <motion.div >
                         <motion.div ref={ref} initial="hidden" animate={`${inView && "visible"}`} variants={container} className='w-full flex justify-center items-center my-20'>
                             <div className="card w-full md:w-3/5 lg:w-3/5 bg-base-100 shadow-xl lg:px-10 mx-3 pb-6">
-                                <div className="card-body w-full">
+                                <div className="card-body w-full py-4">
                                     <motion.h2 variants={item} className="card-title text-3xl font-bold justify-center mb-6">Send Me an Email</motion.h2>
                                     <form onSubmit={handleSubmit(onSubmit)}>
                                         <motion.div variants={item} className="form-control w-full lg:max-w-2xl">
@@ -542,7 +552,20 @@ const Portfolio = ({ reference }) => {
 
                                         <motion.input variants={item} className="btn btn-primary w-full mt-4 normal-case" type="submit" value='Send' />
                                     </form>
+
+                                    <div className='flex flex-col md:flex-row items-center justify-between mt-5' >
+                                        <div className='w-fit flex hover:scale-125 transition-all cursor-pointer items-center group'>
+                                            <FontAwesomeIcon icon={faPhone} className="h-6 hover:text-blue-600 rounded-full border-2 p-2 group-hover:border-blue-600" />
+                                            <h2 className='ml-3 transition-all'>08801919354759</h2>
+                                        </div>
+                                        <div className='my-5 flex justify-evenly w-1/4'>
+                                            <a target='_blank' href='fas' rel="noreferrer"><FontAwesomeIcon className='h-8 w-8 m-3 hover:text-blue-600 hover:scale-125 transition-all rounded-full border-2 p-2 hover:border-blue-600' icon={faFacebookF} /></a>
+                                            <a target='_blank' href={faLinkedin} rel="noreferrer"><FontAwesomeIcon className='h-8 w-8 m-3 hover:text-blue-600 hover:scale-125 transition-all rounded-full border-2 p-2 hover:border-blue-600' icon={faLinkedin} /></a>
+                                            <a target='_blank' href="sdaf" rel="noreferrer"><FontAwesomeIcon className='h-8 w-8 m-3 hover:text-blue-600 hover:scale-125 transition-all rounded-full border-2 p-2 hover:border-blue-600' icon={faTwitter} /></a>
+                                        </div>
+                                    </div>
                                 </div>
+
                             </div>
 
                         </motion.div>

@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
+import useDBUser from '../../hooks/useDBUser';
+import NLoading from '../Shared/NLoading';
+
 
 
 const Settings = () => {
     const [checked, setChecked] = useState(true);
+    const [userData, loading] = useDBUser();
 
     useEffect(() => {
         window.scrollTo(0, 0)
     }, [])
+
+    if (loading) return <NLoading />
+
     return (
         <div className='pt-20'>
             <div className="drawer drawer-mobile">
@@ -21,6 +28,7 @@ const Settings = () => {
                     <ul className="menu p-4 overflow-y-auto w-80 bg-base-100 text-base-content">
                         <li onClick={() => setChecked(false)}><Link to='/settings'>Edit Your Profile</Link></li>
                         <li onClick={() => setChecked(false)}><Link to='verify'>Verify Account</Link></li>
+                        <li onClick={() => setChecked(false)}><Link to='/editPortfolio'>{`${userData?.portfolio ? "Edit " : "Create "}`} Your Portfilio</Link></li>
                         <li onClick={() => setChecked(false)}><Link to='addAchvmnt'>Add Achievements</Link></li>
                     </ul>
                 </div>

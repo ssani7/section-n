@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import Banner from './Banner';
 import CountUp from 'react-countup';
-import { useInView } from 'react-intersection-observer';
+import { InView, useInView } from 'react-intersection-observer';
 import { motion } from 'framer-motion'
 import Footer from '../Shared/Footer';
 import Stars from './Stars';
@@ -33,9 +33,9 @@ const Home = () => {
         "triggerOnce": true
     })
 
-    useEffect(() => {
-        window.scrollTo(0, 0)
-    }, [])
+    // useEffect(() => {
+    //     window.scrollTo(0, 0)
+    // }, [])
 
     if (isLoading || loading) return <NLoading />
 
@@ -61,6 +61,18 @@ const Home = () => {
                         </CountUp>)
                 }
 
+            </div>
+
+            <div className='w-full my-5 md:my-20'>
+                <h1 className='text-3xl font-bold md:mb-10 text-center'> Class Routine</h1>
+                <InView threshold={.2}>
+                    {({ inView, ref }) => (
+                        <motion.img ref={ref} initial="hidden" animate={`${inView && "visible"}`} variants={{
+                            hidden: { x: -200, opacity: 0 },
+                            visible: { x: 0, opacity: 1, transition: { duration: 1 } }
+                        }} className='h-96 w-auto max-w-full md:w-2/5 md:h-auto md:max-h-full object-contain mx-auto' src="https://i.ibb.co/4dfLj2Y/photo1659249554.jpg" alt="" />
+                    )}
+                </InView>
             </div>
 
             <Events />

@@ -4,15 +4,38 @@ import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { InView } from 'react-intersection-observer';
 import { faFacebookF, faLinkedin, faTwitter } from '@fortawesome/free-brands-svg-icons';
-import { faFileArrowDown, faPlusCircle, faTrash, faUserPen } from '@fortawesome/free-solid-svg-icons';
+import { faFileArrowDown, faImage, faPhone, faPlusCircle, faTrash, faUserPen } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { motion } from "framer-motion"
 import { useRef } from 'react';
 import { toast } from 'react-toastify';
+import useDBUser from '../../hooks/useDBUser';
 
 const ghostInput = "w-full bg-transparent outline-none focus:border-b overflow-hidden placeholder:my-10  placeholder:text-gray-500";
 
+const container = {
+    hidden: { opacity: 0, scale: 0 },
+    visible: {
+        opacity: 1,
+        scale: 1,
+        transition: {
+            delayChildren: 0.5,
+            staggerChildren: 0.5,
+            duration: .5
+        }
+    }
+}
 
+const item = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+        y: 0,
+        opacity: 1,
+        transition: {
+            duration: .5
+        }
+    }
+}
 
 
 const EditPortfolio = () => {
@@ -37,20 +60,26 @@ const EditPortfolio = () => {
 
     const [projects, setProjects] = useState([
         {
-            skillName: "", percentage: "",
-            techs: [
-                { techName: "", techIcon: "" },
-                { techName: "", techIcon: "" },
-            ]
+            projectName: "", projectInfo: "", image: "", link: "",
+            techs: ""
+            // techs: [
+            //     { techName: "", techIcon: "" },
+            //     { techName: "", techIcon: "" },
+            // ]
         }
     ]);
 
     const dpRef = useRef();
     const serviceIconRef = useRef([]);
+    const projectImgRef = useRef([]);
+
+    const [userData, loading] = useDBUser();
+    // console.log(userData);
 
     useEffect(() => {
         serviceIconRef.current = serviceIconRef.current.slice(0, services.length);
-    }, [services]);
+        projectImgRef.current = projectImgRef.current.slice(0, projects.length);
+    }, [services, projects]);
 
     const { register,
         handleSubmit,
@@ -97,9 +126,8 @@ const EditPortfolio = () => {
     }
 
     const handleServiceIcon = (e, i) => {
-        // e.stopPropagation();
 
-        uploadPic(e.target.files, "serviceIcon").then(res => {
+        uploadPic(e.target.files, `serviceIcon${i}`).then(res => {
             if (res.status === 200) {
                 const newServices = [...services];
                 newServices[i].serviceIcon = res.data.data.url;
@@ -107,9 +135,19 @@ const EditPortfolio = () => {
             }
         })
             .catch(error => console.log(error));
+    }
 
-        // console.log(serviceIcons)
+    const handleProjectImg = (e, i) => {
 
+        uploadPic(e.target.files, `projectImg${i}`).then(res => {
+            if (res.status === 200) {
+                const newProjects = [...projects];
+                newProjects[i].image = res.data.data.url;
+                setProjects(newProjects);
+            }
+        })
+            .catch(error => console.log(error));
+        console.log("e = ", e.target.files, "i = ", i)
     }
 
     const handleStats = (e, i) => {
@@ -145,7 +183,18 @@ const EditPortfolio = () => {
 
     }
 
-    const onSubmit = (data) => {
+    const handleProjects = (e, i) => {
+        e.stopPropagation();
+
+        const { name, value } = e.target;
+        const newProjects = [...projects];
+        newProjects[i][name] = value;
+
+        setProjects(newProjects);
+
+    }
+
+    const onSubmit = async (data) => {
         const portfolioData = {
             heading1: data.heading1,
             heading2: data.heading2,
@@ -158,10 +207,19 @@ const EditPortfolio = () => {
             dp: dp,
             statistics: statistics,
             services: services,
-            skills: skills
+            skills: skills,
+            projects: projects,
+            email: data.email,
+            fb: data.fb,
+            twitter: data.twitter,
+            linkedin: data.linkedin,
+            phone: data.phone
         }
+        console.log(portfolioData);
 
-        console.log(portfolioData)
+        await axios.post(`http://localhost:5000/portfolio?id=${userData?._id}&verification=${userData?.verification}`, portfolioData)
+            .then(res => console.log(res))
+
     }
 
 
@@ -174,7 +232,10 @@ const EditPortfolio = () => {
                     <div className='h-full w-full bg-black absolute bg-opacity-40'></div>
                     <div className='z-20'>
 
-                        <textarea type="text" placeholder={`Type a Heading.\n eg. Hello! Welcome to my portfolio!`} className={`${ghostInput} text-white text-center text-2xl md:text-5xl xl:text-6xl 2xl:text-8xl great-vibes placeholder:text-lg placeholder:md:text-5xl placeholder:2xl:text-7xl`} {...register("heading1")} />
+                        <textarea type="text" placeholder={`Type a Heading.\n eg. Hello! Welcome to my portfolio!`} className={`${ghostInput} text-white text-center text-2xl md:text-5xl xl:text-6xl 2xl:text-8xl great-vibes placeholder:text-lg placeholder:md:text-5xl placeholder:2xl:text-7xl`} {...register("heading1", {
+                            required: "Please Add Atleast This Heading"
+                        })} />
+                        {errors?.heading1 && <small className='text-error mx-auto'>{errors.heading1.message}</small>}
 
                         <input type="text" placeholder="Type another Heading. eg. My name is Solimuddin!" className={`${ghostInput} text-white lg:py-2 text-center text-xl md:text-4xl xl:text-5xl 2xl:text-6xl great-vibes placeholder:text-base placeholder:md:text-4xl placeholder:2xl:text-6xl`} {...register("heading2")} />
 
@@ -199,7 +260,7 @@ const EditPortfolio = () => {
 
                     <InView threshold={.15} triggerOnce={false}>
                         {({ inView, ref, entry }) => (
-                            <div className='flex justify-center' ref={ref}>
+                            <div className='flex justify-center w-full' ref={ref}>
                                 <motion.div
                                     initial="hidden" animate={`${inView && "animate"}`}
                                     variants={{
@@ -212,19 +273,34 @@ const EditPortfolio = () => {
                                             }
                                         }
                                     }}
-                                    className='bg-base-300 mx-6 xl:w-9/12 lg:mx-32 rounded-2xl flex flex-col-reverse items-center md:flex-row md:relative'>
+                                    className='bg-base-300 mx-6 xl:w-full lg:mx-32 rounded-2xl flex flex-col-reverse items-center md:flex-row md:relative'>
 
-                                    <div className='lg:w-2/3 md:pl-12 md:py-10 p-8 text-base-content'>
+                                    <div className='lg:w-2/4 md:pl-12 md:py-10 p-8 text-base-content '>
+
+                                        <input type="text" className={`${ghostInput} text-4xl lg:text-7xl text-center md:text-left font-bold`} placeholder="Your Name" {...register("name", {
+                                            required: "Please Add Your Name"
+                                        })} />
+
+                                        {errors?.name && <small className='text-error'>{errors.name.message}</small>}
+
+                                        <div className='w-full'>
+                                            <input type="text" className={`${ghostInput} text-xl lg:text-3xl text-center md:text-left font-bold mt-4 poppins`} placeholder="Your Designation" {...register("designation", {
+                                                required: "Please Add Your Name"
+                                            })} />
+
+                                            {errors?.designation && <small className='text-error'>{errors.designation.message}</small>}
+                                        </div>
+
+                                        <div className='flex flex-col w-full'>
+                                            <textarea type="text" className={`${ghostInput} text-left my-5 h-40 text-lg textarea textarea-bordered`} placeholder="Write Your bio here" {...register("bio", {
+                                                required: "Please Add Your Name"
+                                            })} />
+
+                                            {errors?.bio && <small className='text-error'>{errors.bio.message}</small>}
+                                        </div>
 
 
-
-                                        <input type="text" className={`${ghostInput} text-4xl lg:text-7xl text-center md:text-left font-bold`} placeholder="Your Name" {...register("name")} />
-
-                                        <input type="text" className={`${ghostInput} text-xl lg:text-3xl text-center md:text-left font-bold mt-4 poppins`} placeholder="Your Designation" {...register("designation")} />
-
-                                        <textarea type="text" className={`${ghostInput} text-left my-5 md:w-4/6 text-lg textarea textarea-bordered`} placeholder="Write Your bio here" {...register("bio")} />
-
-                                        <textarea type="text" className={`${ghostInput} text-left my-5 md:w-4/6 text-lg textarea textarea-bordered`} placeholder="Write Your Experiences and Skills" {...register("experience")} />
+                                        <textarea type="text" className={`${ghostInput} text-left my-5 md:w-4/6 h-28 text-lg textarea textarea-bordered`} placeholder="Write Your Experiences and Skills" {...register("experience")} />
 
                                         <div className='flex items-end'>
                                             <FontAwesomeIcon className=' h-5 w-6 md:h-8 md:w-8 mr-3' icon={faFileArrowDown} />
@@ -232,23 +308,7 @@ const EditPortfolio = () => {
                                             <input type="text" className={`${ghostInput} text-left lg:text-2xl mt-4`} placeholder="Add Resume/CV Download Link" {...register("cv")} />
                                         </div>
 
-                                        <div className='flex items-end'>
-                                            <FontAwesomeIcon className=' h-5 w-6 md:h-8 md:w-8 mr-3' icon={faFacebookF} />
 
-                                            <input type="text" className={`${ghostInput} text-left lg:text-2xl mt-4`} placeholder="Add Facebook Profile Link" />
-                                        </div>
-
-                                        <div className='flex items-end'>
-                                            <FontAwesomeIcon className=' h-5 w-6 md:h-8 md:w-8 mr-3' icon={faTwitter} />
-
-                                            <input type="text" className={`${ghostInput} text-left lg:text-2xl mt-4`} placeholder="Add Twitter Profile Link" />
-                                        </div>
-
-                                        <div className='flex items-end'>
-                                            <FontAwesomeIcon className=' h-5 w-6 md:h-8 md:w-8 mr-3' icon={faLinkedin} />
-
-                                            <input type="text" className={`${ghostInput} text-left lg:text-2xl mt-4`} placeholder="Add LinkedIn Profile Link" />
-                                        </div>
 
 
                                     </div>
@@ -281,7 +341,7 @@ const EditPortfolio = () => {
                                         <div className='md:w-full h-full transition duration-500 md:group-hover:bg-black absolute top-0 md:group-hover:bg-opacity-30'></div>
 
                                         {
-                                            (updating?.task === "dp") && <div className='btn btn-square loading absolute z-50 h-full w-full text-4xl top-0'></div>
+                                            (updating?.task === "dp") && <div className='btn btn-square loading bg-opacity-50 absolute z-50 h-full w-full text-4xl top-0'></div>
                                         }
 
                                         <div className='absolute z-30 bottom-2 left-2 transform transition duration-500 invisible translate-y-full md:group-hover:visible group-hover:translate-y-0 flex items-center text-gray-200'>
@@ -301,16 +361,16 @@ const EditPortfolio = () => {
                 <div className='my-20'>
                     <h2 className='text-3xl font-bold mb-10 text-center'>Add a statistics</h2>
 
-                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-center justify-center'>
+                    <div className='grid grid-cols-1 lg:grid-cols-3 gap-5 items-center justify-center border-y py-5'>
                         {
                             statistics?.map((statistic, i) => (
                                 <div key={i} className='flex flex-col justify-center items-center mx-auto relative'>
                                     {
-                                        (statistics.length >= 2) && <span className='absolute top-3 right-2 btn btn-xs badge-outline btn-error' onClick={() => setStatistics([...statistics].filter((stat, index) => index !== i))}>x</span>
+                                        <span className='absolute top-3 right-2 btn btn-xs badge-outline btn-error' onClick={() => setStatistics([...statistics].filter((stat, index) => index !== i))}>x</span>
                                     }
-                                    <input name='number' type="text" placeholder='Add a number' pattern="\d*" maxLength={5} className={`${ghostInput} text-5xl w-32 text-center placeholder:text-xl`} onChange={e => handleStats(e, i)} value={statistic.number} />
+                                    <input name='number' type="number" required placeholder='Add a number' className={`${ghostInput} text-5xl w-32 text-center placeholder:text-xl`} onChange={e => handleStats(e, i)} value={statistic.number} />
 
-                                    <input type="text" placeholder='Add Statistic Name' className={`${ghostInput} text-4xl text-center my-4`} onChange={e => handleStats(e, i)} name="name" value={statistic.name} />
+                                    <input type="text" required placeholder='Add Statistic Name' className={`${ghostInput} text-4xl text-center my-4`} onChange={e => handleStats(e, i)} name="name" value={statistic.name} />
                                 </div>
                             ))
                         }
@@ -319,7 +379,7 @@ const EditPortfolio = () => {
                                 <div className='w-full'>
                                     <motion.div whileTap={{ scale: .9 }} className='border w-fit flex flex-col p-5 justify-center items-center rounded-lg btn-outline cursor-pointer mx-auto' onClick={() => setStatistics([...statistics, { name: "", number: "" }])}>
                                         <FontAwesomeIcon icon={faPlusCircle} className="h-6 w-6 py-4" />
-                                        <h1>Add One More Statistic?</h1>
+                                        <h1>{`Add ${statistics?.length > 0 ? "One More" : "A"} Statistic?`}</h1>
                                     </motion.div>
                                 </div>
                             )
@@ -332,33 +392,40 @@ const EditPortfolio = () => {
                 {/* services */}
                 <div className='w-full'>
                     <h1 className='text-3xl font-bold mb-10 text-center'>What Services Do You Provide?</h1>
-                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 items-center justify-center mx-auto'>
+                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 items-center justify-center mx-10'>
                         {
                             services?.map((service, i) => (
-                                <div key={i} class="card max-w-sm bg-base-100 shadow-xl py-5 px-2 mx-auto h-full w-full">
+                                <div key={i} class="card max-w-sm bg-base-200 shadow-xl py-10 px-5 mx-auto h-full w-full">
                                     {
-                                        (services.length >= 2) && <span className='absolute top-3 right-2 btn btn-xs badge-outline btn-error' onClick={() => setServices([...services].filter((stat, index) => index !== i))}>x</span>
+                                        <span className='absolute top-3 right-2 btn btn-xs btn-outline btn-error' onClick={() => setServices([...services].filter((stat, index) => index !== i))}>x</span>
                                     }
 
-                                    <motion.figure whileTap={{ scale: .9 }} onClick={() => serviceIconRef.current[i].click()} class="h-32 w-32 mx-auto cursor-pointer">
+                                    <motion.figure whileTap={{ scale: .9 }} onClick={() => serviceIconRef.current[i].click()} class="h-32 w-32 mx-auto cursor-pointer relative">
                                         {
                                             service.serviceIcon
-                                                ? <img src={service.serviceIcon} alt="Shoes" class="rounded-xl" />
-                                                : <FontAwesomeIcon icon={faPlusCircle} className="h-10 w-10" />
+                                                ? <img onLoad={() => setUpdating({ task: "" })} src={service.serviceIcon} alt="Shoes" class="rounded-xl w-full h-full object-cover" />
+                                                : <div className='flex flex-col items-center justify-center border rounded-xl w-full h-full px-3 mb-3'>
+                                                    <FontAwesomeIcon icon={faImage} className="h-10 w-10" />
+                                                    <h1 className='mt-3 text-center text-sm'>Add A Service Icon</h1>
+                                                </div>
+                                        }
+                                        {
+                                            updating.task === `serviceIcon${i}` &&
+                                            <div className='btn btn-square loading bg-opacity-50 absolute z-50 h-full w-full text-4xl top-0'></div>
                                         }
                                     </motion.figure>
 
                                     <input type="file" name={i} id="serviceIcon" className='hidden' ref={el => serviceIconRef.current[i] = el} onChange={(e) => handleServiceIcon(e, i)} />
 
-                                    <div class="flex flex-col items-center text-center">
+                                    <div class="flex flex-col items-center text-center px-4">
 
-                                        <input name='serviceName' type="text" placeholder='Add Service Name'
-                                            className={`${ghostInput} card-title text-center`}
+                                        <input required name='serviceName' type="text" placeholder='Add Service Name'
+                                            className={`${ghostInput} card-title text-center border-b w-auto my-4`}
                                             onChange={e => handleServices(e, i)}
                                             value={service.serviceName} />
 
-                                        <input name="serviceInfo" type="text" placeholder='Add Some Details'
-                                            className={`${ghostInput}  text-center my-4`}
+                                        <textarea required name="serviceInfo" type="text" placeholder='Add Some Details'
+                                            className={`textarea textarea-bordered w-full bg-transparent`}
                                             onChange={e => handleServices(e, i)} value={service.serviceInfo} />
                                     </div>
                                 </div>
@@ -367,14 +434,14 @@ const EditPortfolio = () => {
                         }
                         {
                             (services.length < 4) && (
-                                <div className='w-full'>
+                                <div className='mx-auto'>
                                     <motion.div whileTap={{ scale: .9 }}
                                         className='border w-fit flex flex-col p-5 justify-center items-center rounded-lg btn-outline cursor-pointer mx-auto'
                                         onClick={() => setServices([...services, { serviceName: "", serviceInfo: "", serviceIcon: "" }])}>
 
                                         <FontAwesomeIcon icon={faPlusCircle} className="h-6 w-6 py-4" />
 
-                                        <h1>Add One More service?</h1>
+                                        <h1>{`Add ${services?.length > 0 ? "One More" : "A"} Service?`}</h1>
                                     </motion.div>
                                 </div>
                             )
@@ -384,20 +451,22 @@ const EditPortfolio = () => {
 
                 {/* skills */}
                 <section className='my-20'>
-                    <h2 className='text-3xl font-bold mb-10 text-center'>Add Your Skills or Your Expertise With The Tools & Technologies You Use</h2>
+                    <h2 className='text-xl lg:text-3xl font-bold mb-10 text-center'>Add Your Skills or Your Expertise With The Tools & Technologies You Use</h2>
 
                     <div>
                         <div className='max-w-3xl mx-auto'>
                             {
                                 skills?.map((skill, i) => (
-                                    <div className='flex flex-col md:flex-row items-center justify-evenly mx-4'>
+                                    <div className='flex flex-col md:flex-row items-center justify-evenly mx-4 border-y py-5 md:border-y-0'>
 
-                                        <input type="text" name='skillName' placeholder='Skill/Technology Name. eg: Photoshop/Reactjs' className={`input input-bordered w-full md:w-3/5 border md:text-lg`}
+                                        <input type="text" required name='skillName' placeholder='Skill/Technology Name. eg: Photoshop/Reactjs' className={`input input-bordered w-full md:w-3/5 border md:text-lg`}
+                                            value={skill.skillName}
                                             onChange={e => handleSkills(e, i)}
                                         />
 
-                                        <div className='md:w-1/3'>
-                                            <input type="number" name='percentage' placeholder='Expertise' className={`input input-bordered w-10/12 border md:text-lg`}
+                                        <div className='md:w-1/3 my-4 ml-3 md:my-0'>
+                                            <input type="number" required name='percentage' placeholder='Expertise' className={`input input-bordered w-10/12 border md:text-lg`}
+                                                value={skill.percentage}
                                                 onChange={e => handleSkills(e, i)} /> %
                                         </div>
 
@@ -428,12 +497,30 @@ const EditPortfolio = () => {
                     <div className='flex flex-col justify-center items-center w-full'>
                         {
                             projects?.map((project, i) => (
-                                <div class="card lg:card-side bg-base-100 shadow-xl md:w-full md:max-w-5xl my-5 mx-6">
-                                    <figure><img src="https://placeimg.com/400/400/arch" alt="Album" /></figure>
-                                    <div class="card-body">
-                                        <input type="text" placeholder='Type Project Name' className={`${ghostInput} text-2xl border-b`} />
+                                <div class="card lg:card-side bg-base-200 shadow-xl md:w-full md:max-w-5xl my-5 mx-6">
+                                    <motion.figure whileTap={{ scale: .9 }} onClick={() => projectImgRef.current[i].click()}
+                                        className="w-full lg:w-1/2 h-72 rounded-2xl mx-5 my-auto relative">
+                                        {
+                                            project.image
+                                                ? <img onLoad={() => setUpdating({ task: "" })} src={project.image} alt="project Pic" class="rounded-xl w-full h-full object-contain absolute" />
+                                                : <div className='w-1/2 h-1/2 rounded-xl flex flex-col justify-center items-center border cursor-pointer p-4'>
+                                                    <FontAwesomeIcon icon={faImage} className="h-10 w-10" />
+                                                    <h2 className='mt-4'>Add Project Image</h2>
+                                                </div>
+                                        }
 
-                                        <textarea type="text" placeholder='Type Some Description' className={`textarea textarea-bordered mt-3`} />
+                                        <input type="file" className='hidden' ref={el => projectImgRef.current[i] = el}
+                                            onChange={(e) => handleProjectImg(e, i)}
+                                        />
+                                        {
+                                            (updating?.task === `projectImg${i}`) && <div className='btn btn-square loading bg-opacity-50 absolute z-50 h-full w-full text-4xl top-0'></div>
+                                        }
+                                    </motion.figure>
+
+                                    <div class="card-body my-5">
+                                        <input required type="text" name="projectName" placeholder='Type Project Name' className={`${ghostInput} text-2xl border-b`} onChange={(e) => handleProjects(e, i)} />
+
+                                        <textarea required type="text" name="projectInfo" placeholder='Type Some Description' className={`textarea textarea-bordered mt-3`} onChange={(e) => handleProjects(e, i)} />
 
                                         {/* <h2 className='mt-3'>Add technologies you used</h2>
                                         <div className='flex flex-col'>
@@ -454,17 +541,18 @@ const EditPortfolio = () => {
                                             }
                                         </div> */}
 
-                                        <input type="text" placeholder='Add technologies you used' className='input input-bordered w-3/5' />
+                                        <input required type="text" name="techs" placeholder='Add technologies you used' className='input input-bordered w-3/5' onChange={(e) => handleProjects(e, i)} />
 
-                                        <input type="text" placeholder='Add Project Link' className='input input-bordered w-3/5' />
+                                        <input required name="link" type="text" placeholder='Add Project Link' className='input input-bordered w-3/5'
+                                            onChange={(e) => handleProjects(e, i)} />
 
                                         <div class="card-actions justify-end">
-                                            <button class="btn btn-primary">Submit</button>
+                                            <span class="btn btn-primary">Submit</span>
                                         </div>
                                     </div>
 
                                     {
-                                        projects?.length > 1 && <span className='btn btn-sm btn-outline btn-error rounded-2xl'
+                                        <span className='btn btn-sm btn-outline btn-error rounded-2xl absolute top-3 right-3'
                                             onClick={() => setProjects([...projects].filter((stat, index) => index !== i))}>
                                             x
                                         </span>
@@ -474,12 +562,61 @@ const EditPortfolio = () => {
                         }
                         <motion.div whileTap={{ scale: .9 }}
                             className='border w-fit flex flex-col p-2 justify-center items-center rounded-lg btn-outline cursor-pointer mx-auto mt-5'
-                            onClick={() => setProjects([...projects, { skillName: "", percentage: "" }])}>
+                            onClick={() => setProjects([...projects, {
+                                projectName: "", projectInfo: "", image: "", link: "",
+                                techs: ""
+                            }])}>
                             <FontAwesomeIcon icon={faPlusCircle} className="h-6 w-6 py-2" />
-                            <h1>Add More Skills?</h1>
+                            <h1>{`Add ${projects?.length > 0 ? "One More" : "A"} Project?`}</h1>
                         </motion.div>
                     </div>
                 </div>
+
+                {/* contact */}
+                <h1 className='text-3xl font-bold text-center '>Contact Information</h1>
+                <InView threshold={.8} triggerOnce={true}>
+                    {({ inView, ref }) => (
+
+                        <motion.div ref={ref} initial="hidden" animate={`${inView && "visible"}`} variants={container} className='w-full flex justify-center items-center my-20'>
+                            <div className="card w-full md:w-3/5 lg:w-3/5 shadow-xl lg:px-10 mx-3 pb-6 bg-base-200">
+                                <div className="card-body w-full">
+                                    <motion.h2 variants={item} className="card-title text-3xl font-bold justify-center mb-6">Send Me an Email</motion.h2>
+
+                                    <motion.div variants={item} className="form-control w-full lg:max-w-2xl">
+                                        <input type="email" placeholder="Your Email Address" className="input input-bordered my-6 text-xl w-full h-14" {...register("email", { required: "Email Address Lagbe Mia" })} />
+                                        {errors?.email && <small className='text-error'>{errors.email.message}</small>}
+                                    </motion.div>
+
+                                    <motion.div variants={item} className='flex items-end'>
+                                        <FontAwesomeIcon className=' h-5 w-6 md:h-8 md:w-8 mr-3 mt-5' icon={faFacebookF} />
+
+                                        <input type="text" className={`${ghostInput} text-left lg:text-2xl mt-4`} placeholder="Add Facebook Profile Link" {...register("fb")} />
+                                    </motion.div>
+
+                                    <motion.div variants={item} className='flex items-end'>
+                                        <FontAwesomeIcon className=' h-5 w-6 md:h-8 md:w-8 mr-3 mt-5' icon={faTwitter} />
+
+                                        <input type="text" className={`${ghostInput} text-left lg:text-2xl mt-4`} placeholder="Add Twitter Profile Link" {...register("twitter")} />
+                                    </motion.div>
+
+                                    <motion.div variants={item} className='flex items-end'>
+                                        <FontAwesomeIcon className=' h-5 w-6 md:h-8 md:w-8 mr-3 mt-5' icon={faLinkedin} />
+
+                                        <input type="text" className={`${ghostInput} text-left lg:text-2xl mt-4`} placeholder="Add LinkedIn Profile Link" {...register("linkedin")} />
+                                    </motion.div>
+
+                                    <motion.div variants={item} className='flex items-end'>
+                                        <FontAwesomeIcon className=' h-5 w-6 md:h-8 md:w-8 mr-3 mt-5' icon={faPhone} />
+
+                                        <input type="text" className={`${ghostInput} text-left lg:text-2xl mt-4`} placeholder="Add Your Phone Number" {...register("phone")} />
+                                    </motion.div>
+                                </div>
+                            </div>
+                        </motion.div>
+
+
+                    )}
+                </InView>
 
                 <div className='flex justify-center pb-20'>
                     <input type="submit" value="Submit" className='btn btn-primary max-w-xl w-full' />

@@ -66,7 +66,7 @@ function App() {
           <Route path='addAchvmnt' element={<AddAchievement />}></Route>
         </Route>
         <Route path='/portfolio' element={<Portfolio />}></Route>
-        <Route path='/edit' element={<EditPortfolio />}></Route>
+        <Route path='/editPortfolio' element={<EditPortfolio />}></Route>
         <Route path='/dummy' element={<Dummy />}></Route>
         <Route path='*' element={<NotFound />}></Route>
       </Routes>

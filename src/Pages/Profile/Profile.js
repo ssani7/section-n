@@ -92,6 +92,11 @@ const Profile = () => {
                             </p>
 
                             <button onClick={() => navigate('/settings')} className='link link-hover mt-1 md:mt-3 flex items-center text-2xs md:text-base w-fit xl:text-2xl xl:mt-5 cursor-pointer'><FontAwesomeIcon icon={faUserPen} className='mr-4 w-3 h-3 md:h-5 md:w-5 xl:w-6 xl:h-6' /> Edit Profile Here</button>
+
+                            {
+                                userFromDb?.verification === "verified" || <button onClick={() => navigate('/settings/verify')} className='link link-hover mt-1 md:mt-3 flex items-center text-2xs md:text-base w-fit xl:text-2xl xl:mt-5 cursor-pointer'><FontAwesomeIcon icon={faUserPen} className='mr-4 w-3 h-3 md:h-5 md:w-5 xl:w-6 xl:h-6' /> Verify Account and Become a Celebrity?</button>
+                            }
+
                         </div>
 
 

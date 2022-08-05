@@ -43,7 +43,7 @@ const Stars = () => {
     return (
         <div className={`text-center ${length === "all" && "pt-20"} bg-base-100`}>
             <h2 className='text-xl md:text-4xl font-bold text-center py-10'>Our Achievements</h2>
-            <div ref={ref} className='pb-10 grid grid-cols-2 gap-2 lg:gap-5 mx-4 lg:mx-auto w-fit'>
+            <div ref={ref} className='pb-10 grid grid-cols-2 gap-2 md:gap-5 mx-4 lg:mx-auto w-fit'>
                 {
                     stars.map((star, i) => <motion.div key={i} initial='hidden' animate={`${inView && 'visible'}`} className="hero py-2 bg-base-200 max-w-3xl rounded-xl shadow-lg"
 
@@ -64,9 +64,9 @@ const Stars = () => {
                                 <img src={star.image} className='h-full lg:h-full w-full shadow-2xl object-cover rounded-lg transition-all' alt='' />
                             </motion.div>
 
-                            <div className='h-1/2 lg:h-auto lg:w-1/3 lg:mt-0'>
-                                <motion.h1 variants={item} className="text-lg lg:text-3xl font-bold poppins">{star?.name}</motion.h1>
-                                <motion.p variants={item} className="text-xs lg:text-lg mt-4 font-semibold">{star.achievement}</motion.p>
+                            <div className='h-1/2 md:h-auto lg:w-1/3 lg:mt-0'>
+                                <motion.h1 variants={item} className="text-lg md:text-3xl font-bold poppins">{star?.name}</motion.h1>
+                                <motion.p variants={item} className="text-xs md:text-lg mt-4 font-semibold">{star.achievement}</motion.p>
                             </div>
                         </div>
                     </motion.div>)

@@ -2,16 +2,22 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faImages, faAt, faIdCard, faGraduationCap, faBuildingColumns, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
+import { faAt, faIdCard, faGraduationCap, faBuildingColumns, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import { faFacebookF, faLinkedin, faTwitter } from '@fortawesome/free-brands-svg-icons';
 import { useQuery } from "react-query"
 import NLoading from '../Shared/NLoading';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect } from 'react';
 
 
 const UserProfile = () => {
     const { email } = useParams();
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    })
+
     const { isLoading, data: userFromDb } = useQuery(['user', email], () => fetch(`https://section-n-diu-server.herokuapp.com/user/${email}`).then(res => res.json()))
 
     const { ref, inView } = useInView({
