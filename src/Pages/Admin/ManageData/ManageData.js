@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
+import Footer from '../../Shared/Footer';
 
 const ManageData = () => {
     const [checked, setChecked] = useState(true);
@@ -21,8 +22,9 @@ const ManageData = () => {
                         <li onClick={() => setChecked(false)}><Link to='verifyReq'>Verification Requests</Link></li>
                     </ul>
                 </div>
-                <label htmlFor="my-drawer-2" className={`btn btn-accent btn-circle drawer-button lg:hidden absolute bottom-2 left-4 z-40 transform transition-all ${checked ? "rotate-180" : "rotate-0"}`}>❯</label>
+                <label htmlFor="my-drawer-2" className={`btn btn-accent btn-circle drawer-button lg:hidden fixed bottom-10 left-4 z-40 transform transition-all ${checked ? "rotate-180" : "rotate-0"}`}>❯</label>
             </div>
+            <Footer />
         </div>
     );
 };

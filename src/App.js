@@ -28,19 +28,26 @@ import UserProfile from './Pages/Informations/UserProfile';
 import Stars from './Pages/Home/Stars';
 import Portfolio from './Pages/Profile/Portfolio/Portfolio';
 import EditPortfolio from './Pages/Settiings/EditPortfolio';
+import UserPortfolio from './Pages/Informations/UserPortfolio';
+import RequireVerified from './Pages/Login/RequireVerified';
+import Project from './Pages/Profile/Portfolio/Project';
+import Slides from './Pages/Info/Slides';
 
 function App() {
   // const [theme, setTheme] = useState(localStorage.getItem('theme'));
   const [theme, setTheme] = useTheme();
 
   return (
-    <div data-theme={theme} className="App h-screen">
+    <div data-theme={theme} className="App min-h-screen">
       <Header theme={theme} setTheme={setTheme}></Header>
       <Routes>
         <Route path='/' element={<Home />}></Route>
         <Route path='/home' element={<Home />}></Route>
         <Route path='/students' element={<Students />}></Route>
-        <Route path='/userProfile/:email' element={<UserProfile />}></Route>
+        <Route path='/slides' element={<Slides />}></Route>
+        <Route path='/userProfile/:email/:option' element={<UserProfile />}></Route>
+        <Route path='/userPortfolio/:email/:option' element={<UserPortfolio />}></Route>
+        <Route path='/project/:email/:index' element={<Project />}></Route>
         <Route path='/achievements/:length' element={<Stars />}></Route>
         <Route path='/register' element={<Register />}></Route>
         <Route path='/login' element={<Login />}></Route>
@@ -65,9 +72,8 @@ function App() {
           <Route path='verify' element={<VerifyAcc />}></Route>
           <Route path='addAchvmnt' element={<AddAchievement />}></Route>
         </Route>
-        <Route path='/portfolio' element={<Portfolio />}></Route>
-        <Route path='/editPortfolio' element={<EditPortfolio />}></Route>
-        <Route path='/dummy' element={<Dummy />}></Route>
+        <Route path='/portfolio' element={<RequireVerified> <Portfolio /></RequireVerified>}></Route>
+        <Route path='/editPortfolio' element={<RequireAuth><EditPortfolio /></RequireAuth>}></Route>
         <Route path='*' element={<NotFound />}></Route>
       </Routes>
       <ToastContainer

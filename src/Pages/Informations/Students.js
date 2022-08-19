@@ -25,17 +25,19 @@ const Students = () => {
                         <th>Name</th>
                         <th>ID</th>
                         <th>Email Address</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     {
                         students?.map((student, i) => <tr
                             key={i}
-                            onClick={student.userData ? () => navigate(`/userProfile/${student.userData?.email}`) : undefined}
                             className="hover cursor-pointer">
                             <th>{i + 1}</th>
                             <td>
-                                <div className="flex items-center space-x-3">
+                                <div
+                                    onClick={student.userData ? () => navigate(`/userProfile/${student.userData?.email}/others`) : undefined}
+                                    className="flex items-center space-x-3">
                                     <div className="avatar">
                                         <div className="mask mask-squircle w-12 h-12">
                                             <img src={student?.userData?.photoURL || 'https://i.ibb.co/pzpVdPV/no-user-image-icon-3.jpg'} alt="Avatar Tailwind CSS Component" />
@@ -51,6 +53,21 @@ const Students = () => {
                             </td>
                             <td>{student.id}</td>
                             <td>{student.userData?.email}</td>
+                            <td>
+                                <div className='flex flex-col h-full w-full'>
+                                    {
+                                        student.userData && <button
+                                            onClick={student.userData ? () => navigate(`/userProfile/${student.userData?.email}/others`) : undefined}
+                                            className='btn btn-xs btn-outline capitalize'>See Profile</button>
+                                    }
+
+                                    {
+                                        student.portfolio && <button
+                                            onClick={student.userData ? () => navigate(`/userPortfolio/${student.userData?.email}/other`) : undefined}
+                                            className='btn btn-xs btn-outline btn-success capitalize mt-3'>See Portfolio</button>
+                                    }
+                                </div>
+                            </td>
                         </tr>)
                     }
                 </tbody>

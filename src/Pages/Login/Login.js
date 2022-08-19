@@ -69,11 +69,11 @@ const Login = () => {
                         })} />
                         {errors?.password && <small className='text-error'>{errors.password.message}</small>}
 
-                        <p className='text-sm mt-3 font-semibold'>Forgot Password? <button className='text-secondary' onClick={handleSubmit(handleReset)}>Reset Password</button></p>
+                        <p className='text-sm mt-3 font-semibold'>Forgot Password? <span className='text-secondary link link-hover' onClick={handleSubmit(handleReset)}>Reset Password</span></p>
 
                         {resetError && <small className='text-error mt-2'>{resetError.message}</small>}
 
-                        <p className='text-sm mt-3 font-semibold'>Don't have an account? <Link to='/register' className='text-secondary'>Create an account</Link></p>
+                        <p className='text-sm mt-3 font-semibold'>Don't have an account? <Link to='/register' className='text-secondary link link-hover'>Create an account</Link></p>
 
                         {
                             loading

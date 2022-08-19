@@ -1,15 +1,17 @@
+import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { signOut } from 'firebase/auth';
 import React, { useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { Link, useMatch, useResolvedPath } from 'react-router-dom';
-
+import { Link, useMatch, useNavigate, useResolvedPath } from 'react-router-dom';
 import auth from '../../../firebase.init';
 import useAdmin from '../../../hooks/useAdmin';
 import useDBUser from '../../../hooks/useDBUser';
-import useToken from '../../../hooks/useToken';
 
 const Header = ({ theme, setTheme }) => {
+    const navigate = useNavigate();
     const [changeBg, setChangeBg] = useState(false);
+    const [collapse, setCollapse] = useState(false);
 
     const [user, loading] = useAuthState(auth);
     const [userData, loadingData] = useDBUser();
@@ -73,9 +75,35 @@ const Header = ({ theme, setTheme }) => {
                     <p className='hover:scale-105 active:scale-90 font-bold text-sm md:text-xl my-auto mx-3 md:mx-5'>Students</p>
                 </CustomLink>
 
-                <CustomLink to='/courses'>
-                    <p className='hover:scale-105 active:scale-90 font-bold text-sm md:text-xl my-auto mx-3 md:mx-5'>Courses</p>
-                </CustomLink>
+                <input type="checkbox" onChange={(e) => setCollapse(e.target.checked)} checked={collapse} className="hidden" />
+
+                <div className='relative'>
+                    <span
+                        onClick={() => setCollapse(!collapse)}
+                        onBlur={() => setCollapse(false)}
+                        className='hover:scale-105 active:scale-90 font-bold text-sm md:text-xl my-auto mx-3 md:mx-5 flex items-center cursor-pointer group select-none whitespace-nowrap'>
+                        Information
+                        <FontAwesomeIcon icon={faAngleDown} className={`ml-2 group-hover:scale-105 active:scale-90 transition-all ${collapse && "rotate-180"}`} />
+                    </span>
+
+                    <ul className={`absolute text-sm bg-base-100 flex flex-col mt-4 rounded-xl h-auto cursor-pointer p-2 shadow-lg transform transition-all ${collapse || "invisible scale-0"}`}>
+                        <Link to='/courses'>
+                            <li onClick={() => setCollapse(false)} className='hover:badge-ghost active:bg-primary px-4 py-2 rounded-lg'>
+                                <span>Courses</span>
+                            </li>
+                        </Link>
+
+                        <CustomLink to='/slides'>
+                            <li onClick={() => setCollapse(false)} className='hover:badge-ghost  active:bg-primary px-4 py-2 rounded-lg'>Slides</li>
+                        </CustomLink>
+
+                        <CustomLink to='/slides'>
+                            <li onClick={() => setCollapse(false)} className='hover:badge-ghost  active:bg-primary px-4 py-2 rounded-lg'>Important Links</li>
+                        </CustomLink>
+
+                        <li onClick={() => setCollapse(false)} className='hover:badge-ghost  active:bg-primary px-4 py-2 rounded-lg whitespace-nowrap'>Assignment Covers</li>
+                    </ul>
+                </div>
 
 
                 <div className="dropdown dropdown-end flex items-center mx-3 md:mx-5">
@@ -98,7 +126,7 @@ const Header = ({ theme, setTheme }) => {
                                         ? <div className="animate-pulse w-10 md:w-16 rounded-full bg-slate-700 ">
                                         </div>
                                         : <div className="w-10 md:w-16 rounded-full">
-                                            <img src={userData?.photoURL || 'https://i.ibb.co/pzpVdPV/no-user-image-icon-3.jpg'} alt='' />
+                                            <img src={userData?.photoURL} alt='' />
                                         </div>
 
                                 }
@@ -106,9 +134,20 @@ const Header = ({ theme, setTheme }) => {
                             </label>
                             <ul tabIndex="0" className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
                                 <li>
-                                    <Link to='/profile'>
+                                    <Link to={`/userProfile/${userData?.email}/self`}>
                                         Profile
                                     </Link>
+                                </li>
+                                <li>
+                                    {
+                                        userData?.portfolio
+                                            ? <Link to={`/userPortfolio/${userData?.email}/self`}>
+                                                Portfolio
+                                            </Link>
+                                            : <Link to='/editPortfolio'>
+                                                Create Portfolio
+                                            </Link>
+                                    }
                                 </li>
                                 <li><Link to='/settings'><span>Settings</span></Link></li>
                                 {

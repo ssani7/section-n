@@ -33,9 +33,8 @@ const VerifyAcc = () => {
     const onSubmit = async (data) => {
         setFetching(true)
 
-        axios.get(`https://section-n-diu-server.herokuapp.com/verifyUser?id=${data?.id}&email=${userData?.email}`)
+        await axios.put(`https://section-n-diu-server.herokuapp.com/verifyUser?id=${data?.id}&email=${userData?.email}`)
             .then(res => {
-                console.log(Array.isArray(res.data))
                 if (res.data.modifiedCount > 0) {
                     setFetching(false);
                     window.location.reload(false);

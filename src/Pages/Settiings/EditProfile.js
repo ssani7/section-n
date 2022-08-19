@@ -132,7 +132,18 @@ const EditProfile = () => {
         formData.append('image', data.image[0]);
         const imageApiKey = "906bfdafb7a4a5b92021d570714ff50f";
 
-        let updatedUser = { displayName: currentUser?.displayName, varsity: currentUser?.varsity, degree: currentUser?.degree, id: currentUser?.id, blood: currentUser?.blood, fb: currentUser?.fb, linkedin: currentUser?.linkedin, twitter: currentUser?.twitter };
+        let updatedUser = {
+            displayName: currentUser?.displayName,
+            photoURL: currentUser?.photoURL,
+            email: currentUser.email,
+            varsity: currentUser?.varsity,
+            degree: currentUser?.degree,
+            id: currentUser?.id,
+            blood: currentUser?.blood,
+            fb: currentUser?.fb,
+            linkedin: currentUser?.linkedin,
+            twitter: currentUser?.twitter
+        };
 
         if (data.image[0]) {
             await axios.post(`https://api.imgbb.com/1/upload?key=${imageApiKey}`, formData)
@@ -181,9 +192,9 @@ const EditProfile = () => {
     if (loading || isLoading) return <Loading />
 
     return (
-        <div className='bg-base-100 mx-auto w-full flex flex-col mb-20 md:mb-0 md:overflow-y-hidden'>
+        <div className='bg-base-100 mx-auto w-full flex flex-col mb-20 md:mb-0'>
             <div className='flex flex-col md:flex-row w-full h-full px-5 md:items-center'>
-                <div className='w-auto h-auto max-h-screen md:max-w-sm lg:max-w-2xl rounded-3xl mx-auto'>
+                <div className='w-auto h-auto max-h-screen md:max-w-sm 2xl:max-w-2xl rounded-3xl mx-auto'>
                     <img src={userData?.photoURL} alt="" className='w-full h-full rounded-3xl object-cover' />
                 </div>
 

@@ -4,12 +4,14 @@ import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { InView } from 'react-intersection-observer';
 import { faFacebookF, faLinkedin, faTwitter } from '@fortawesome/free-brands-svg-icons';
-import { faFileArrowDown, faImage, faPhone, faPlusCircle, faTrash, faUserPen } from '@fortawesome/free-solid-svg-icons';
+import { faCircleUser, faFileArrowDown, faImage, faPhone, faPlusCircle, faStar, faTrash, faUser, faUserPen } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { motion } from "framer-motion"
 import { useRef } from 'react';
 import { toast } from 'react-toastify';
 import useDBUser from '../../hooks/useDBUser';
+import NLoading from '../Shared/NLoading';
+import { useNavigate } from 'react-router-dom';
 
 const ghostInput = "w-full bg-transparent outline-none focus:border-b overflow-hidden placeholder:my-10  placeholder:text-gray-500";
 
@@ -38,7 +40,11 @@ const item = {
 }
 
 
+
+
 const EditPortfolio = () => {
+    const navigate = useNavigate();
+
     const [updating, setUpdating] = useState({
         task: ""
     });
@@ -69,12 +75,16 @@ const EditPortfolio = () => {
         }
     ]);
 
+    const [reviews, setReviews] = useState([
+        { clientName: "", clientImg: "", clientCompany: "", review: "", rating: 0 }
+    ]);
+
     const dpRef = useRef();
     const serviceIconRef = useRef([]);
     const projectImgRef = useRef([]);
+    const reviewImgRef = useRef([]);
 
     const [userData, loading] = useDBUser();
-    // console.log(userData);
 
     useEffect(() => {
         serviceIconRef.current = serviceIconRef.current.slice(0, services.length);
@@ -85,13 +95,39 @@ const EditPortfolio = () => {
         handleSubmit,
         formState: { errors },
         reset,
-        unregister,
-        getValues
     } = useForm({
         mode: "onBlur",
         reValidateMode: "onBlur",
-        shouldUnregister: true
+        shouldUnregister: true,
     });
+
+    useEffect(() => {
+        if (userData?.portfolio) {
+            setCover(userData?.portfolio?.cover);
+            setDp(userData?.portfolio?.dp);
+            setStatistics(userData?.portfolio?.statistics || []);
+            setServices(userData?.portfolio?.services || []);
+            setSkills(userData?.portfolio?.skills || []);
+            setProjects(userData?.portfolio?.projects || []);
+            setReviews(userData?.portfolio?.reviews || []);
+        }
+
+        let defaultValues = {};
+        defaultValues.heading1 = userData?.portfolio?.heading1;
+        defaultValues.heading2 = userData?.portfolio?.heading2;
+        defaultValues.name = userData?.portfolio?.name;
+        defaultValues.designation = userData?.portfolio?.designation;
+        defaultValues.bio = userData?.portfolio?.bio;
+        defaultValues.experience = userData?.portfolio?.experience;
+        defaultValues.cv = userData?.portfolio?.cv;
+        defaultValues.fb = userData?.portfolio?.fb;
+        defaultValues.twitter = userData?.portfolio?.twitter;
+        defaultValues.linkedin = userData?.portfolio?.linkedin;
+        defaultValues.phone = userData?.portfolio?.phone;
+        defaultValues.email = userData?.portfolio?.email;
+
+        reset({ ...defaultValues });
+    }, [userData, reset])
 
     const uploadPic = async (image, task) => {
         const formData = new FormData();
@@ -150,6 +186,18 @@ const EditPortfolio = () => {
         console.log("e = ", e.target.files, "i = ", i)
     }
 
+    const handleReviewtImg = (e, i) => {
+
+        uploadPic(e.target.files, `reviewImg${i}`).then(res => {
+            if (res.status === 200) {
+                const newReview = [...reviews];
+                newReview[i].clientImg = res.data.data.url;
+                setReviews(newReview);
+            }
+        })
+            .catch(error => console.log(error));
+    }
+
     const handleStats = (e, i) => {
         e.stopPropagation();
 
@@ -194,6 +242,17 @@ const EditPortfolio = () => {
 
     }
 
+    const handleReviews = (e, i) => {
+        e.stopPropagation();
+
+        const { name, value } = e.target;
+        const newReviews = [...reviews];
+        newReviews[i][name] = value;
+
+        setReviews(newReviews);
+
+    }
+
     const onSubmit = async (data) => {
         const portfolioData = {
             heading1: data.heading1,
@@ -209,6 +268,7 @@ const EditPortfolio = () => {
             services: services,
             skills: skills,
             projects: projects,
+            reviews: reviews,
             email: data.email,
             fb: data.fb,
             twitter: data.twitter,
@@ -217,27 +277,47 @@ const EditPortfolio = () => {
         }
         console.log(portfolioData);
 
-        await axios.post(`http://localhost:5000/portfolio?id=${userData?._id}&verification=${userData?.verification}`, portfolioData)
-            .then(res => console.log(res))
+        setUpdating({ task: "uploading" })
+        await axios.post(`https://section-n-diu-server.herokuapp.com/portfolio?id=${userData?._id}&verification=${userData?.verification}`, portfolioData)
+            .then(res => {
+                setUpdating({ task: "" });
+                if (res.data.modifiedCount > 0) toast.success("Updated Portfolio");
+                else toast.error("Nothing Updated")
+                console.log(res)
+            })
+            .catch(errors => {
+                console.log(errors);
+                setUpdating({ task: "" });
+                toast.error("Something Went Wrong")
+            })
 
     }
 
 
+    if (loading) return <NLoading />
 
+    if (userData.verification !== "verified") return (
+        <div className='min-h-screen w-full flex flex-col justify-center items-center text-center'>
+            <h2 className='text-3xl'>You are not verified. Please Verify account first to create your portfolio</h2>
+
+            <button onClick={() => navigate('/settings/verify')} className='link mt-10 text-2xl'>Verify Account?</button>
+
+        </div>
+    )
     return (
         <div className='w-full bg-base-100'>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className='relative w-full min-h-screen flex items-center justify-center'>
                     <img onLoad={() => setUpdating({ task: "" })} src={cover} alt="" className='w-full h-full absolute object-cover' />
                     <div className='h-full w-full bg-black absolute bg-opacity-40'></div>
-                    <div className='z-20'>
+                    <div className='z-20 px-6'>
 
-                        <textarea type="text" placeholder={`Type a Heading.\n eg. Hello! Welcome to my portfolio!`} className={`${ghostInput} text-white text-center text-2xl md:text-5xl xl:text-6xl 2xl:text-8xl great-vibes placeholder:text-lg placeholder:md:text-5xl placeholder:2xl:text-7xl`} {...register("heading1", {
+                        <input type="text" placeholder={`Type a Heading.\n eg. Hello! Welcome to my portfolio!`} className={`${ghostInput} text-white text-center text-2xl md:text-5xl xl:text-6xl 2xl:text-8xl great-vibes placeholder:text-lg placeholder:md:text-5xl placeholder:2xl:text-7xl border-b mb-4`} {...register("heading1", {
                             required: "Please Add Atleast This Heading"
                         })} />
                         {errors?.heading1 && <small className='text-error mx-auto'>{errors.heading1.message}</small>}
 
-                        <input type="text" placeholder="Type another Heading. eg. My name is Solimuddin!" className={`${ghostInput} text-white lg:py-2 text-center text-xl md:text-4xl xl:text-5xl 2xl:text-6xl great-vibes placeholder:text-base placeholder:md:text-4xl placeholder:2xl:text-6xl`} {...register("heading2")} />
+                        <input type="text" placeholder="Type another Heading. eg. My name is Solimuddin!" className={`${ghostInput} text-white lg:py-2 text-center text-xl md:text-4xl xl:text-5xl 2xl:text-6xl great-vibes placeholder:text-base placeholder:md:text-4xl placeholder:2xl:text-6xl border-b`} {...register("heading2")} />
 
                         <input type="file" name="cover" id="cover" className='hidden' {...register("cover", {
                             onChange: (e) => handleCover(e)
@@ -255,7 +335,7 @@ const EditPortfolio = () => {
                 </div>
 
                 {/* about */}
-                <div className='my-20 lg:pt-0 md:w-full lg:w-full flex flex-col justify-center items-center overflow-x-hidden'>
+                <div className='my-20 lg:pt-0 md:w-full lg:w-full flex flex-col justify-center items-center overflow-x-hidden '>
                     <h1 className='text-3xl font-bold mb-10 text-center'>About </h1>
 
                     <InView threshold={.15} triggerOnce={false}>
@@ -305,7 +385,7 @@ const EditPortfolio = () => {
                                         <div className='flex items-end'>
                                             <FontAwesomeIcon className=' h-5 w-6 md:h-8 md:w-8 mr-3' icon={faFileArrowDown} />
 
-                                            <input type="text" className={`${ghostInput} text-left lg:text-2xl mt-4`} placeholder="Add Resume/CV Download Link" {...register("cv")} />
+                                            <input type="text" className={`${ghostInput} text-left lg:text-2xl mt-4 border-b`} placeholder="Add Resume/CV Download Link" {...register("cv")} />
                                         </div>
 
 
@@ -317,20 +397,20 @@ const EditPortfolio = () => {
 
                                     <motion.div initial="hidden" animate={`${inView && "animate"}`}
                                         whileTap={{
-                                            scale: .95,
+                                            scale: .8,
                                             transition: { duration: 0.1 }
                                         }}
                                         variants={{
                                             hidden: { opacity: 0, x: -500 },
                                             animate: {
                                                 opacity: 1, x: 0,
-                                                scale: 1.1,
+                                                scale: .9,
                                                 transition: {
                                                     ease: "easeOut",
                                                     duration: 1,
                                                 }
                                             }
-                                        }} className='h-60 w-60 md:w-1/3 xl:w-1/3 shadow-2xl rounded-full mt-3 md:m-0 md:-right-10 md:rounded-lg md:h-auto md:max-h-96 md:absolute group cursor-pointer overflow-hidden'
+                                        }} className='h-60 w-60 md:w-1/3 xl:w-1/3 shadow-2xl rounded-full mt-3 md:m-0 md:-right-10 md:rounded-lg md:h-full md:max-h-full md:absolute group cursor-pointer overflow-hidden'
                                         onClick={() => { dpRef.current.click() }}
                                     >
                                         <img
@@ -368,9 +448,9 @@ const EditPortfolio = () => {
                                     {
                                         <span className='absolute top-3 right-2 btn btn-xs badge-outline btn-error' onClick={() => setStatistics([...statistics].filter((stat, index) => index !== i))}>x</span>
                                     }
-                                    <input name='number' type="number" required placeholder='Add a number' className={`${ghostInput} text-5xl w-32 text-center placeholder:text-xl`} onChange={e => handleStats(e, i)} value={statistic.number} />
+                                    <input name='number' type="number" required placeholder='Add a number' className={`${ghostInput} text-5xl w-3/5 text-center placeholder:text-xl`} onChange={e => handleStats(e, i)} value={statistic.number} />
 
-                                    <input type="text" required placeholder='Add Statistic Name' className={`${ghostInput} text-4xl text-center my-4`} onChange={e => handleStats(e, i)} name="name" value={statistic.name} />
+                                    <input type="text" required placeholder='Add Statistic Name' className={`${ghostInput} text-4xl text-center my-4 h-full`} onChange={e => handleStats(e, i)} name="name" value={statistic.name} />
                                 </div>
                             ))
                         }
@@ -395,15 +475,15 @@ const EditPortfolio = () => {
                     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 items-center justify-center mx-10'>
                         {
                             services?.map((service, i) => (
-                                <div key={i} class="card max-w-sm bg-base-200 shadow-xl py-10 px-5 mx-auto h-full w-full">
+                                <div key={i} className="card max-w-sm bg-base-200 shadow-xl py-10 px-5 mx-auto h-full w-full">
                                     {
                                         <span className='absolute top-3 right-2 btn btn-xs btn-outline btn-error' onClick={() => setServices([...services].filter((stat, index) => index !== i))}>x</span>
                                     }
 
-                                    <motion.figure whileTap={{ scale: .9 }} onClick={() => serviceIconRef.current[i].click()} class="h-32 w-32 mx-auto cursor-pointer relative">
+                                    <motion.figure whileTap={{ scale: .9 }} onClick={() => serviceIconRef.current[i].click()} className="h-32 w-32 mx-auto cursor-pointer relative">
                                         {
                                             service.serviceIcon
-                                                ? <img onLoad={() => setUpdating({ task: "" })} src={service.serviceIcon} alt="Shoes" class="rounded-xl w-full h-full object-cover" />
+                                                ? <img onLoad={() => setUpdating({ task: "" })} src={service.serviceIcon} alt="Shoes" className="rounded-xl w-full h-full object-cover" />
                                                 : <div className='flex flex-col items-center justify-center border rounded-xl w-full h-full px-3 mb-3'>
                                                     <FontAwesomeIcon icon={faImage} className="h-10 w-10" />
                                                     <h1 className='mt-3 text-center text-sm'>Add A Service Icon</h1>
@@ -417,7 +497,7 @@ const EditPortfolio = () => {
 
                                     <input type="file" name={i} id="serviceIcon" className='hidden' ref={el => serviceIconRef.current[i] = el} onChange={(e) => handleServiceIcon(e, i)} />
 
-                                    <div class="flex flex-col items-center text-center px-4">
+                                    <div className="flex flex-col items-center text-center px-4">
 
                                         <input required name='serviceName' type="text" placeholder='Add Service Name'
                                             className={`${ghostInput} card-title text-center border-b w-auto my-4`}
@@ -457,7 +537,7 @@ const EditPortfolio = () => {
                         <div className='max-w-3xl mx-auto'>
                             {
                                 skills?.map((skill, i) => (
-                                    <div className='flex flex-col md:flex-row items-center justify-evenly mx-4 border-y py-5 md:border-y-0'>
+                                    <div key={i} className='flex flex-col md:flex-row items-center justify-evenly mx-4 border-y py-5 md:border-y-0'>
 
                                         <input type="text" required name='skillName' placeholder='Skill/Technology Name. eg: Photoshop/Reactjs' className={`input input-bordered w-full md:w-3/5 border md:text-lg`}
                                             value={skill.skillName}
@@ -497,12 +577,12 @@ const EditPortfolio = () => {
                     <div className='flex flex-col justify-center items-center w-full'>
                         {
                             projects?.map((project, i) => (
-                                <div class="card lg:card-side bg-base-200 shadow-xl md:w-full md:max-w-5xl my-5 mx-6">
+                                <div key={i} className="card lg:card-side bg-base-200 shadow-xl md:w-full md:max-w-5xl my-5 mx-6">
                                     <motion.figure whileTap={{ scale: .9 }} onClick={() => projectImgRef.current[i].click()}
-                                        className="w-full lg:w-1/2 h-72 rounded-2xl mx-5 my-auto relative">
+                                        className="w-full lg:w-1/2 h-72 rounded-2xl mx-auto lg:ml-5 my-auto relative">
                                         {
                                             project.image
-                                                ? <img onLoad={() => setUpdating({ task: "" })} src={project.image} alt="project Pic" class="rounded-xl w-full h-full object-contain absolute" />
+                                                ? <img onLoad={() => setUpdating({ task: "" })} src={project.image} alt="project Pic" className="rounded-xl w-full h-full object-contain absolute" />
                                                 : <div className='w-1/2 h-1/2 rounded-xl flex flex-col justify-center items-center border cursor-pointer p-4'>
                                                     <FontAwesomeIcon icon={faImage} className="h-10 w-10" />
                                                     <h2 className='mt-4'>Add Project Image</h2>
@@ -517,10 +597,10 @@ const EditPortfolio = () => {
                                         }
                                     </motion.figure>
 
-                                    <div class="card-body my-5">
-                                        <input required type="text" name="projectName" placeholder='Type Project Name' className={`${ghostInput} text-2xl border-b`} onChange={(e) => handleProjects(e, i)} />
+                                    <div className="card-body my-5">
+                                        <input required type="text" value={project.projectName} name="projectName" placeholder='Type Project Name' className={`${ghostInput} text-2xl border-b`} onChange={(e) => handleProjects(e, i)} />
 
-                                        <textarea required type="text" name="projectInfo" placeholder='Type Some Description' className={`textarea textarea-bordered mt-3`} onChange={(e) => handleProjects(e, i)} />
+                                        <textarea value={project.projectInfo} required type="text" name="projectInfo" placeholder='Type Some Description' className={`textarea textarea-bordered mt-3 h-28`} onChange={(e) => handleProjects(e, i)} />
 
                                         {/* <h2 className='mt-3'>Add technologies you used</h2>
                                         <div className='flex flex-col'>
@@ -541,18 +621,15 @@ const EditPortfolio = () => {
                                             }
                                         </div> */}
 
-                                        <input required type="text" name="techs" placeholder='Add technologies you used' className='input input-bordered w-3/5' onChange={(e) => handleProjects(e, i)} />
+                                        <input required value={project.techs} type="text" name="techs" placeholder='Add technologies you used' className='input input-bordered w-full' onChange={(e) => handleProjects(e, i)} />
 
-                                        <input required name="link" type="text" placeholder='Add Project Link' className='input input-bordered w-3/5'
+                                        <input required value={project.link} name="link" type="text" placeholder='Add Project Link' className='input input-bordered w-full'
                                             onChange={(e) => handleProjects(e, i)} />
 
-                                        <div class="card-actions justify-end">
-                                            <span class="btn btn-primary">Submit</span>
-                                        </div>
                                     </div>
 
                                     {
-                                        <span className='btn btn-sm btn-outline btn-error rounded-2xl absolute top-3 right-3'
+                                        <span className='btn btn-sm btn-outline btn-circle btn-error absolute top-3 right-3'
                                             onClick={() => setProjects([...projects].filter((stat, index) => index !== i))}>
                                             x
                                         </span>
@@ -572,6 +649,80 @@ const EditPortfolio = () => {
                     </div>
                 </div>
 
+                {/* reviews */}
+                <div className='my-20'>
+                    <h2 className='text-3xl font-bold text-center '>Add Client Reviews</h2>
+                    <div className='grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-4 gap-5 lg:gap-10 mx-auto  md:w-fit items-center justify-center'>
+                        {
+                            reviews?.map((review, i) => (
+                                <div class="card w-96 bg-base-100 shadow-xl justify-center items-center p-5 mx-auto relative">
+
+                                    <motion.div whileTap={{ scale: 0.9 }} className='h-44 w-44 cursor-pointer relative rounded-full' onClick={() => reviewImgRef.current[i].click()}>
+                                        {
+                                            review.clientImg
+                                                ? <img onLoad={() => setUpdating({ task: "" })} src={review.clientImg} alt="Client" class="w-full h-full object-cover rounded-full" />
+                                                : <div className='border rounded-xl p-4 w-full h-full flex flex-col items-center'
+                                                >
+                                                    <FontAwesomeIcon icon={faCircleUser} className="h-20 w-20 p-4" />
+                                                    <h2 className='text-center'>Add Client Image</h2>
+
+                                                </div>
+                                        }
+                                        {
+                                            (updating?.task === `reviewImg${i}`) && <div className='btn btn-square loading bg-black opacity-40 absolute h-full w-full inset-0 flex justify-center'></div>
+                                        }
+                                        <input type="file" className='hidden' ref={el => reviewImgRef.current[i] = el}
+                                            onChange={(e) => handleReviewtImg(e, i)}
+                                        />
+                                    </motion.div>
+                                    <div class="items-center text-center py-5 px-3 ">
+                                        <h2 className='mt-2 flex items-center justify-center'>
+                                            Ratings :
+                                            <input type="number"
+                                                name='rating'
+                                                min="0"
+                                                max="5"
+                                                required
+                                                value={review.rating}
+                                                onChange={(e) => handleReviews(e, i)}
+                                                className=' w-16 h-10 mx-1 input input-bordered' /> /5
+                                        </h2>
+
+                                        <input type="text"
+                                            value={review.clientName}
+                                            name='clientName'
+                                            onChange={(e) => handleReviews(e, i)}
+                                            className={`${ghostInput} border-b my-2 text-center `} placeholder="Client Name" />
+
+                                        <input type="text"
+                                            name='clientCompany'
+                                            value={review.clientCompany}
+                                            onChange={(e) => handleReviews(e, i)}
+                                            className={`${ghostInput} border-b my-2 text-center `} placeholder="Client Company Name" />
+
+                                        <textarea
+                                            name="review"
+                                            value={review.review}
+                                            onChange={(e) => handleReviews(e, i)}
+                                            className='w-full p-3 mt-2 textarea textarea-bordered' rows="3"></textarea>
+                                    </div>
+
+                                    <span className='btn btn-sm btn-outline btn-circle btn-error absolute top-3 right-3'
+                                        onClick={() => setReviews([...reviews].filter((rev, index) => index !== i))}>
+                                        x
+                                    </span>
+                                </div>
+                            ))
+                        }
+                        <motion.div whileTap={{ scale: .9 }}
+                            className='border w-fit h-fit flex flex-col p-2 justify-center items-center rounded-lg btn-outline cursor-pointer mx-auto mt-5'
+                            onClick={() => setReviews([...reviews, { clientName: "", clientImg: "", clientCompany: "", review: "", rating: "" }])}>
+                            <FontAwesomeIcon icon={faPlusCircle} className="h-6 w-6 py-2" />
+                            <h1>{`Add ${projects?.length > 0 ? "One More" : "A"} Project?`}</h1>
+                        </motion.div>
+                    </div>
+                </div>
+
                 {/* contact */}
                 <h1 className='text-3xl font-bold text-center '>Contact Information</h1>
                 <InView threshold={.8} triggerOnce={true}>
@@ -580,35 +731,36 @@ const EditPortfolio = () => {
                         <motion.div ref={ref} initial="hidden" animate={`${inView && "visible"}`} variants={container} className='w-full flex justify-center items-center my-20'>
                             <div className="card w-full md:w-3/5 lg:w-3/5 shadow-xl lg:px-10 mx-3 pb-6 bg-base-200">
                                 <div className="card-body w-full">
-                                    <motion.h2 variants={item} className="card-title text-3xl font-bold justify-center mb-6">Send Me an Email</motion.h2>
 
-                                    <motion.div variants={item} className="form-control w-full lg:max-w-2xl">
-                                        <input type="email" placeholder="Your Email Address" className="input input-bordered my-6 text-xl w-full h-14" {...register("email", { required: "Email Address Lagbe Mia" })} />
+                                    <motion.div variants={item} className="form-control w-full">
+                                        <input type="email" placeholder="Your Email Address" className="input input-bordered my-6 text-xl w-full h-14"
+                                            {...register("email", { required: "Email Address Lagbe Mia" })} />
+
                                         {errors?.email && <small className='text-error'>{errors.email.message}</small>}
                                     </motion.div>
 
                                     <motion.div variants={item} className='flex items-end'>
                                         <FontAwesomeIcon className=' h-5 w-6 md:h-8 md:w-8 mr-3 mt-5' icon={faFacebookF} />
 
-                                        <input type="text" className={`${ghostInput} text-left lg:text-2xl mt-4`} placeholder="Add Facebook Profile Link" {...register("fb")} />
+                                        <input type="text" className={`${ghostInput} text-left lg:text-2xl mt-4 border-b`} placeholder="Add Facebook Profile Link" {...register("fb")} />
                                     </motion.div>
 
                                     <motion.div variants={item} className='flex items-end'>
                                         <FontAwesomeIcon className=' h-5 w-6 md:h-8 md:w-8 mr-3 mt-5' icon={faTwitter} />
 
-                                        <input type="text" className={`${ghostInput} text-left lg:text-2xl mt-4`} placeholder="Add Twitter Profile Link" {...register("twitter")} />
+                                        <input type="text" className={`${ghostInput} text-left lg:text-2xl mt-4 border-b`} placeholder="Add Twitter Profile Link" {...register("twitter")} />
                                     </motion.div>
 
                                     <motion.div variants={item} className='flex items-end'>
                                         <FontAwesomeIcon className=' h-5 w-6 md:h-8 md:w-8 mr-3 mt-5' icon={faLinkedin} />
 
-                                        <input type="text" className={`${ghostInput} text-left lg:text-2xl mt-4`} placeholder="Add LinkedIn Profile Link" {...register("linkedin")} />
+                                        <input type="text" className={`${ghostInput} text-left lg:text-2xl mt-4 border-b`} placeholder="Add LinkedIn Profile Link" {...register("linkedin")} />
                                     </motion.div>
 
                                     <motion.div variants={item} className='flex items-end'>
                                         <FontAwesomeIcon className=' h-5 w-6 md:h-8 md:w-8 mr-3 mt-5' icon={faPhone} />
 
-                                        <input type="text" className={`${ghostInput} text-left lg:text-2xl mt-4`} placeholder="Add Your Phone Number" {...register("phone")} />
+                                        <input type="text" className={`${ghostInput} text-left lg:text-2xl mt-4 border-b`} placeholder="Add Your Phone Number" {...register("phone")} />
                                     </motion.div>
                                 </div>
                             </div>
@@ -619,7 +771,11 @@ const EditPortfolio = () => {
                 </InView>
 
                 <div className='flex justify-center pb-20'>
-                    <input type="submit" value="Submit" className='btn btn-primary max-w-xl w-full' />
+                    {
+                        updating?.task === "uploading"
+                            ? <span className='btn btn-primary loading max-w-xl w-full capitalize'>Submitting Portfolio</span>
+                            : <input type="submit" value="Submit" className='btn btn-primary max-w-xl w-full capitalize' />
+                    }
                 </div>
             </form>
 

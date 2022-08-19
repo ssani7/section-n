@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { Link, Outlet } from 'react-router-dom';
+import Footer from '../Shared/Footer';
 import NLoading from '../Shared/NLoading';
 
 
@@ -19,8 +20,8 @@ const Courses = () => {
     if (isLoading) return <NLoading />
 
     return (
-        <div className='pt-20'>
-            <div className="drawer drawer-mobile">
+        <div className='pt-20 min-h-screen'>
+            <div className="drawer drawer-mobile h-full relative">
                 <input checked={checked} onChange={(e) => setChecked(e.target.checked)} id="course-drawer" type="checkbox" className="drawer-toggle"
                 />
                 <div className="drawer-content flex flex-col items-center bg-base-100">
@@ -41,8 +42,9 @@ const Courses = () => {
                         }
                     </ul>
                 </div>
-                <label htmlFor="course-drawer" className={`btn btn-accent btn-circle drawer-button lg:hidden absolute bottom-2 left-4 z-40 transform transition-all ${checked ? "rotate-180" : "rotate-0"}`}>❯</label>
             </div>
+            <label htmlFor="course-drawer" className={`btn btn-accent btn-circle drawer-button lg:hidden fixed bottom-10 left-4 z-40 transform transition-all ${checked ? "rotate-180" : "rotate-0"}`}>❯</label>
+            <Footer />
         </div>
     );
 };

@@ -92,7 +92,7 @@ const Register = () => {
                         })} />
                         {errors?.confirmPass && <small className='text-error'>{errors.confirmPass.message}</small>}
 
-                        <p className='text-sm mt-3'>Already have an account? <Link to='/login' className='text-secondary'>Log in here</Link></p>
+                        <p className='text-sm mt-3'>Already have an account? <Link to='/login' className='text-secondary link link-hover'>Log in here</Link></p>
 
                         {
                             (updating || loading)

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import useDBUser from '../../hooks/useDBUser';
 import NLoading from '../Shared/NLoading';
+import Footer from '../Shared/Footer';
 
 
 
@@ -16,10 +17,10 @@ const Settings = () => {
     if (loading) return <NLoading />
 
     return (
-        <div className='pt-20'>
-            <div className="drawer drawer-mobile">
+        <div className='pt-20 h-full min-h-screen relative'>
+            <div className="drawer relative drawer-mobile h-full">
                 <input id="settings-drawer" checked={checked} onChange={(e) => setChecked(e.target.checked)} type="checkbox" className="drawer-toggle" />
-                <div className="drawer-content flex flex-col items-center bg-base-100">
+                <div className="drawer-content flex flex-col items-center bg-base-100 min-h-screen">
                     <Outlet />
 
                 </div>
@@ -32,8 +33,13 @@ const Settings = () => {
                         <li onClick={() => setChecked(false)}><Link to='addAchvmnt'>Add Achievements</Link></li>
                     </ul>
                 </div>
-                <label htmlFor="settings-drawer" className={`btn btn-accent btn-circle drawer-button lg:hidden absolute bottom-2 left-4 z-40 transform transition-all ${checked ? "rotate-180" : "rotate-0"}`}>❯</label>
+
+                <label htmlFor="settings-drawer" className={`btn btn-accent btn-circle drawer-button lg:hidden fixed bottom-10 left-4 z-40 transform transition-all ${checked ? "rotate-180" : "rotate-0"}`}>❯</label>
+                <div className="h-screen absolute">
+                </div>
             </div>
+
+            <Footer />
         </div>
     );
 };
