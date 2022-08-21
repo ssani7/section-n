@@ -46,9 +46,9 @@ const Login = () => {
         signInWithEmailAndPassword(email, password)
     }
     return (
-        <div className='pt-20 bg-base-100'>
-            <div className="card mx-6 bg-base-100 shadow-xl rounded-2xl border md:max-w-lg md:mx-auto">
-                <div className="card-body items-center text-center">
+        <div className='pt-28 bg-base-100'>
+            <div className="card mx-6 bg-base-200 shadow-xl md:max-w-lg md:mx-auto">
+                <div className="card-body items-center text-center py-10">
                     <h2 className="card-title font-bold">Log In</h2>
 
                     <form onSubmit={handleSubmit(onSubmit)} className="form-control w-full mx-auto max-w-lg">
@@ -69,11 +69,11 @@ const Login = () => {
                         })} />
                         {errors?.password && <small className='text-error'>{errors.password.message}</small>}
 
-                        <p className='text-sm mt-3 font-semibold'>Forgot Password? <span className='text-secondary link link-hover' onClick={handleSubmit(handleReset)}>Reset Password</span></p>
+                        <p className='text-sm mt-3 font-semibold'>Forgot Password? <span className='text-sky-600 link link-hover' onClick={handleSubmit(handleReset)}>Reset Password</span></p>
 
                         {resetError && <small className='text-error mt-2'>{resetError.message}</small>}
 
-                        <p className='text-sm mt-3 font-semibold'>Don't have an account? <Link to='/register' className='text-secondary link link-hover'>Create an account</Link></p>
+                        <p className='text-sm mt-3 font-semibold'>Don't have an account? <Link to='/register' className='text-sky-600 link link-hover'>Create an account</Link></p>
 
                         {
                             loading

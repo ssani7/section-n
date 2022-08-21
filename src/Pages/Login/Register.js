@@ -42,7 +42,7 @@ const Register = () => {
     }
     return (
         <div className='pt-20 bg-base-100'>
-            <div className="card mx-6 bg-base-100 shadow-xl rounded-2xl border md:max-w-lg md:mx-auto">
+            <div className="card mx-6 bg-base-200 shadow-xl md:max-w-lg md:mx-auto">
                 <div className="card-body items-center text-center">
                     <h2 className="card-title font-bold">Sign Up</h2>
                     <form onSubmit={handleSubmit(onSubmit)} className="form-control w-full mx-auto max-w-lg">
@@ -92,7 +92,7 @@ const Register = () => {
                         })} />
                         {errors?.confirmPass && <small className='text-error'>{errors.confirmPass.message}</small>}
 
-                        <p className='text-sm mt-3'>Already have an account? <Link to='/login' className='text-secondary link link-hover'>Log in here</Link></p>
+                        <p className='text-sm mt-3'>Already have an account? <Link to='/login' className='text-sky-600 link link-hover'>Log in here</Link></p>
 
                         {
                             (updating || loading)

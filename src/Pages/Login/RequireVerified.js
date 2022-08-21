@@ -22,11 +22,11 @@ const RequireVerified = ({ children }) => {
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
-    if (userData?.verification === "verified") {
-        console.log(userData?.verification);
-
-        return children;
+    if (userData?.verification !== "verified") {
+        return <Navigate to="/settings/verify" state={{ from: location }} replace />;
     }
+
+    return children;
 
 
 

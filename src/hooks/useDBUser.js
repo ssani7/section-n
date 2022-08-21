@@ -4,20 +4,20 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import auth from '../firebase.init';
 
 const useDBUser = () => {
-    const [userFromDb, setUserFromDb] = useState('');
+    const [userFromDb, setUserFromDb] = useState();
     const [user, loading] = useAuthState(auth);
-    const [loadingData, setLoadingData] = useState(false);
+    const [loadingData, setLoadingData] = useState(true);
 
     useEffect(() => {
         if (loading) {
             setLoadingData(true);
         }
-        else if (!loading) {
+
+        if (user && !loading && userFromDb) {
             setLoadingData(false);
         }
 
         if (user) {
-            setLoadingData(true);
             axios.get(`https://section-n-diu-server.herokuapp.com/user/${user?.email}`)
                 .then(res => {
                     if (res.status === 200) {

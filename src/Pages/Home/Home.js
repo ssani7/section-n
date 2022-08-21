@@ -57,7 +57,6 @@ const Home = () => {
     if (isLoading || loading) return <NLoading />
 
     const uploadRoutine = async (e) => {
-
         const image = e.target.files[0];
         const formData = new FormData();
         formData.append('image', image);
@@ -95,6 +94,15 @@ const Home = () => {
         }
     }
 
+    function handleUpload() {
+        if (userData?.verification === "verified") {
+            inputRef.current.click()
+        }
+        else {
+            navigate('/settings/verify')
+        }
+    }
+
     return (
         <div className='bg-base-100 overflow-y-hidden'>
             <Banner />
@@ -119,6 +127,7 @@ const Home = () => {
 
             </div>
 
+            {/* routine */}
             <div className='w-full my-5 md:my-20'>
                 <h1 className='text-3xl font-bold mb-5 md:mb-10 text-center'> Class Routine</h1>
                 <InView threshold={.2}>
@@ -150,21 +159,17 @@ const Home = () => {
 
                             <input onChange={(e) => uploadRoutine(e)} type="file" className='hidden' ref={inputRef} />
 
-                            {
-                                loadingUser
-                                    ? <button className='btn btn-primary btn-disabled loading mt-7'>Loading User Data</button>
-                                    : <div data-tip="Verified Users Only"
-                                        className={`${userData?.verification === "verified" || "tooltip"} h-fit mt-7 cursor-pointer`}>
-                                        {
-                                            updating
-                                                ? <button
-                                                    className={`btn btn-primary loading`}>Updating</button>
-                                                : <button
-                                                    onClick={() => inputRef.current.click()}
-                                                    className={`btn btn-primary ${userData?.verification === "verified" || "btn-disabled"}`}>Update Routine</button>
-                                        }
-                                    </div>
-                            }
+                            <div className='mt-6'>
+                                {
+                                    updating
+                                        ? <button
+                                            className={`btn btn-primary loading`}>Updating</button>
+                                        : <button
+                                            onClick={() => handleUpload()}
+                                            className={`btn btn-primary`}>Update Routine
+                                        </button>
+                                }
+                            </div>
                         </div>
 
                     )}

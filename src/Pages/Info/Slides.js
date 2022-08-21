@@ -30,11 +30,12 @@ const Slides = () => {
             const fileRef = ref(storage, `slides/${semester}/${course}/${inputFile.name}`);
             uploadBytes(fileRef, inputFile)
                 .then(() => {
-                    setLoading({ ...loading, course: '' })
+                    setLoading({ ...loading, course: '' });
                     toast.success("Uploaded Successfully");
                 })
                 .catch(err => {
                     console.log(err);
+                    setLoading({ ...loading, course: '' })
                     toast.error("Something went wrong");
                 })
 
@@ -96,7 +97,7 @@ const Slides = () => {
                     <div key={i} className='mt-5'>
                         <button
                             onClick={() => setSlideCheck({ ...slideCheck, [`slide${i}`]: !slideCheck[`slide${i}`] })}
-                            className='border p-3 w-full btn btn-outline'>
+                            className='border p-3 w-full btn btn-outline capitalize'>
                             {semDiv.semester}
                             <FontAwesomeIcon icon={faAngleDown} className={`transition-all ${slideCheck?.[`slide${i}`] && "rotate-180"} ml-5 `} />
                         </button>
@@ -114,7 +115,7 @@ const Slides = () => {
                                         <div className='w-full'>
                                             <button
                                                 onClick={() => setCourseCheck({ ...courseCheck, [`slide${ci}`]: !courseCheck[`slide${ci}`] })}
-                                                className='border p-3 w-full btn btn-outline'>
+                                                className='border p-3 w-full btn btn-outline capitalize'>
                                                 {course.courseName}
                                                 <FontAwesomeIcon icon={faAngleDown} className={`transition-all ${courseCheck?.[`slide${ci}`] && "rotate-180"} ml-5 `} />
                                             </button>

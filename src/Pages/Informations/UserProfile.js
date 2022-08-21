@@ -6,13 +6,18 @@ import { faAt, faIdCard, faGraduationCap, faBuildingColumns, faCircleCheck, faUs
 import { faFacebookF, faLinkedin, faTwitter } from '@fortawesome/free-brands-svg-icons';
 import { useQuery } from "react-query"
 import NLoading from '../Shared/NLoading';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import auth from '../../firebase.init';
 
 
 const UserProfile = () => {
     const { email, option } = useParams();
     const navigate = useNavigate();
+    const [user, loading] = useAuthState(auth);
+    let location = useLocation();
+
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -27,6 +32,9 @@ const UserProfile = () => {
     if (isLoading) {
         return <NLoading />
     }
+
+    if (option === "self" && !user) return <Navigate to="/login" state={{ from: location }} replace />;
+
     return (
         <>
             <div className='px-5 flex flex-col pt-40 md:pt-60 xl:justify-center items-center bg-base-100 overflow-x-hidden md:px-10 md:py-0 md:w-full xl:h-screen lg:pt-28 2xl:pt-0 h-full'>

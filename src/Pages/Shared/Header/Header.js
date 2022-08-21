@@ -11,7 +11,9 @@ import useDBUser from '../../../hooks/useDBUser';
 const Header = ({ theme, setTheme }) => {
     const navigate = useNavigate();
     const [changeBg, setChangeBg] = useState(false);
+
     const [collapse, setCollapse] = useState(false);
+    const [usCollapse, setUsCollapse] = useState(false);
 
     const [user, loading] = useAuthState(auth);
     const [userData, loadingData] = useDBUser();
@@ -71,19 +73,46 @@ const Header = ({ theme, setTheme }) => {
             </div>
             <div className="flex justify-end w-2/3 md:w-1/2 xl:w-1/4">
 
-                <CustomLink to='/students'>
-                    <p className='hover:scale-105 active:scale-90 font-bold text-sm md:text-xl my-auto mx-3 md:mx-5'>Students</p>
-                </CustomLink>
+                <div className='relative'>
+                    <input type="checkbox" onChange={(e) => setUsCollapse(e.target.checked)} checked={usCollapse} className="hidden" />
 
-                <input type="checkbox" onChange={(e) => setCollapse(e.target.checked)} checked={collapse} className="hidden" />
+                    <span
+                        onClick={() => setUsCollapse(!usCollapse)}
+                        onBlur={() => setUsCollapse(false)}
+                        className='hover:scale-105 font-bold text-sm md:text-xl my-auto mx-3 md:mx-5 flex items-center cursor-pointer group select-none whitespace-nowrap'>
+                        Us
+                        <FontAwesomeIcon icon={faAngleDown} className={`ml-2 group-hover:scale-105 transition-all ${usCollapse && "rotate-180"}`} />
+                    </span>
+
+                    <ul className={`absolute text-sm bg-base-100 flex flex-col mt-4 rounded-xl h-auto cursor-pointer p-2 shadow-lg transform transition-all ${usCollapse || "invisible scale-0"}`}>
+                        <CustomLink to='/students'>
+                            <li onClick={() => setUsCollapse(false)} className='hover:badge-ghost active:bg-primary px-4 py-2 rounded-lg'>
+                                <span>Students</span>
+                            </li>
+                        </CustomLink>
+
+                        <CustomLink to='/memes'>
+                            <li onClick={() => setUsCollapse(false)} className='hover:badge-ghost  active:bg-primary px-4 py-2 rounded-lg'>Memes</li>
+                        </CustomLink>
+
+                        {/* <CustomLink to='/'>
+                            <li onClick={() => setCollapse(false)} className='hover:badge-ghost  active:bg-primary px-4 py-2 rounded-lg'>Important Links</li>
+                        </CustomLink>
+
+                        <li onClick={() => setCollapse(false)} className='hover:badge-ghost  active:bg-primary px-4 py-2 rounded-lg whitespace-nowrap'>Assignment Covers</li> */}
+                    </ul>
+                </div>
+
 
                 <div className='relative'>
+                    <input type="checkbox" onChange={(e) => setCollapse(e.target.checked)} checked={collapse} className="hidden" />
+
                     <span
                         onClick={() => setCollapse(!collapse)}
                         onBlur={() => setCollapse(false)}
-                        className='hover:scale-105 active:scale-90 font-bold text-sm md:text-xl my-auto mx-3 md:mx-5 flex items-center cursor-pointer group select-none whitespace-nowrap'>
+                        className='hover:scale-105 font-bold text-sm md:text-xl my-auto mx-3 md:mx-5 flex items-center cursor-pointer group select-none whitespace-nowrap'>
                         Information
-                        <FontAwesomeIcon icon={faAngleDown} className={`ml-2 group-hover:scale-105 active:scale-90 transition-all ${collapse && "rotate-180"}`} />
+                        <FontAwesomeIcon icon={faAngleDown} className={`ml-2 group-hover:scale-105 transition-all ${collapse && "rotate-180"}`} />
                     </span>
 
                     <ul className={`absolute text-sm bg-base-100 flex flex-col mt-4 rounded-xl h-auto cursor-pointer p-2 shadow-lg transform transition-all ${collapse || "invisible scale-0"}`}>
@@ -97,11 +126,11 @@ const Header = ({ theme, setTheme }) => {
                             <li onClick={() => setCollapse(false)} className='hover:badge-ghost  active:bg-primary px-4 py-2 rounded-lg'>Slides</li>
                         </CustomLink>
 
-                        <CustomLink to='/slides'>
+                        {/* <CustomLink to='/'>
                             <li onClick={() => setCollapse(false)} className='hover:badge-ghost  active:bg-primary px-4 py-2 rounded-lg'>Important Links</li>
                         </CustomLink>
 
-                        <li onClick={() => setCollapse(false)} className='hover:badge-ghost  active:bg-primary px-4 py-2 rounded-lg whitespace-nowrap'>Assignment Covers</li>
+                        <li onClick={() => setCollapse(false)} className='hover:badge-ghost  active:bg-primary px-4 py-2 rounded-lg whitespace-nowrap'>Assignment Covers</li> */}
                     </ul>
                 </div>
 
@@ -118,15 +147,15 @@ const Header = ({ theme, setTheme }) => {
                     </label>
                 </div>
                 {
-                    user
+                    user && userData
                         ? <div className="dropdown dropdown-end">
                             <label tabIndex="0" className="btn btn-ghost btn-circle avatar">
                                 {
-                                    (loading || loadingData)
+                                    (loadingData)
                                         ? <div className="animate-pulse w-10 md:w-16 rounded-full bg-slate-700 ">
                                         </div>
                                         : <div className="w-10 md:w-16 rounded-full">
-                                            <img src={userData?.photoURL} alt='' />
+                                            <img src={userData?.photoURL || "https://i.ibb.co/pzpVdPV/no-user-image-icon-3.jpg"} alt='' />
                                         </div>
 
                                 }

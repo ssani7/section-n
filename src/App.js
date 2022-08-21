@@ -23,7 +23,6 @@ import SemesterView from './Pages/Courses/SemesterView';
 import ContactCR from './Pages/Shared/ContactCR';
 import VerifyAcc from './Pages/Settiings/VerifyAcc';
 import VerificationReq from './Pages/Admin/ManageData/VerificationReq/VerificationReq';
-import Students from './Pages/Informations/Students';
 import UserProfile from './Pages/Informations/UserProfile';
 import Stars from './Pages/Home/Stars';
 import Portfolio from './Pages/Profile/Portfolio/Portfolio';
@@ -32,6 +31,8 @@ import UserPortfolio from './Pages/Informations/UserPortfolio';
 import RequireVerified from './Pages/Login/RequireVerified';
 import Project from './Pages/Profile/Portfolio/Project';
 import Slides from './Pages/Info/Slides';
+import Students from './Pages/Us/Students';
+import Memes from './Pages/Us/Memes';
 
 function App() {
   // const [theme, setTheme] = useState(localStorage.getItem('theme'));
@@ -52,11 +53,13 @@ function App() {
         <Route path='/register' element={<Register />}></Route>
         <Route path='/login' element={<Login />}></Route>
         <Route path='/contactCR' element={<ContactCR />}></Route>
-        <Route path='/profile' element={<RequireAuth><Profile /></RequireAuth>}></Route>
+        {/* <Route path='/profile' element={<RequireAuth><Profile /></RequireAuth>}></Route> */}
         <Route path='/courses' element={<Courses />}>
           <Route index element={<SemesterView />}></Route>
           <Route index path="/courses/:semesterName" element={<SemesterView />}></Route>
         </Route>
+
+        <Route path='/memes' element={<RequireVerified><Memes /></RequireVerified>}></Route>
 
         <Route path='/addAchievement' element={<RequireAuth><AddAchievement /></RequireAuth>}></Route>
 
