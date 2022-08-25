@@ -8,17 +8,17 @@ import { ref, uploadBytes, listAll, getDownloadURL } from 'firebase/storage';
 import { toast } from "react-toastify"
 import { useEffect } from 'react';
 import NLoading from '../Shared/NLoading'
+import useDBUser from '../../hooks/useDBUser';
 
 const Slides = () => {
+    const [userData, loadingData] = useDBUser();
+    console.log(userData)
     const [slideCheck, setSlideCheck] = useState({});
     const [courseCheck, setCourseCheck] = useState({});
     const [loading, setLoading] = useState({
         loadingData: true
     });
     const [slides, setSlides] = useState([]);
-    console.log(slides)
-    console.log(loading)
-
 
     const inputRef = useRef([]);
 
@@ -148,10 +148,22 @@ const Slides = () => {
                                                     ref={el => inputRef.current[ci] = el} type="file" className='hidden' />
 
                                                 {
-                                                    loading.course === course.courseName
-                                                        ? <span className='btn btn-primary mt-7 loading capitalize'>Uploading</span>
-                                                        : <button onClick={() => inputRef.current[ci].click()} className={`btn btn-primary mt-7 capitalize `}>Upload Slide</button>
+                                                    loadingData
+                                                        ? <span className='btn btn-primary mt-7 loading capitalize'>Loading User Data</span>
+                                                        : <>
+                                                            {
+                                                                userData?.verification === "verified" && <>
+                                                                    {
+                                                                        loading.course === course.courseName
+                                                                            ? <span className='btn btn-primary mt-7 loading capitalize'>Uploading</span>
+                                                                            : <button onClick={() => inputRef.current[ci].click()} className={`btn btn-primary mt-7 capitalize `}>Upload Slide</button>
+                                                                    }
+                                                                </>
+                                                            }
+                                                        </>
+
                                                 }
+
                                             </div>
 
 
@@ -165,7 +177,7 @@ const Slides = () => {
                     </div>
                 ))
             }
-        </div>
+        </div >
     );
 };
 

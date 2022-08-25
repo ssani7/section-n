@@ -127,6 +127,8 @@ const Home = () => {
 
             </div>
 
+            <Events />
+
             {/* routine */}
             <div className='w-full my-5 md:my-20'>
                 <h1 className='text-3xl font-bold mb-5 md:mb-10 text-center'> Class Routine</h1>
@@ -175,8 +177,6 @@ const Home = () => {
                     )}
                 </InView>
             </div>
-
-            <Events />
 
             <Stars />
 

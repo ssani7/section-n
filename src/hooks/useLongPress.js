@@ -1,14 +1,10 @@
-import React from 'react';
-import { motion } from 'framer-motion'
-import { useRef } from 'react';
-import { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
-const Dummy = () => {
+const useLongPress = () => {
     const [action, setAction] = useState('');
 
     const timerRef = useRef();
     const isLongPress = useRef(false);
-    console.log(action);
 
     function handleOnClick() {
         if (isLongPress.current) {
@@ -20,6 +16,8 @@ const Dummy = () => {
     }
     function handleOnMouseUp() {
         clearTimeout(timerRef.current);
+        setAction("");
+
     }
     function handleOnMouseDown() {
         setTimer();
@@ -29,6 +27,7 @@ const Dummy = () => {
     }
     function handleOnTouchEnd() {
         clearTimeout(timerRef.current);
+        setAction("");
     }
 
     function setTimer() {
@@ -38,20 +37,17 @@ const Dummy = () => {
             setAction("longpress");
         }, 500);
     }
-    return (
-        <div className='cbody bg-base-100'>
-            <button
-                onClick={handleOnClick}
-                onMouseUp={handleOnMouseUp}
-                onMouseDown={handleOnMouseDown}
-                onTouchStart={handleOnTouchStart}
-                onTouchEnd={handleOnTouchEnd}
 
-                className='btn btn-primary'>
-                Button
-            </button>
-        </div>
-    );
+    return {
+        action,
+        handlers: {
+            onClick: handleOnClick,
+            onMouseUp: handleOnMouseUp,
+            onMouseDown: handleOnMouseDown,
+            onTouchStart: handleOnTouchStart,
+            onTouchEnd: handleOnTouchEnd
+        }
+    }
 };
 
-export default Dummy;
+export default useLongPress;

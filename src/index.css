@@ -43,3 +43,39 @@
   align-items: center;
   perspective: 500px;
 }
+
+.react-container0:hover > img {
+  transform: translateY(-100%);
+}
+
+.react-container1:hover > img {
+  transform: translateY(-100%);
+}
+
+.react-container2:hover > img {
+  transform: translateY(-100%);
+}
+
+.react-container3:hover > img {
+  transform: translateY(-100%);
+}
+
+.react-container4:hover > img {
+  transform: translateY(-100%);
+}
+
+.react-container5:hover > img {
+  transform: translateY(-100%);
+}
+
+.player-wrapper {
+  width: auto;
+  height: auto;
+}
+.react-player {
+  padding-top: 56.25%;
+}
+
+.react-player > div {
+  position: absolute;
+}

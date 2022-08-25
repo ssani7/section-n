@@ -9,25 +9,21 @@ const useDBUser = () => {
     const [loadingData, setLoadingData] = useState(true);
 
     useEffect(() => {
-        if (loading) {
-            setLoadingData(true);
-        }
-
-        if (user && !loading && userFromDb) {
+        if (!user && !loading) {
             setLoadingData(false);
         }
 
-        if (user) {
+        if (user && !loading) {
             axios.get(`https://section-n-diu-server.herokuapp.com/user/${user?.email}`)
                 .then(res => {
+                    setLoadingData(false);
                     if (res.status === 200) {
                         setUserFromDb(res.data);
-                        setLoadingData(false);
                     }
                 })
                 .catch(err => {
                     console.log(err)
-                    setLoadingData(false)
+                    setLoadingData(false);
                 })
         }
     }, [user, loading])

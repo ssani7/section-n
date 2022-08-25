@@ -69,7 +69,7 @@ const Header = ({ theme, setTheme }) => {
     return (
         <div className={`navbar ${changeBg ? 'bg-base-300' : 'bg-transparent'} fixed top-0 z-40 px-3 md:px-6 transition-all duration-700`}>
             <div className="flex-1">
-                <Link to='/' className="font-bold normal-case text-base md:text-2xl great-vibes">Section N</Link>
+                <Link to='/' className="font-bold normal-case text-lg md:text-3xl great-vibes">Section N</Link>
             </div>
             <div className="flex justify-end w-2/3 md:w-1/2 xl:w-1/4">
 
@@ -91,9 +91,9 @@ const Header = ({ theme, setTheme }) => {
                             </li>
                         </CustomLink>
 
-                        <CustomLink to='/memes'>
+                        {/* <CustomLink to='/memes'>
                             <li onClick={() => setUsCollapse(false)} className='hover:badge-ghost  active:bg-primary px-4 py-2 rounded-lg'>Memes</li>
-                        </CustomLink>
+                        </CustomLink> */}
 
                         {/* <CustomLink to='/'>
                             <li onClick={() => setCollapse(false)} className='hover:badge-ghost  active:bg-primary px-4 py-2 rounded-lg'>Important Links</li>
@@ -146,53 +146,63 @@ const Header = ({ theme, setTheme }) => {
 
                     </label>
                 </div>
+
                 {
-                    user && userData
-                        ? <div className="dropdown dropdown-end">
-                            <label tabIndex="0" className="btn btn-ghost btn-circle avatar">
-                                {
-                                    (loadingData)
-                                        ? <div className="animate-pulse w-10 md:w-16 rounded-full bg-slate-700 ">
-                                        </div>
-                                        : <div className="w-10 md:w-16 rounded-full">
-                                            <img src={userData?.photoURL || "https://i.ibb.co/pzpVdPV/no-user-image-icon-3.jpg"} alt='' />
-                                        </div>
+                    (loading || loadingData)
+                        ? (
+                            <span className="animate-pulse w-7 h-7 md:w-10 md:h-10 rounded-full bg-slate-700 ">
+                            </span>)
+                        : <>
+                            {
+                                (user)
+                                    ? <div className="dropdown dropdown-end">
+                                        <label tabIndex="0" className="btn btn-ghost btn-circle avatar">
+                                            {
+                                                (loadingData)
+                                                    ? <div className="animate-pulse w-10 md:w-16 rounded-full bg-slate-700 ">
+                                                    </div>
+                                                    : <div className="w-10 md:w-16 rounded-full">
+                                                        <img src={userData?.photoURL || "https://i.ibb.co/pzpVdPV/no-user-image-icon-3.jpg"} alt='' />
+                                                    </div>
 
-                                }
+                                            }
 
-                            </label>
-                            <ul tabIndex="0" className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
-                                <li>
-                                    <Link to={`/userProfile/${userData?.email}/self`}>
-                                        Profile
-                                    </Link>
-                                </li>
-                                <li>
-                                    {
-                                        userData?.portfolio
-                                            ? <Link to={`/userPortfolio/${userData?.email}/self`}>
-                                                Portfolio
-                                            </Link>
-                                            : <Link to='/editPortfolio'>
-                                                Create Portfolio
-                                            </Link>
-                                    }
-                                </li>
-                                <li><Link to='/settings'><span>Settings</span></Link></li>
-                                {
-                                    isAdmin && <li><Link to='/manageData'>Manage Data
-                                        <span className="badge">Admin</span>
-                                    </Link></li>
-                                }
-                                <li><span onClick={handleSignOut}>Logout</span></li>
-                            </ul>
-                        </div>
+                                        </label>
+                                        <ul tabIndex="0" className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
+                                            <li>
+                                                <Link to={`/userProfile/${userData?.email}/self`}>
+                                                    Profile
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                {
+                                                    userData?.portfolio
+                                                        ? <Link to={`/userPortfolio/${userData?.email}/self`}>
+                                                            Portfolio
+                                                        </Link>
+                                                        : <Link to='/editPortfolio'>
+                                                            Create Portfolio
+                                                        </Link>
+                                                }
+                                            </li>
+                                            <li><Link to='/settings'><span>Settings</span></Link></li>
+                                            {
+                                                isAdmin && <li><Link to='/manageData'>Manage Data
+                                                    <span className="badge">Admin</span>
+                                                </Link></li>
+                                            }
+                                            <li><span onClick={handleSignOut}>Logout</span></li>
+                                        </ul>
+                                    </div>
 
 
-                        : <div className="dropdown dropdown-end">
-                            <Link className='text-sm md:text-xl font-bold my-auto whitespace-nowrap' to='/login'>Sign In</Link>
-                        </div>
+                                    : <div className="dropdown dropdown-end">
+                                        <Link className='text-sm md:text-xl font-bold my-auto whitespace-nowrap' to='/login'>Sign In</Link>
+                                    </div>
+                            }
+                        </>
                 }
+
             </div>
 
 

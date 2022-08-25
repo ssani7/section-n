@@ -29,11 +29,13 @@ const UserProfile = () => {
         triggerOnce: true
     })
 
-    if (isLoading) {
+    if (isLoading || loading) {
         return <NLoading />
     }
 
     if (option === "self" && !user) return <Navigate to="/login" state={{ from: location }} replace />;
+
+    if (option === "self" && (user?.email !== email)) return <Navigate to={`/userProfile/${user?.email}/self`} state={{ from: location }} replace />;
 
     return (
         <>
@@ -95,6 +97,10 @@ const UserProfile = () => {
                             {
                                 option === "self"
                                     ? (<>
+                                        {
+                                            userFromDb?.verification === "verified" || <button onClick={() => navigate('/settings/verify')} className='link link-hover mt-1 md:mt-3 flex items-center text-2xs md:text-base w-fit xl:text-2xl xl:mt-5 cursor-pointer'><FontAwesomeIcon icon={faUserPen} className='mr-4 w-3 h-3 md:h-5 md:w-5 xl:w-6 xl:h-6' />Verify Account and Become a Celebrity?</button>
+                                        }
+
                                         <button onClick={() => navigate('/settings')} className='link link-hover mt-1 md:mt-3 flex items-center text-2xs md:text-base w-fit xl:text-2xl xl:mt-5 cursor-pointer'><FontAwesomeIcon icon={faUserPen} className='mr-4 w-3 h-3 md:h-5 md:w-5 xl:w-6 xl:h-6' />Edit Profile</button>
 
                                         <button onClick={() => navigate('/editPortfolio')} className='link link-hover mt-1 md:mt-3 flex items-center text-2xs md:text-base w-fit xl:text-2xl xl:mt-5 cursor-pointer'><FontAwesomeIcon icon={faUserTie} className='mr-4 w-3 h-3 md:h-5 md:w-5 xl:w-6 xl:h-6' />
@@ -102,11 +108,6 @@ const UserProfile = () => {
                                         </button>
                                     </>)
                                     : (<>
-                                        {
-                                            userFromDb?.verification === "verified" || <button onClick={() => navigate('/settings/verify')} className='link link-hover mt-1 md:mt-3 flex items-center text-2xs md:text-base w-fit xl:text-2xl xl:mt-5 cursor-pointer'><FontAwesomeIcon icon={faUserPen} className='mr-4 w-3 h-3 md:h-5 md:w-5 xl:w-6 xl:h-6' />Verify Account and Become a Celebrity?</button>
-                                        }
-
-
                                         {
                                             userFromDb?.portfolio && <p data-tip="Professional Portfolio" className='mt-1 md:mt-3 flex items-center text-2xs md:text-base w-fit xl:text-xl xl:mt-5 tooltip'>
                                                 <FontAwesomeIcon icon={faUserTie} className="w-3 h-3 md:h-5 md:w-5 xl:w-6 xl:h-6 fill-red-700 mr-4" />

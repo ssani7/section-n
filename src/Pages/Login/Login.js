@@ -29,11 +29,11 @@ const Login = () => {
 
     const token = useToken();
 
+    if (sending) return <NLoading />
+
     if (token) {
         navigate(from, { replace: true });
     }
-
-    if (sending) return <NLoading />
 
     const handleReset = async () => {
         await sendPasswordResetEmail(email);

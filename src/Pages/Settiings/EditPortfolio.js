@@ -13,7 +13,7 @@ import useDBUser from '../../hooks/useDBUser';
 import NLoading from '../Shared/NLoading';
 import { useNavigate } from 'react-router-dom';
 
-const ghostInput = "w-full bg-transparent outline-none focus:border-b overflow-hidden placeholder:my-10  placeholder:text-gray-500";
+export const ghostInput = "w-full bg-transparent outline-none focus:border-b overflow-hidden placeholder:my-10  placeholder:text-gray-500";
 
 const container = {
     hidden: { opacity: 0, scale: 0 },

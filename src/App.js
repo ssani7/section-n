@@ -59,6 +59,8 @@ function App() {
           <Route index path="/courses/:semesterName" element={<SemesterView />}></Route>
         </Route>
 
+        <Route path='/memes/:postId' element={<RequireVerified><Memes /></RequireVerified>}></Route>
+
         <Route path='/memes' element={<RequireVerified><Memes /></RequireVerified>}></Route>
 
         <Route path='/addAchievement' element={<RequireAuth><AddAchievement /></RequireAuth>}></Route>
@@ -78,6 +80,8 @@ function App() {
         <Route path='/portfolio' element={<RequireVerified> <Portfolio /></RequireVerified>}></Route>
         <Route path='/editPortfolio' element={<RequireAuth><EditPortfolio /></RequireAuth>}></Route>
         <Route path='*' element={<NotFound />}></Route>
+
+        <Route path='/dummy' element={<Dummy />}></Route>
       </Routes>
       <ToastContainer
         pauseOnFocusLoss={false}
