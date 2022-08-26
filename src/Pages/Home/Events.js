@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer';
 import { useQuery } from 'react-query';
-import { addDays, format } from 'date-fns'; sdf
+import { addDays, format } from 'date-fns';
 import Loading from '../Shared/Loading';
 import { useState } from 'react';
 import { useEffect } from 'react';

@@ -7,6 +7,7 @@ import { Link, useMatch, useNavigate, useResolvedPath } from 'react-router-dom';
 import auth from '../../../firebase.init';
 import useAdmin from '../../../hooks/useAdmin';
 import useDBUser from '../../../hooks/useDBUser';
+import useToken from '../../../hooks/useToken';
 
 const Header = ({ theme, setTheme }) => {
     const navigate = useNavigate();
@@ -19,7 +20,7 @@ const Header = ({ theme, setTheme }) => {
     const [userData, loadingData] = useDBUser();
     const [isAdmin, adminLoading] = useAdmin();
 
-    // const token = useToken();
+    const token = useToken();
 
     function CustomLink({ children, to, ...props }) {
         let resolved = useResolvedPath(to);
