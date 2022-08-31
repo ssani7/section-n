@@ -67,6 +67,8 @@ const Header = ({ theme, setTheme }) => {
         }
     }
     window.addEventListener('scroll', handleChangeBg);
+
+    // console.log({ user, userData })
     return (
         <div className={`navbar ${changeBg ? 'bg-base-300' : 'bg-transparent'} fixed top-0 z-40 px-3 md:px-6 transition-all duration-700`}>
             <div className="flex-1">

@@ -57,17 +57,37 @@ const Events = () => {
         }
     }
     if (isLoading) return <Loading />
+
     return (
         <div className='w-full'>
             {
                 (events.length > 0) && <motion.div ref={ref} initial='hidden' animate={`${inView && 'show'}`} variants={container} className='border-y text-center py-5 md:py-10' >
-                    <motion.h1 className='text-xl md:text-3xl font-bold' variants={item}>{events.length > 1 ? "Upcoming Events" : "Upcoming Event"}</motion.h1>
+                    <motion.h1 className='text-xl md:text-3xl font-semibold' variants={item}>{events.length > 1 ? "Upcoming Events" : "Upcoming Event"}</motion.h1>
                     {
-                        events && events.map((event, i) => <div key={i}>
-                            <motion.h1 variants={item} className='text-2xl mt-6 md:text-5xl font-bold poppins md:mt-8'>{event.name}</motion.h1>
-                            <motion.h1 variants={item} className='mt-2 md:text-3xl md:mt-6 poppins'>{(event.date)}</motion.h1>
-                            <motion.h1 variants={item} className='mt-2 md:text-2xl md:mt-4 poppins'>{(event.time)}</motion.h1>
-                        </div>)
+                        events && events.map((event, i) => (
+                            <div key={i}>
+                                <motion.h1 variants={item} className='text-2xl mt-6 md:text-5xl font-bold poppins md:mt-10'>{event.name}</motion.h1>
+                                {
+                                    event.guest && (
+                                        <>
+                                            <motion.h1 variants={item} className='text-xl mt-4 md:text-3xl'>
+                                                featuring
+                                            </motion.h1>
+                                            <motion.h1 variants={item} className='text-2xl mt-4 md:text-5xl font-bold poppins'>
+                                                {event.guest}
+                                            </motion.h1>
+                                        </>
+                                    )
+                                }
+                                <motion.h1 variants={item} className='mt-2 md:text-3xl md:mt-7 poppins'>{(event.date)}</motion.h1>
+
+                                <motion.h1 variants={item} className='flex justify-center mt-2 md:mt-5'>
+                                    <h1 className='md:text-2xl poppins mr-2'>{(event.startTime)}</h1>
+                                    {
+                                        event.endTime && <h1 className='md:text-2xl poppins'>to {event.endTime}</h1>
+                                    }
+                                </motion.h1>
+                            </div>))
                     }
                 </motion.div >
             }

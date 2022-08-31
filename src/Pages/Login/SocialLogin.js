@@ -4,7 +4,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import auth from '../../firebase.init'
 import google from '../../images/icons/google.png'
 import facebook from '../../images/icons/facebook.png'
-import useToken from '../../hooks/useToken';
 
 const SocialLogin = () => {
     const [signInWithGoogle, user, loading, error] = useSignInWithGoogle(auth);
@@ -32,6 +31,7 @@ const SocialLogin = () => {
             {(error || fbError) && <small className='text-error'>{error?.message || fbError?.message}</small>}
         </>
     );
+
 };
 
 export default SocialLogin;

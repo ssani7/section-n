@@ -13,9 +13,9 @@ const Login = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
 
     const navigate = useNavigate();
-    const location = useLocation();
     const [email, setEmail] = useState('');
 
+    const location = useLocation();
     const from = location.state?.from?.pathname || "/";
 
     const [

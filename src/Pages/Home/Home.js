@@ -54,7 +54,7 @@ const Home = () => {
         setRoutineImg(routine?.routineData?.routineImg)
     }, [routine])
 
-    if (isLoading || loading) return <NLoading />
+    // if (loadingUser || loading) return <NLoading />
 
     const uploadRoutine = async (e) => {
         const image = e.target.files[0];
