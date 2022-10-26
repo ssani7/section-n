@@ -1,22 +1,24 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { useAuthState, useUpdateEmail, useUpdatePassword, useUpdateProfile } from 'react-firebase-hooks/auth';
 import { useForm } from 'react-hook-form'
-import { useQuery } from 'react-query'
 import auth from '../../firebase.init';
 import Loading from '../Shared/Loading';
 import { toast } from 'react-toastify'
 import { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import useDBUser from '../../hooks/useDBUser';
+import { updateProfile, updateEmail, updatePassword } from "firebase/auth";
+import { current } from 'daisyui/src/colors';
 
 const EditProfile = () => {
-    const [user, loading] = useAuthState(auth);
     const [updating, setUpdating] = useState(false);
+    const [imgLoading, setImgLoading] = useState(false);
     const [visible, setvisible] = useState(false);
     const [password, setPassword] = useState('');
     const [currentUser, setCurrentUser] = useState({
         displayName: "",
+        photoURL: "",
         email: "",
         varsity: "",
         degree: "",
@@ -27,9 +29,14 @@ const EditProfile = () => {
         linkedin: ""
     })
 
-    const [updateProfile, pUpdating, pError] = useUpdateProfile(auth);
-    const [updateEmail, emUpdating, emError] = useUpdateEmail(auth);
-    const [updatePassword, passUpdating, passError] = useUpdatePassword(auth);
+    const [userData, loadingData] = useDBUser();
+
+    useEffect(() => {
+        setCurrentUser(userData)
+    }, [userData])
+
+    const [emError, setEmError] = useState()
+    const [passError, setPassError] = useState()
 
     const { register,
         handleSubmit,
@@ -43,45 +50,31 @@ const EditProfile = () => {
         shouldUnregister: true
     });
 
-    const { isLoading, data: userData, refetch } = useQuery(['update', user], () => fetch(`https://section-n-diu-server.herokuapp.com/user/${user?.email}`).then(res => res.json()));
-
-
-
-
     const updateUserDb = async (oldUser, newUser) => {
         setUpdating(true);
-        await axios.put(`https://section-n-diu-server.herokuapp.com/updateUser?id=${oldUser?._id}&verification=${oldUser?.verification}&studentId=${oldUser?.id}`, newUser, {
+        axios.put(`https://section-n-diu-server.herokuapp.com/user/update/${oldUser?._id}/${oldUser?.verification}/${newUser?.id || undefined}`, newUser, {
             headers: {
                 "content-type": "application/json"
             }
         })
             .then(res => {
                 if (res.data.modifiedCount > 0) {
-                    refetch();
+                    // refetch();
                     reset();
                     toast.success("Updated Profile");
-                    setUpdating(false);
                 }
-
-
+                else {
+                    toast.error("Nothing Updated");
+                }
+                setUpdating(false);
             })
             .catch(err => {
                 toast.error("Please login again or try again later")
                 setUpdating(false);
                 reset();
-                refetch();
+                // refetch();
                 console.log(err)
             })
-    }
-
-    const checkEmail = async (updatedUser) => {
-        if (user?.email !== userData.email) {
-            updateUserDb(userData, updatedUser);
-            toast.success("Updated Email");
-        }
-        else {
-            toast.error("Something went wrong, Please try again later")
-        }
     }
 
     useEffect(() => {
@@ -101,101 +94,124 @@ const EditProfile = () => {
             unregister("password");
         }
 
-
-
     }, [password, unregister, getValues, register, reset]);
 
-    useEffect(() => {
-        setCurrentUser(userData);
-    }, [userData])
+    async function handleImage(e) {
+        const formData = new FormData();
+        formData.append('image', e.target.files[0]);
+        const imageApiKey = "906bfdafb7a4a5b92021d570714ff50f";
 
-    const handlePassword = async () => {
-        const confirm = window.confirm("Password Change Korlam Kintu?!");
-        if (confirm) {
-
-            updatePassword(password);
-
-            if (passError) {
-                toast.error(passError.message)
+        if (e.target.files[0]) {
+            try {
+                setImgLoading(true)
+                const imgResponse = await axios.post(`https://api.imgbb.com/1/upload?key=${imageApiKey}`, formData)
+                if (imgResponse.status === 200) {
+                    const photoURL = imgResponse.data.data.url;
+                    setCurrentUser({ ...currentUser, photoURL });
+                }
+            } catch (error) {
+                console.log(error);
+                return toast.error(error.message)
             }
-            else {
-                toast.success("Changed Password")
+            finally {
+                setImgLoading(false)
             }
+
         }
-        setUpdating(false)
     }
 
     const onSubmit = async (data) => {
         setUpdating(true);
 
-        const formData = new FormData();
-        formData.append('image', data.image[0]);
-        const imageApiKey = "906bfdafb7a4a5b92021d570714ff50f";
+        let updateCount = 0;
+        let updatedUser = {};
 
-        let updatedUser = {
-            displayName: currentUser?.displayName,
-            photoURL: currentUser?.photoURL,
-            email: currentUser.email,
-            varsity: currentUser?.varsity,
-            degree: currentUser?.degree,
-            id: currentUser?.id,
-            blood: currentUser?.blood,
-            fb: currentUser?.fb,
-            linkedin: currentUser?.linkedin,
-            twitter: currentUser?.twitter
-        };
+        if (currentUser.photoURL !== userData?.photoURL) {
+            try {
+                await updateProfile(auth.currentUser, { photoURL: currentUser?.photoURL });
+                updatedUser = { ...updatedUser, photoURL: current?.photoURL };
+                ++updateCount;
 
-        if (data.image[0]) {
-            await axios.post(`https://api.imgbb.com/1/upload?key=${imageApiKey}`, formData)
-                .then(res => {
-                    if (res.status === 200) {
-                        setUpdating(false)
-                        const photoURL = res.data.data.url;
-                        updateProfile({ photoURL });
-                        updatedUser = { ...updatedUser, photoURL }
-                        updateUserDb(userData, updatedUser)
-                            .then(() => window.location.reload(false))
-                        toast.success("Updated DP");
-                    }
-                })
+            } catch (error) {
+                return toast.error(error.message)
+            }
         }
-        else if (currentUser?.email !== userData?.email) {
-            await updateEmail(currentUser?.email);
-            updatedUser = { ...updatedUser, email: currentUser?.email };
-            await checkEmail(updatedUser);
-            setUpdating(false)
+
+        if (currentUser?.email !== userData?.email) {
+            try {
+                setUpdating(true)
+                await updateEmail(auth.currentUser, currentUser.email)
+                updatedUser = { ...updatedUser, email: currentUser?.email }
+                ++updateCount;
+
+            } catch (error) {
+                setEmError(error.message)
+                return toast.error(error.message)
+            }
+            finally {
+                setUpdating(false)
+            }
 
         }
 
-        else if (userData?.displayName !== currentUser?.displayName) {
-            updateProfile({ displayName: currentUser?.displayName }).then(() => {
-                if (!pError) {
-                    updateUserDb(userData, updatedUser);
-                }
-                toast.success("Updated Name")
-            })
+        if (userData?.displayName !== currentUser?.displayName) {
+            try {
+                await updateProfile(auth.currentUser, { displayName: currentUser?.displayName });
+                updatedUser = { ...updatedUser, displayName: currentUser.displayName }
+                ++updateCount;
+
+            } catch (error) {
+                return toast.error(error.message)
+            }
         }
 
-        else if (userData?.varsity !== currentUser?.varsity || userData?.degree !== currentUser?.degree || userData?.id !== currentUser?.id || userData?.blood !== currentUser?.blood || userData?.fb !== currentUser?.fb || userData?.linkedin !== currentUser?.linkedin || userData?.twitter !== currentUser?.twitter) {
-            updateUserDb(userData, updatedUser);
+        if (userData?.varsity !== currentUser?.varsity || userData?.degree !== currentUser?.degree || userData?.id !== currentUser?.id || userData?.blood !== currentUser?.blood || userData?.fb !== currentUser?.fb || userData?.linkedin !== currentUser?.linkedin || userData?.twitter !== currentUser?.twitter) {
+            updatedUser = currentUser
+            ++updateCount;
+        }
+
+        if (updateCount > 0) {
+            updateUserDb(userData, updatedUser)
         }
         else if (password) {
-            handlePassword();
+            const confirm = window.confirm("Password Change Korlam Kintu?!");
+            if (confirm) {
+                try {
+                    setUpdating(true)
+                    await updatePassword(auth.currentUser, password);
+                    toast.success("Changed Password")
+
+                } catch (error) {
+                    setPassError(error)
+                    toast.error(error.message)
+                }
+                finally {
+                    setUpdating(false)
+                }
+            }
         }
         else {
             toast.warn("Nothing To Update")
             setUpdating(false);
         }
+
+        setUpdating(false)
+
     }
 
 
-    if (loading || isLoading) return <Loading />
+    if (loadingData) return <Loading />
 
     return (
         <div className='bg-base-100 mx-auto w-full flex flex-col mb-20 md:mb-0'>
             <div className='flex flex-col md:flex-row w-full h-full px-5 md:items-center'>
-                <div className='w-auto h-auto max-h-screen md:max-w-sm 2xl:max-w-2xl rounded-3xl mx-auto'>
-                    <img src={userData?.photoURL} alt="" className='w-full h-full rounded-3xl object-cover' />
+                <div className='w-auto h-auto max-h-screen md:max-w-sm 2xl:max-w-xl rounded-3xl mx-auto'>
+                    {
+                        imgLoading
+                            ? <div className="w-16 h-16 border-b-2 border-info-content rounded-full animate-spin"></div>
+                            : <img src={currentUser?.photoURL} alt="" className='w-full h-full rounded-3xl object-cover' />
+                    }
+
                 </div>
 
                 <form className='w-auto md:w-2/5 lg:max-w-3xl mt-6 mx-6 lg:mx-auto' onSubmit={handleSubmit(onSubmit)}>
@@ -205,7 +221,9 @@ const EditProfile = () => {
                             <label className="label">
                                 <span className="label-text">Shundor Ekta Pic Den </span>
                             </label>
-                            <input type="file" className="input input-bordered w-full" {...register("image")} />
+                            <input type="file" className="input input-bordered w-full" {...register("image", {
+                                onChange: e => handleImage(e)
+                            })} />
                             {errors?.image && <span className='text-error text-sm text-center'>{errors?.image?.message}</span>}
                         </div>
 
@@ -226,7 +244,7 @@ const EditProfile = () => {
                             <input type="text" value={currentUser?.email} placeholder="Update Email Address here" className="input input-bordered w-full" {...register("email", {
                                 onChange: e => setCurrentUser({ ...currentUser, email: e.target.value }),
                                 pattern: {
-                                    value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                                    // value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
                                     message: "Provide a valid email"
                                 }
                             })} />
@@ -343,7 +361,7 @@ const EditProfile = () => {
                     </div>
 
                     {
-                        (updating || emUpdating || pUpdating || passUpdating) ? <button className="btn w-full mt-6 normal-case loading">Updating Profile</button>
+                        (updating) ? <button className="btn w-full mt-6 normal-case loading">Updating Profile</button>
                             : <input className='btn btn-primary w-full mt-6 normal-case' type="Submit" />
                     }
                 </form>

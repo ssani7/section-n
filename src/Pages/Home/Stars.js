@@ -29,15 +29,13 @@ const Stars = () => {
         "triggerOnce": true
     });
 
-    useEffect(() => {
-        window.scrollTo(0, 0)
-    }, [])
+    // useEffect(() => {
+    //     window.scrollTo(0, 0)
+    // }, [])
 
     if (isLoading) return <Loading />
 
     stars = length ? stars : stars.slice(0, 4);
-
-
 
 
     return (
@@ -61,7 +59,7 @@ const Stars = () => {
                         }}>
                         <div className={`hero-content flex-col ${(i + 1) % 2 === 0 ? 'lg:flex-row-reverse' : 'lg:flex-row'} w-full justify-evenly h-full`}>
                             <motion.div variants={item} className="h-1/2 lg:w-1/2 lg:h-96">
-                                <img src={star.image} className='h-full lg:h-full w-full shadow-2xl object-cover rounded-lg transition-all' alt='' />
+                                <img src={star.image} className='h-full lg:h-full w-full object-contain rounded-xl transition-all' alt='' />
                             </motion.div>
 
                             <div className='h-1/2 md:h-auto lg:w-1/3 lg:mt-0'>

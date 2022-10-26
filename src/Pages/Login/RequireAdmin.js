@@ -5,13 +5,12 @@ import {
 } from "react-router-dom";
 import auth from "../../firebase.init";
 import useAdmin from "../../hooks/useAdmin";
-import useToken from "../../hooks/useToken";
 import NLoading from '../Shared/NLoading';
 
 function RequireAdmin({ children }) {
     const [user, loading] = useAuthState(auth);
     const [isAdmin, adminLoading] = useAdmin();
-    const token = useToken()
+
     let location = useLocation();
 
     if (loading || adminLoading) {

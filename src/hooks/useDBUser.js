@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { signOut } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import auth from '../firebase.init';
@@ -19,6 +20,9 @@ const useDBUser = () => {
                     setLoadingData(false);
                     if (res.status === 200) {
                         setUserFromDb(res.data);
+                    }
+                    else {
+                        signOut(auth);
                     }
                 })
                 .catch(err => {

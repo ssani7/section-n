@@ -1,7 +1,6 @@
 import axios from 'axios';
 import React from 'react';
 import { useState } from 'react';
-import { useQuery } from 'react-query';
 import { toast } from 'react-toastify';
 
 const AchvmntReqRow = ({ request, refetch, index }) => {

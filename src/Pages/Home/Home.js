@@ -16,6 +16,7 @@ import axios from 'axios';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { format, parse } from 'date-fns';
+import Loading from '../Shared/Loading';
 
 
 
@@ -25,10 +26,11 @@ const Home = () => {
     const inputRef = useRef();
     const [updating, setUpdating] = useState(false);
     const [routineImg, setRoutineImg] = useState('');
+    const [inside, setInside] = useState(false);
 
     const [user, loading] = useAuthState(auth);
 
-    const { isLoading, data: achievementCount } = useQuery('countofAchvment', () => fetch('https://section-n-diu-server.herokuapp.com/achievementCount').then(res => res.json()));
+    const { isLoading, data: achievementCount } = useQuery('countofAchvment', () => fetch('https://section-n-diu-server.herokuapp.com/achievements/count').then(res => res.json()));
 
     const { isLoading: loadingUser, data: userData } = useQuery(['userdata', user], () => fetch(`https://section-n-diu-server.herokuapp.com/user/${user?.email}`).then(res => res.json()));
 
@@ -54,7 +56,7 @@ const Home = () => {
         setRoutineImg(routine?.routineData?.routineImg)
     }, [routine])
 
-    // if (loadingUser || loading) return <NLoading />
+    if (loadingUser || loading) return <NLoading />
 
     const uploadRoutine = async (e) => {
         const image = e.target.files[0];
@@ -135,22 +137,27 @@ const Home = () => {
                 <InView threshold={.2}>
                     {({ inView, ref }) => (
                         <div className='flex flex-col items-center'>
-                            <motion.img ref={ref}
-                                initial="hidden"
-                                animate={`${inView && "visible"}`}
-                                variants={{
-                                    hidden: { opacity: 0 },
-                                    visible: {
-                                        opacity: 1, transition:
-                                        {
-                                            duration: 1.5,
-                                            ease: "easeInOut"
-                                        }
-                                    }
-                                }}
-                                onLoad={() => setUpdating(false)}
-                                className='h-96 w-auto max-w-full md:w-2/5 md:h-auto md:max-h-full object-contain mx-auto'
-                                src={routineImg} alt="" />
+                            {
+                                loadingRoutine
+                                    ? <Loading />
+                                    : <motion.img ref={ref}
+                                        initial="hidden"
+                                        animate={`${inView && "visible"}`}
+                                        variants={{
+                                            hidden: { opacity: 0 },
+                                            visible: {
+                                                opacity: 1, transition:
+                                                {
+                                                    duration: 1.5,
+                                                    ease: "easeInOut"
+                                                }
+                                            }
+                                        }}
+                                        onLoad={() => setUpdating(false)}
+                                        className='h-96 w-auto max-w-full md:w-2/5 md:h-auto md:max-h-full object-contain mx-auto'
+                                        src={routineImg} alt="" />
+                            }
+
 
                             <div className='w-fit mx-auto mt-10 text-center'>
                                 <h2 className='font-semibold'>Updated By : <span className='poppins'>{routine?.routineData?.uploader}</span></h2>
@@ -162,14 +169,18 @@ const Home = () => {
                             <input onChange={(e) => uploadRoutine(e)} type="file" className='hidden' ref={inputRef} />
 
                             <div className='mt-6'>
+                                <span className='group'></span>
                                 {
                                     updating
                                         ? <button
                                             className={`btn btn-primary loading`}>Updating</button>
-                                        : <button
-                                            onClick={() => handleUpload()}
-                                            className={`btn btn-primary`}>Update Routine
-                                        </button>
+                                        : <div className='group w-fit'>
+                                            <div onMouseEnter={() => setInside(true)} onMouseLeave={() => setInside(false)} className={`border-4 absolute btn opacity-0 z-10 ${userData?.verification === "verified" && 'hidden'}`}>Update Routine</div>
+                                            <button
+                                                onClick={() => handleUpload()}
+                                                className={`z-0 btn btn-primary ${(userData?.verification !== "verified" && inside) && "translate-x-40 "} ${userData?.verification !== "verified" && 'btn-disabled'}`}>Update Routine
+                                            </button>
+                                        </div>
                                 }
                             </div>
                         </div>

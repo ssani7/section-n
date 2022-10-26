@@ -14,6 +14,7 @@ import NLoading from '../Shared/NLoading';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { toast } from 'react-toastify'
+import Footer from '../Shared/Footer';
 
 const container = {
     hidden: { opacity: 0, scale: 0 },
@@ -444,6 +445,8 @@ const UserPortfolio = () => {
 
                 )}
             </InView>
+
+            <Footer />
 
         </div>
     );
