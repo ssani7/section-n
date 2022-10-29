@@ -6,8 +6,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import auth from '../../firebase.init';
 import useToken from '../../hooks/useToken';
 import SocialLogin from './SocialLogin';
-import NLoading from '../Shared/NLoading'
 import { toast } from 'react-toastify';
+import NLoading from '../Shared/Loading/NLoading';
 
 const Login = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();

@@ -1,4 +1,5 @@
-import { signOut } from 'firebase/auth';
+import axios from 'axios';
+import { signOut, updateProfile } from 'firebase/auth';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -7,7 +8,7 @@ import auth from '../firebase.init';
 const useToken = () => {
     const [user, loading] = useAuthState(auth);
     const [token, setToken] = useState('');
-    let photo = user?.photoURL;
+    let photo = user?.photoURL || 'https://i.ibb.co/pzpVdPV/no-user-image-icon-3.jpg';
 
     if (user?.photoURL?.includes("facebook")) {
         photo = user.photoURL + "?height=500";
@@ -17,27 +18,31 @@ const useToken = () => {
     }
 
     useEffect(() => {
-        if (user) {
-            fetch(`https://section-n-diu-server.herokuapp.com/user/${user?.email}`, {
-                method: "PUT",
-                headers: {
-                    "content-type": "application/json"
-                },
-                body: JSON.stringify({ email: user.email, photoURL: photo, displayName: user.displayName })
-            })
-                .then(res => {
-                    if (res.status === 401 || res.status === 403) {
-                        signOut(auth);
-                    }
-                    return res.json();
-                })
-                .then(data => {
-                    setToken(data.token);
-                    localStorage.setItem('access-token', data.token)
-                })
+        if (user?.email) {
+            createUser()
+        }
+    }, [user, loading])
+
+    async function createUser() {
+        const res = await axios.put(`https://section-n-diu-server.herokuapp.com/user/${user?.email}`,
+            JSON.stringify({ email: user.email, photoURL: photo, displayName: user.displayName }), {
+            method: "PUT",
+            headers: {
+                "content-type": "application/json"
+            }
+        })
+
+        if (res.status === 401 || res.status === 403) {
+            signOut(auth);
         }
 
-    }, [user])
+        try {
+            await updateProfile(auth.currentUser, { photoURL: photo })
+            return setToken(res?.data?.token);
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     return token;
 };

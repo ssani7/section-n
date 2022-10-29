@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
-import Footer from '../../Shared/Footer';
+import Footer from '../Shared/Footer';
 
 const ManageData = () => {
     const [checked, setChecked] = useState(true);

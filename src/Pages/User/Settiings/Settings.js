@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
-import useDBUser from '../../hooks/useDBUser';
-import NLoading from '../Shared/NLoading';
-import Footer from '../Shared/Footer';
+import useDBUser from '../../../hooks/useDBUser';
+import Footer from '../../Shared/Footer';
+import NLoading from '../../Shared/Loading/NLoading';
 
 
 

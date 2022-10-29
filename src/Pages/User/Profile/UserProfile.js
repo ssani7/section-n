@@ -5,11 +5,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAt, faIdCard, faGraduationCap, faBuildingColumns, faCircleCheck, faUserTie, faUserPen } from '@fortawesome/free-solid-svg-icons';
 import { faFacebookF, faLinkedin, faTwitter } from '@fortawesome/free-brands-svg-icons';
 import { useQuery } from "react-query"
-import NLoading from '../Shared/NLoading';
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import auth from '../../firebase.init';
+import auth from '../../../firebase.init';
+import NLoading from '../../Shared/Loading/NLoading';
+import useToken from '../../../hooks/useToken';
 
 
 const UserProfile = () => {
@@ -18,6 +19,7 @@ const UserProfile = () => {
     const [user, loading] = useAuthState(auth);
     let location = useLocation();
 
+    const token = useToken();
 
     useEffect(() => {
         window.scrollTo(0, 0);

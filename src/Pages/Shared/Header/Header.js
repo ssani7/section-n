@@ -1,8 +1,10 @@
 import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import axios from 'axios';
 import { signOut } from 'firebase/auth';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { useQuery } from 'react-query';
 import { Link, useMatch, useNavigate, useResolvedPath } from 'react-router-dom';
 import auth from '../../../firebase.init';
 import useAdmin from '../../../hooks/useAdmin';
@@ -12,15 +14,25 @@ import useToken from '../../../hooks/useToken';
 const Header = ({ theme, setTheme }) => {
     const navigate = useNavigate();
     const [changeBg, setChangeBg] = useState(false);
-
     const [collapse, setCollapse] = useState(false);
     const [usCollapse, setUsCollapse] = useState(false);
 
     const [user, loading] = useAuthState(auth);
-    const [userData, loadingData] = useDBUser();
     const [isAdmin, adminLoading] = useAdmin();
 
     const token = useToken();
+
+    // const { data: userData, isLoading: loadingData } = useQuery(['userdata', user], () => fetch(`https://section-n-diu-server.herokuapp.com/user/${user?.email}`).then(res => res.json()))
+
+    // console.log(loadingData);
+    // useEffect(() => {
+    //     if (!loading && !user?.email) {
+    //         signOut(auth)
+    //     }
+    // }, [user, loading])
+
+    const [userData, loadingData] = useDBUser();
+
 
     function CustomLink({ children, to, ...props }) {
         let resolved = useResolvedPath(to);
@@ -140,7 +152,7 @@ const Header = ({ theme, setTheme }) => {
                 <div className="dropdown dropdown-end flex items-center mx-3 md:mx-5">
                     <label className="swap swap-rotate">
 
-                        <input className='check' defaultChecked={theme === "darkTheme" ? true : false} onChange={(e) => checked(e)} type="checkbox" />
+                        <input className='check hidden' defaultChecked={theme === "darkTheme" ? true : false} onChange={(e) => checked(e)} type="checkbox" />
 
                         <svg className="swap-on fill-current w-5 h-5 md:h-8 md:w-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" /></svg>
 
@@ -149,65 +161,56 @@ const Header = ({ theme, setTheme }) => {
                     </label>
                 </div>
 
-                {
-                    (loading || loadingData || adminLoading)
-                        ? (
-                            <span className="animate-pulse w-7 h-7 md:w-10 md:h-10 rounded-full bg-slate-700 ">
-                            </span>)
-                        : <>
-                            {
-                                (user)
-                                    ? <div className="dropdown dropdown-end">
-                                        <label tabIndex="0" className="btn btn-ghost btn-circle avatar">
-                                            {
-                                                (loadingData)
-                                                    ? <div className="animate-pulse w-10 md:w-16 rounded-full bg-slate-700 ">
-                                                    </div>
-                                                    : <div className="w-10 md:w-16 rounded-full">
-                                                        <img src={userData?.photoURL || "https://i.ibb.co/pzpVdPV/no-user-image-icon-3.jpg"} alt='' />
-                                                    </div>
-
-                                            }
-
-                                        </label>
-                                        <ul tabIndex="0" className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
-                                            <li>
-                                                <Link to={`/userProfile/${userData?.email}/self`}>
-                                                    Profile
-                                                </Link>
-                                            </li>
-                                            <li>
-                                                {
-                                                    userData?.portfolio
-                                                        ? <Link to={`/userPortfolio/${userData?.email}/self`}>
-                                                            Portfolio
-                                                        </Link>
-                                                        : <Link to='/editPortfolio'>
-                                                            Create Portfolio
-                                                        </Link>
-                                                }
-                                            </li>
-                                            <li><Link to='/settings'><span>Settings</span></Link></li>
-                                            {
-                                                isAdmin && <li><Link to='/manageData'>Manage Data
-                                                    <span className="badge">Admin</span>
-                                                </Link></li>
-                                            }
-                                            <li><span onClick={handleSignOut}>Logout</span></li>
-                                        </ul>
-                                    </div>
-
-
-                                    : <div className="dropdown dropdown-end">
-                                        <Link className='text-sm md:text-xl font-bold my-auto whitespace-nowrap' to='/login'>Sign In</Link>
-                                    </div>
-                            }
-                        </>
-                }
-
             </div>
+            {
+                (loading || loadingData || adminLoading)
+                    ? (
+                        <span className="animate-pulse btn-sm md:btn-md btn-circle bg-slate-700 ">
+                        </span>)
+                    : <>
+                        {
+                            (userData || user)
+                                ? <div className="dropdown dropdown-end">
+                                    <label tabIndex="0" className="btn btn-ghost btn-circle avatar">
+                                        <div className="w-10 md:w-20 rounded-full">
+                                            <img src={userData?.photoURL || user?.photoURL} alt='' />
+                                        </div>
+
+                                    </label>
+                                    <ul tabIndex="0" className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
+                                        <li>
+                                            <Link to={`/userProfile/${user?.email}/self`}>
+                                                Profile
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            {
+                                                userData?.portfolio
+                                                    ? <Link to={`/userPortfolio/${userData?.email}/self`}>
+                                                        Portfolio
+                                                    </Link>
+                                                    : <Link to='/editPortfolio'>
+                                                        Create Portfolio
+                                                    </Link>
+                                            }
+                                        </li>
+                                        <li><Link to='/settings'><span>Settings</span></Link></li>
+                                        {
+                                            isAdmin && <li><Link to='/manageData'>Manage Data
+                                                <span className="badge">Admin</span>
+                                            </Link></li>
+                                        }
+                                        <li><span onClick={handleSignOut}>Logout</span></li>
+                                    </ul>
+                                </div>
 
 
+                                : <div className="dropdown dropdown-end">
+                                    <Link className='text-sm md:text-xl font-bold my-auto whitespace-nowrap' to='/login'>Sign In</Link>
+                                </div>
+                        }
+                    </>
+            }
         </div>
     );
 };

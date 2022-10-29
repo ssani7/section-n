@@ -1,11 +1,11 @@
 import React from 'react';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
-import Loading from '../Shared/Loading';
 import { motion } from "framer-motion";
-import useDBUser from '../../hooks/useDBUser';
 import { toast } from 'react-toastify';
 import { useState } from 'react';
+import useDBUser from '../../../hooks/useDBUser';
+import NLoading from '../../Shared/Loading/NLoading';
 
 const SemesterView = () => {
     const { semesterName } = useParams();
@@ -39,7 +39,7 @@ const SemesterView = () => {
         }
     };
 
-    if (isLoading || loadingData) return <Loading />
+    if (isLoading || loadingData) return <NLoading />
 
     const handleUnlock = (index) => {
         userData?.verification === "verified"

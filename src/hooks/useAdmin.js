@@ -9,18 +9,17 @@ const useAdmin = () => {
     const [adminLoading, setAdminLoading] = useState(true)
 
     useEffect(() => {
-        if (user) {
+        if (!loading) {
             axios.get(`https://section-n-diu-server.herokuapp.com/user/role/${user?.email}`)
                 .then(res => {
-                    setAdminLoading(false)
                     setAdmin(res.data);
                 })
                 .catch(error => {
                     console.log(error);
-                    setAdminLoading(false);
                 })
+                .finally(() => setAdminLoading(false))
         }
-    }, [user])
+    }, [user, loading])
 
     return [admin, adminLoading];
 };

@@ -1,45 +1,62 @@
-import React, { useState } from 'react';
-import { useCreateUserWithEmailAndPassword, useUpdateProfile } from 'react-firebase-hooks/auth';
+import React, { useState, useEffect } from 'react';
+import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { useForm } from 'react-hook-form';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import auth from '../../firebase.init';
-import useToken from '../../hooks/useToken';
-import NLoading from '../Shared/NLoading';
 import SocialLogin from './SocialLogin';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
+import useToken from '../../hooks/useToken';
 
 const Register = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
+    const [displayName, setDisplayName] = useState('');
     const [password, setPassword] = useState('');
-
-
+    const [updating, setUpdating] = useState('');
+    const [updateError, setUpdateError] = useState('');
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname || "/";
 
-    const [
-        createUserWithEmailAndPassword,
-        user,
-        loading,
-        error,
-    ] = useCreateUserWithEmailAndPassword(auth);
+    // const [
+    //     createUserWithEmailAndPassword,
+    //     user,
+    //     loading,
+    //     error,
+    // ] = useCreateUserWithEmailAndPassword(auth);
 
-    const [updateProfile, updating, updateError] = useUpdateProfile(auth);
+    // useEffect(() => {
+    //     if (user) {
+    //         console.log(user);
+    //         createNewProfile(displayName)
+    //     }
+    // }, [user])
+
+    // const [loading, setLoading] = useState('');
+    // const [error, setError] = useState('');
 
     const token = useToken();
 
-    if (updating || loading) return <NLoading />
-
-    if (token) {
-        navigate(from, { replace: true });
-    }
 
     const onSubmit = async (data) => {
-        const displayName = data.name;
         const email = data.email;
+        const displayName = data.name;
 
-        await createUserWithEmailAndPassword(email, password);
-        await updateProfile({ displayName, photoURL: 'https://i.ibb.co/pzpVdPV/no-user-image-icon-3.jpg' });
+        setUpdating(true);
+        try {
+            setUpdateError("")
+            await createUserWithEmailAndPassword(auth, email, password);
+            await updateProfile(auth.currentUser, { displayName, photoURL: 'https://i.ibb.co/pzpVdPV/no-user-image-icon-3.jpg' })
+            navigate(from, { replace: true });
+
+        } catch (err) {
+            console.log(err);
+            setUpdateError(err)
+        }
+        finally {
+            setUpdating(false)
+        }
     }
+
     return (
         <div className='pt-20 bg-base-100'>
             <div className="card mx-6 bg-base-200 shadow-xl md:max-w-lg md:mx-auto">
@@ -50,7 +67,8 @@ const Register = () => {
                             <span className="label-text">Name</span>
                         </label>
                         <input type="text" placeholder="Your Name" className="input input-bordered w-full focus:outline-none focus:ring-2" {...register('name', {
-                            required: 'Name is required'
+                            required: 'Name is required',
+                            onChange: e => setDisplayName(e.target.value)
                         })} />
                         {errors?.name && <small className='text-error'>{errors.name.message}</small>}
 
@@ -60,7 +78,7 @@ const Register = () => {
                         <input type="email" placeholder="Your Email Address" className="input input-bordered w-full focus:outline-none focus:ring-2" {...register('email', {
                             required: 'Email is required',
                             pattern: {
-                                value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                                value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
                                 message: 'Provide a valid email address'
                             }
                         })} />
@@ -75,7 +93,7 @@ const Register = () => {
                                 size: p => p.length >= 6 || 'minimum 6 chatacter password required',
                                 character: p => /[a-zA-Z]/.test(p) || 'Must contain a character',
                                 number: p => /\d/.test(p) || 'Must contain a number',
-                                special: p => /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(p) || 'Must contain a special character',
+                                special: p => /[ `!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~]/.test(p) || 'Must contain a special character',
                             },
                             onBlur: e => setPassword(e.target.value)
                         })} />
@@ -95,12 +113,12 @@ const Register = () => {
                         <p className='text-sm mt-3'>Already have an account? <Link to='/login' className='text-sky-600 link link-hover'>Log in here</Link></p>
 
                         {
-                            (updating || loading)
+                            (updating)
                                 ? <button className="btn btn-primary mt-6 loading normal-case">Creating Account</button>
                                 : <input className='btn mt-6 normal-case' type="submit" value="Sign Up" />
                         }
 
-                        {(error || updateError) && <small className='text-error'>{error.message || updateError.message}</small>}
+                        {(updateError) && <small className='text-error'>{updateError?.message}</small>}
                     </form>
 
                     <SocialLogin></SocialLogin>

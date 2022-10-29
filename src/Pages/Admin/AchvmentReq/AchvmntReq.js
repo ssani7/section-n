@@ -1,12 +1,13 @@
 import React from 'react';
 import { useQuery } from 'react-query';
-import Loading from '../../../Shared/Loading';
+import NLoading from '../../Shared/Loading/NLoading';
 import AchvmntReqRow from './AchvmntReqRow';
 
 const AchvmntReq = () => {
     const { isLoading, data: requests, refetch } = useQuery('stars', () => fetch('https://section-n-diu-server.herokuapp.com/achievements/requests').then(res => res.json()));
 
-    if (isLoading) return <Loading />
+    if (isLoading) return <NLoading />
+
     if (requests.length === 0) return <h2 className='w-full text-center text-3xl  font-semibold p-10'>No Achievement Request. Lazy day. Chill ;)</h2>
     return (
         <div className="overflow-x-auto w-full">

@@ -1,9 +1,9 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect } from 'react';
 import { useQuery } from 'react-query';
-import NLoading from '../Shared/NLoading';
 import { faCheckCircle } from "@fortawesome/free-solid-svg-icons"
 import { useNavigate } from 'react-router-dom';
+import NLoading from '../../Shared/Loading/NLoading';
 
 
 const Students = () => {

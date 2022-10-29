@@ -1,15 +1,15 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form'
-import auth from '../../firebase.init';
-import Loading from '../Shared/Loading';
 import { toast } from 'react-toastify'
 import { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import useDBUser from '../../hooks/useDBUser';
 import { updateProfile, updateEmail, updatePassword } from "firebase/auth";
 import { current } from 'daisyui/src/colors';
+import NLoading from '../../Shared/Loading/NLoading';
+import auth from '../../../firebase.init';
+import useDBUser from '../../../hooks/useDBUser';
 
 const EditProfile = () => {
     const [updating, setUpdating] = useState(false);
@@ -52,6 +52,7 @@ const EditProfile = () => {
 
     const updateUserDb = async (oldUser, newUser) => {
         setUpdating(true);
+        console.log({ oldUser, newUser });
         axios.put(`https://section-n-diu-server.herokuapp.com/user/update/${oldUser?._id}/${oldUser?.verification}/${newUser?.id || undefined}`, newUser, {
             headers: {
                 "content-type": "application/json"
@@ -62,6 +63,7 @@ const EditProfile = () => {
                     // refetch();
                     reset();
                     toast.success("Updated Profile");
+                    window.location.reload(false);
                 }
                 else {
                     toast.error("Nothing Updated");
@@ -124,12 +126,13 @@ const EditProfile = () => {
         setUpdating(true);
 
         let updateCount = 0;
+        let passUpdate = 0;
         let updatedUser = {};
 
         if (currentUser.photoURL !== userData?.photoURL) {
             try {
                 await updateProfile(auth.currentUser, { photoURL: currentUser?.photoURL });
-                updatedUser = { ...updatedUser, photoURL: current?.photoURL };
+                updatedUser = { ...updatedUser, photoURL: currentUser?.photoURL };
                 ++updateCount;
 
             } catch (error) {
@@ -170,16 +173,17 @@ const EditProfile = () => {
             ++updateCount;
         }
 
-        if (updateCount > 0) {
-            updateUserDb(userData, updatedUser)
-        }
-        else if (password) {
-            const confirm = window.confirm("Password Change Korlam Kintu?!");
+        if (password) {
+            console.log(password);
+            const confirm = window.confirm("Confirm to change password?!");
             if (confirm) {
                 try {
+                    ++passUpdate
                     setUpdating(true)
                     await updatePassword(auth.currentUser, password);
+                    reset()
                     toast.success("Changed Password")
+                    window.location.reload(false);
 
                 } catch (error) {
                     setPassError(error)
@@ -190,7 +194,11 @@ const EditProfile = () => {
                 }
             }
         }
-        else {
+
+        if (updateCount > 0) {
+            updateUserDb(userData, updatedUser)
+        }
+        else if (passUpdate === 0) {
             toast.warn("Nothing To Update")
             setUpdating(false);
         }
@@ -200,7 +208,7 @@ const EditProfile = () => {
     }
 
 
-    if (loadingData) return <Loading />
+    if (loadingData) return <NLoading />
 
     return (
         <div className='bg-base-100 mx-auto w-full flex flex-col mb-20 md:mb-0'>

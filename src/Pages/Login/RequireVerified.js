@@ -6,7 +6,7 @@ import {
 import auth from "../../firebase.init";
 import useDBUser from "../../hooks/useDBUser";
 import useToken from "../../hooks/useToken";
-import NLoading from '../Shared/NLoading';
+import NLoading from "../Shared/Loading/NLoading";
 
 const RequireVerified = ({ children }) => {
     const [user, loading] = useAuthState(auth)

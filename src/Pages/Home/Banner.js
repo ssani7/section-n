@@ -26,6 +26,7 @@ const Banner = () => {
         const slideInterval = setInterval(nextSlide, 10000);
         return () => clearInterval(slideInterval);
     }, [currentSlide]);
+
     return (
         <div className='w-full h-72 md:min-h-screen mx-auto relative overflow-hidden'>
             {

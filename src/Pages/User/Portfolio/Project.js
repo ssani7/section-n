@@ -1,7 +1,7 @@
 import React from 'react';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
-import NLoading from '../../Shared/NLoading';
+import NLoading from '../../Shared/Loading/NLoading';
 
 const Project = () => {
     const { email, index } = useParams();

@@ -2,25 +2,25 @@ import { faComment, faImage, faShare } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { useState } from 'react';
-import { ghostInput } from '../Settiings/EditPortfolio';
 import ReactPlayer from 'react-player'
-import haha from '../../images/icons/lol.png'
-import like from '../../images/icons/like.png'
-import sad from '../../images/icons/sad.png'
-import angry from '../../images/icons/angry.png'
-import love from '../../images/icons/heart.png'
-import dislike from '../../images/icons/dislike.png'
-import noReact from '../../images/icons/laughing.png'
+import haha from '../../../images/icons/laughing.png'
+import like from '../../../images/icons/like.png'
+import sad from '../../../images/icons/sad.png'
+import angry from '../../../images/icons/angry.png'
+import love from '../../../images/icons/heart.png'
+import dislike from '../../../images/icons/dislike.png'
+import noReact from '../../../images/icons/laughing.png'
 import { useRef } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import auth from '../../firebase.init';
-import Footer from '../Shared/Footer';
 import { useParams } from 'react-router-dom';
 import { InView } from 'react-intersection-observer';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import NLoading from '../Shared/NLoading';
 import { format } from 'date-fns';
+import auth from '../../../firebase.init';
+import { ghostInput } from '../../User/Settiings/EditPortfolio';
+import Footer from '../../Shared/Footer';
+import NLoading from '../../Shared/Loading/NLoading';
 
 
 const Memes = () => {

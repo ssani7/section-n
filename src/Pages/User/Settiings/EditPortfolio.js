@@ -9,9 +9,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { motion } from "framer-motion"
 import { useRef } from 'react';
 import { toast } from 'react-toastify';
-import useDBUser from '../../hooks/useDBUser';
-import NLoading from '../Shared/NLoading';
 import { useNavigate } from 'react-router-dom';
+import useDBUser from '../../../hooks/useDBUser';
+import NLoading from '../../Shared/Loading/NLoading';
 
 export const ghostInput = "w-full bg-transparent outline-none focus:border-b overflow-hidden placeholder:my-10  placeholder:text-gray-500";
 

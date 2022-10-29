@@ -7,8 +7,8 @@ import { storage } from '../../firebase.init';
 import { ref, uploadBytes, listAll, getDownloadURL } from 'firebase/storage';
 import { toast } from "react-toastify"
 import { useEffect } from 'react';
-import NLoading from '../Shared/NLoading'
-import useDBUser from '../../hooks/useDBUser';
+import useDBUser from '../../hooks/useDBUser'
+import NLoading from '../Shared/Loading/NLoading';
 
 const Slides = () => {
     const [userData, loadingData] = useDBUser();

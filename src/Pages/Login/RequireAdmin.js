@@ -5,7 +5,7 @@ import {
 } from "react-router-dom";
 import auth from "../../firebase.init";
 import useAdmin from "../../hooks/useAdmin";
-import NLoading from '../Shared/NLoading';
+import NLoading from "../Shared/Loading/NLoading";
 
 function RequireAdmin({ children }) {
     const [user, loading] = useAuthState(auth);

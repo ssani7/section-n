@@ -1,7 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion'
 
-const NLoading = () => {
+
+const NLoadingMini = ({ title }) => {
     const icon = {
         hidden: {
             opacity: 0,
@@ -23,8 +24,8 @@ const NLoading = () => {
         }
     };
     return (
-        <div className='cbody bg-base-100'>
-            <div className="container w-72 h-72 bg-base-300">
+        <div className='bg-base-100'>
+            <div className="container w-72 h-72 mx-auto">
                 <motion.svg
                     xmlns="http://www.w3.org/2000/svg" viewBox="16.897 95.742 578.207 600.517"
                     className="item"
@@ -43,8 +44,9 @@ const NLoading = () => {
                     />
                 </motion.svg>
             </div>
+            {title && <p className='text-center poppins'>{title}...</p>}
         </div>
     );
 };
 
-export default NLoading;
+export default NLoadingMini;

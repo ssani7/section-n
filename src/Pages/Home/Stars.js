@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { useQuery } from 'react-query';
-import Loading from '../Shared/Loading';
 import { useInView } from 'react-intersection-observer';
 import { motion } from 'framer-motion'
 import { useNavigate, useParams } from 'react-router-dom';
 import Footer from '../Shared/Footer';
+import NLoadingMini from '../Shared/Loading/NLoadingMini';
 
 
 const Stars = () => {
@@ -29,11 +29,11 @@ const Stars = () => {
         "triggerOnce": true
     });
 
-    // useEffect(() => {
-    //     window.scrollTo(0, 0)
-    // }, [])
+    useEffect(() => {
+        if (length === 'all') return window.scrollTo(0, 0)
+    }, [length])
 
-    if (isLoading) return <Loading />
+    if (isLoading) return <NLoadingMini title="Loading Achievements" />
 
     stars = length ? stars : stars.slice(0, 4);
 

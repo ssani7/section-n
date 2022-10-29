@@ -4,7 +4,7 @@ import {
     Navigate
 } from "react-router-dom";
 import auth from "../../firebase.init";
-import NLoading from '../Shared/NLoading';
+import NLoading from "../Shared/Loading/NLoading";
 
 function RequireAuth({ children }) {
     const [user, loading] = useAuthState(auth);

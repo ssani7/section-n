@@ -3,8 +3,8 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { Link, Outlet } from 'react-router-dom';
-import Footer from '../Shared/Footer';
-import NLoading from '../Shared/NLoading';
+import Footer from '../../Shared/Footer';
+import NLoading from '../../Shared/Loading/NLoading';
 
 
 const Courses = () => {

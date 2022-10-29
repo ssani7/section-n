@@ -1,10 +1,10 @@
 import React from 'react';
 import { useForm } from 'react-hook-form'
 import axios from 'axios'
-import Loading from '../Shared/Loading';
-import useDBUser from '../../hooks/useDBUser';
 import { useState } from 'react';
 import { toast } from "react-toastify"
+import NLoading from '../../Shared/Loading/NLoading';
+import useDBUser from '../../../hooks/useDBUser';
 
 
 const VerifyAcc = () => {
@@ -13,7 +13,7 @@ const VerifyAcc = () => {
     const [fetching, setFetching] = useState(false);
     const [multipleErr, setMultipleErr] = useState('')
 
-    if (loadingData) return <Loading />
+    if (loadingData) return <NLoading />
 
     if (userData?.verification === "verified") {
         return <>
