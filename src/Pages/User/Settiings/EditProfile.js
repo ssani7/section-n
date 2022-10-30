@@ -6,10 +6,10 @@ import { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { updateProfile, updateEmail, updatePassword } from "firebase/auth";
-import { current } from 'daisyui/src/colors';
 import NLoading from '../../Shared/Loading/NLoading';
 import auth from '../../../firebase.init';
 import useDBUser from '../../../hooks/useDBUser';
+import { useUserContext } from '../../../Contexts/UserContex';
 
 const EditProfile = () => {
     const [updating, setUpdating] = useState(false);
@@ -29,7 +29,9 @@ const EditProfile = () => {
         linkedin: ""
     })
 
-    const [userData, loadingData] = useDBUser();
+    // const [userData, loadingData, getUserData] = useDBUser();
+
+    const { userData, loadingData, getUserData } = useUserContext();
 
     useEffect(() => {
         setCurrentUser(userData)
@@ -50,33 +52,33 @@ const EditProfile = () => {
         shouldUnregister: true
     });
 
-    const updateUserDb = async (oldUser, newUser) => {
-        setUpdating(true);
-        console.log({ oldUser, newUser });
-        axios.put(`https://section-n-diu-server.herokuapp.com/user/update/${oldUser?._id}/${oldUser?.verification}/${newUser?.id || undefined}`, newUser, {
-            headers: {
-                "content-type": "application/json"
-            }
-        })
-            .then(res => {
-                if (res.data.modifiedCount > 0) {
-                    // refetch();
-                    reset();
-                    toast.success("Updated Profile");
-                    window.location.reload(false);
+    async function updateUserDb(oldUser, newUser) {
+        try {
+            setUpdating(true);
+            const res = await axios.put(`https://section-n-diu-server.herokuapp.com/user/update/${oldUser?._id}/${oldUser?.verification}/${newUser?.id || undefined}`, newUser, {
+                headers: {
+                    "content-type": "application/json"
                 }
-                else {
-                    toast.error("Nothing Updated");
-                }
-                setUpdating(false);
             })
-            .catch(err => {
-                toast.error("Please login again or try again later")
-                setUpdating(false);
+
+            if (res.data.modifiedCount > 0) {
+                await getUserData()
+                console.log("updated db");
                 reset();
-                // refetch();
-                console.log(err)
-            })
+                toast.success("Updated Profile");
+            }
+            else {
+                toast.error("Nothing Updated");
+            }
+            setUpdating(false);
+
+        } catch (error) {
+            toast.error("Please login again or try again later")
+            setUpdating(false);
+            reset();
+            console.log(error)
+        }
+
     }
 
     useEffect(() => {

@@ -1,14 +1,19 @@
 import axios from 'axios';
 import { signOut } from 'firebase/auth';
-import { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import auth from '../firebase.init';
 
-const useDBUser = () => {
-    const [userFromDb, setUserFromDb] = useState();
-    const [user, loading] = useAuthState(auth);
-    const [loadingData, setLoadingData] = useState(loading);
+const UserContext = React.createContext()
 
+export function useUserContext() {
+    return useContext(UserContext)
+}
+
+export function UserProvider({ children }) {
+    const [user, loading] = useAuthState(auth);
+    const [userData, setUserData] = useState()
+    const [loadingData, setLoadingData] = useState(loading);
 
     async function getUserData() {
         if (user?.email) {
@@ -21,7 +26,7 @@ const useDBUser = () => {
                 }
 
                 setLoadingData(false);
-                setUserFromDb(res.data)
+                setUserData(res.data)
             } catch (error) {
                 console.log(error);
                 setLoadingData(false);
@@ -30,7 +35,7 @@ const useDBUser = () => {
         }
 
         if (!loading && !user?.email) {
-            setUserFromDb('')
+            setUserData('')
             setLoadingData(false)
         }
     }
@@ -39,7 +44,17 @@ const useDBUser = () => {
         getUserData()
     }, [user, loading])
 
-    return [userFromDb, loadingData, getUserData]
-};
 
-export default useDBUser;
+
+    const value = {
+        userData,
+        loadingData,
+        getUserData
+    }
+
+    return (
+        <UserContext.Provider value={value}>
+            {children}
+        </UserContext.Provider>
+    );
+}

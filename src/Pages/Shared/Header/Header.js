@@ -6,6 +6,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useQuery } from 'react-query';
 import { Link, useMatch, useNavigate, useResolvedPath } from 'react-router-dom';
+import { useUserContext } from '../../../Contexts/UserContex';
 import auth from '../../../firebase.init';
 import useAdmin from '../../../hooks/useAdmin';
 import useDBUser from '../../../hooks/useDBUser';
@@ -22,16 +23,7 @@ const Header = ({ theme, setTheme }) => {
 
     const token = useToken();
 
-    // const { data: userData, isLoading: loadingData } = useQuery(['userdata', user], () => fetch(`https://section-n-diu-server.herokuapp.com/user/${user?.email}`).then(res => res.json()))
-
-    // console.log(loadingData);
-    // useEffect(() => {
-    //     if (!loading && !user?.email) {
-    //         signOut(auth)
-    //     }
-    // }, [user, loading])
-
-    const [userData, loadingData] = useDBUser();
+    const { userData, loadingData } = useUserContext();
 
 
     function CustomLink({ children, to, ...props }) {

@@ -12,7 +12,7 @@ import NLoading from '../Shared/Loading/NLoading';
 
 const Slides = () => {
     const [userData, loadingData] = useDBUser();
-    console.log(userData)
+
     const [slideCheck, setSlideCheck] = useState({});
     const [courseCheck, setCourseCheck] = useState({});
     const [loading, setLoading] = useState({
