@@ -6,7 +6,7 @@ import NLoading from '../../Shared/Loading/NLoading';
 const Project = () => {
     const { email, index } = useParams();
 
-    const { isLoading, data } = useQuery(['project', [email, index]], () => fetch(`https://section-n-diu-server.herokuapp.com/user/${email}`).then(res => res.json()))
+    const { isLoading, data } = useQuery(['project', [email, index]], () => fetch(`https://section-n-server.vercel.app/user/${email}`).then(res => res.json()))
 
     if (isLoading) return <NLoading />
 

@@ -11,7 +11,7 @@ import Loading from '../Shared/Loading/Loading';
 const Events = () => {
     const [events, setEvents] = useState([]);
 
-    const { data, isLoading } = useQuery('events', () => fetch('https://section-n-diu-server.herokuapp.com/events').then(res => res.json()));
+    const { data, isLoading } = useQuery('events', () => fetch('https://section-n-server.vercel.app/events').then(res => res.json()));
 
 
     useEffect(() => {

@@ -1,29 +1,24 @@
 import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import axios from 'axios';
 import { signOut } from 'firebase/auth';
 import React, { useState, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { useQuery } from 'react-query';
 import { Link, useMatch, useNavigate, useResolvedPath } from 'react-router-dom';
 import { useUserContext } from '../../../Contexts/UserContex';
 import auth from '../../../firebase.init';
 import useAdmin from '../../../hooks/useAdmin';
-import useDBUser from '../../../hooks/useDBUser';
 import useToken from '../../../hooks/useToken';
 
 const Header = ({ theme, setTheme }) => {
-    const navigate = useNavigate();
-    const [changeBg, setChangeBg] = useState(false);
+    const [navBg, setChangeBg] = useState(false);
     const [collapse, setCollapse] = useState(false);
     const [usCollapse, setUsCollapse] = useState(false);
 
     const [user, loading] = useAuthState(auth);
+    const { userData, loadingData } = useUserContext();
     const [isAdmin, adminLoading] = useAdmin();
 
-    const token = useToken();
-
-    const { userData, loadingData } = useUserContext();
 
 
     function CustomLink({ children, to, ...props }) {
@@ -51,9 +46,8 @@ const Header = ({ theme, setTheme }) => {
         }
     }
 
-    const checked = e => {
-        let isChecked = e.target.checked;
-        if (isChecked) {
+    const checked = value => {
+        if (value) {
             setTheme("darkTheme");
             localStorage.setItem('theme', "darkTheme");
         }
@@ -61,19 +55,31 @@ const Header = ({ theme, setTheme }) => {
             setTheme('mytheme');
             localStorage.setItem('theme', 'mytheme');
         }
-    }
+    };
 
-    const handleChangeBg = () => {
+
+    window.addEventListener('scroll', () => {
         if (window.scrollY >= 20) {
             setChangeBg(true);
         } else {
             setChangeBg(false)
         }
+    });
+
+    let systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
+
+    useEffect(() => {
+        systemTheme.addEventListener('change', e => checked(e.target.matches));
+    }, [systemTheme])
+
+    if (window.matchMedia('(prefers-color-scheme : dark)').matches && localStorage.getItem('theme') == null) {
+        setTheme("darkTheme");
+        localStorage.setItem('theme', "darkTheme");
     }
-    window.addEventListener('scroll', handleChangeBg);
+
 
     return (
-        <div className={`navbar ${changeBg ? 'bg-base-300' : 'bg-transparent'} fixed top-0 z-40 px-3 md:px-6 transition-all duration-700`}>
+        <div className={`navbar ${navBg ? 'bg-base-300' : 'bg-transparent'} fixed top-0 z-40 px-3 md:px-6 transition-all duration-700`}>
             <div className="flex-1">
                 <Link to='/' className="font-bold normal-case text-lg md:text-3xl great-vibes">Section N</Link>
             </div>
@@ -144,7 +150,7 @@ const Header = ({ theme, setTheme }) => {
                 <div className="dropdown dropdown-end flex items-center mx-3 md:mx-5">
                     <label className="swap swap-rotate">
 
-                        <input className='check hidden' defaultChecked={theme === "darkTheme" ? true : false} onChange={(e) => checked(e)} type="checkbox" />
+                        <input className='checkbox hidden' onChange={(e) => checked(e.target.checked)} type="checkbox" checked={theme === "darkTheme" ? true : false} />
 
                         <svg className="swap-on fill-current w-5 h-5 md:h-8 md:w-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" /></svg>
 
@@ -169,7 +175,7 @@ const Header = ({ theme, setTheme }) => {
                                         </div>
 
                                     </label>
-                                    <ul tabIndex="0" className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
+                                    <ul onClick={(e) => e.target.blur()} tabIndex="0" className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
                                         <li>
                                             <Link to={`/userProfile/${user?.email}/self`}>
                                                 Profile

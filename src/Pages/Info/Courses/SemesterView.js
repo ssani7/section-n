@@ -13,7 +13,7 @@ const SemesterView = () => {
     const [unlockedIndex, setUnlocked] = useState();
 
     const { isLoading, data: semester } = useQuery(['semester', semesterName],
-        () => fetch(`https://section-n-diu-server.herokuapp.com/courses/${semesterName || "Fall-2022"}`).then(res => res.json()));
+        () => fetch(`https://section-n-server.vercel.app/courses/${semesterName || "Fall-2022"}`).then(res => res.json()));
 
     const container = {
         hidden: { opacity: 1, scale: 0 },

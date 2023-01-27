@@ -9,7 +9,7 @@ const AchvmntReqRow = ({ request, refetch, index }) => {
 
     const removeReq = () => {
         setRemoving(true);
-        axios.delete(`https://section-n-diu-server.herokuapp.com/achievements/${request._id}`)
+        axios.delete(`https://section-n-server.vercel.app/achievements/${request._id}`)
             .then(res => {
                 if (res.data.deletedCount >= 1) {
                     setRemoving(false);
@@ -21,7 +21,7 @@ const AchvmntReqRow = ({ request, refetch, index }) => {
 
     const acceptReq = () => {
         setAccepting(true);
-        axios.put(`https://section-n-diu-server.herokuapp.com/achievements/${request._id}`)
+        axios.put(`https://section-n-server.vercel.app/achievements/${request._id}`)
             .then(res => {
                 if (res) {
                     setAccepting(false);

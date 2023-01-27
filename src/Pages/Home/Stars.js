@@ -22,7 +22,7 @@ const Stars = () => {
         }
     };
 
-    let { isLoading, data: stars } = useQuery('stars', () => fetch('https://section-n-diu-server.herokuapp.com/achievements').then(res => res.json()));
+    let { isLoading, data: stars } = useQuery('stars', () => fetch('https://section-n-server.vercel.app/achievements').then(res => res.json()));
 
     const { ref, inView } = useInView({
         "threshold": 0.2,

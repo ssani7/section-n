@@ -8,7 +8,7 @@ import auth from '../firebase.init';
 const useToken = () => {
     const [user, loading] = useAuthState(auth);
     const [token, setToken] = useState('');
-    let photo = user?.photoURL || 'https://i.ibb.co/pzpVdPV/no-user-image-icon-3.jpg';
+    let photo = user?.photoURL;
 
     if (user?.photoURL?.includes("facebook")) {
         photo = user.photoURL + "?height=500";
@@ -24,7 +24,7 @@ const useToken = () => {
     }, [user, loading])
 
     async function createUser() {
-        const res = await axios.put(`https://section-n-diu-server.herokuapp.com/user/${user?.email}`,
+        const res = await axios.put(`https://section-n-server.vercel.app/user/${user?.email}`,
             JSON.stringify({ email: user.email, photoURL: photo, displayName: user.displayName }), {
             method: "PUT",
             headers: {
@@ -38,7 +38,8 @@ const useToken = () => {
 
         try {
             await updateProfile(auth.currentUser, { photoURL: photo })
-            return setToken(res?.data?.token);
+            setToken(res?.data?.token);
+            localStorage.setItem("access-token", res?.data?.token)
         } catch (error) {
             console.log(error);
         }

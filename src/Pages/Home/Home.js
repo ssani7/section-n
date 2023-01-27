@@ -13,7 +13,7 @@ import useToken from '../../hooks/useToken';
 const Home = () => {
     const navigate = useNavigate();
 
-    const { isLoading, data: achievementCount } = useQuery('countofAchvment', () => fetch('https://section-n-diu-server.herokuapp.com/achievements/count').then(res => res.json()));
+    const { isLoading, data: achievementCount } = useQuery('countofAchvment', () => fetch('https://section-n-server.vercel.app/achievements/count').then(res => res.json()));
 
 
     const preview = [

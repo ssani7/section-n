@@ -278,7 +278,7 @@ const EditPortfolio = () => {
         console.log(portfolioData);
 
         setUpdating({ task: "uploading" })
-        await axios.post(`https://section-n-diu-server.herokuapp.com/portfolio?id=${userData?._id}&verification=${userData?.verification}`, portfolioData)
+        await axios.post(`https://section-n-server.vercel.app/portfolio?id=${userData?._id}&verification=${userData?.verification}`, portfolioData)
             .then(res => {
                 setUpdating({ task: "" });
                 if (res.data.modifiedCount > 0) toast.success("Updated Portfolio");
@@ -296,7 +296,7 @@ const EditPortfolio = () => {
 
     if (loading) return <NLoading />
 
-    if (userData.verification !== "verified") return (
+    if (userData?.verification !== "verified") return (
         <div className='min-h-screen w-full flex flex-col justify-center items-center text-center'>
             <h2 className='text-3xl'>You are not verified. Please Verify account first to create your portfolio</h2>
 

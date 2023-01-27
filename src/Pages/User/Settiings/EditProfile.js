@@ -8,7 +8,6 @@ import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { updateProfile, updateEmail, updatePassword } from "firebase/auth";
 import NLoading from '../../Shared/Loading/NLoading';
 import auth from '../../../firebase.init';
-import useDBUser from '../../../hooks/useDBUser';
 import { useUserContext } from '../../../Contexts/UserContex';
 
 const EditProfile = () => {
@@ -28,8 +27,6 @@ const EditProfile = () => {
         twitter: "",
         linkedin: ""
     })
-
-    // const [userData, loadingData, getUserData] = useDBUser();
 
     const { userData, loadingData, getUserData } = useUserContext();
 
@@ -55,7 +52,7 @@ const EditProfile = () => {
     async function updateUserDb(oldUser, newUser) {
         try {
             setUpdating(true);
-            const res = await axios.put(`https://section-n-diu-server.herokuapp.com/user/update/${oldUser?._id}/${oldUser?.verification}/${newUser?.id || undefined}`, newUser, {
+            const res = await axios.put(`https://section-n-server.vercel.app/user/update/${oldUser?._id}/${oldUser?.verification}/${newUser?.id || undefined}`, newUser, {
                 headers: {
                     "content-type": "application/json"
                 }
@@ -63,7 +60,6 @@ const EditProfile = () => {
 
             if (res.data.modifiedCount > 0) {
                 await getUserData()
-                console.log("updated db");
                 reset();
                 toast.success("Updated Profile");
             }

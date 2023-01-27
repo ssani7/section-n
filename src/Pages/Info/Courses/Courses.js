@@ -9,7 +9,7 @@ import NLoading from '../../Shared/Loading/NLoading';
 
 const Courses = () => {
     const [checked, setChecked] = useState(true);
-    const { isLoading, data: semesters } = useQuery('semesters', () => fetch("https://section-n-diu-server.herokuapp.com/courses").then(res => res.json()))
+    const { isLoading, data: semesters } = useQuery('semesters', () => fetch("https://section-n-server.vercel.app/courses").then(res => res.json()))
 
     // const [semester, setSemester] = useState(semesters?.length > 0 ? semesters[semesters.length - 1] : {});
 

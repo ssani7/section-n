@@ -173,7 +173,7 @@ const AddEvent = () => {
 
             if (confirm) {
                 setLoading(true);
-                await axios.post('https://section-n-diu-server.herokuapp.com/events', event)
+                await axios.post('https://section-n-server.vercel.app/events', event)
                     .then(res => {
                         if (res.data.insertedId) {
                             toast.success("Posted Event");

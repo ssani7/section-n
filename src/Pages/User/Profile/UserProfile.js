@@ -25,7 +25,7 @@ const UserProfile = () => {
         window.scrollTo(0, 0);
     })
 
-    const { isLoading, data: userFromDb } = useQuery(['user', email], () => fetch(`https://section-n-diu-server.herokuapp.com/user/${email}`).then(res => res.json()))
+    const { isLoading, data: userFromDb } = useQuery(['user', email], () => fetch(`https://section-n-server.vercel.app/user/${email}`).then(res => res.json()))
 
     const { ref, inView } = useInView({
         triggerOnce: true

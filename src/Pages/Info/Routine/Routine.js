@@ -9,29 +9,29 @@ import auth from '../../../firebase.init';
 import { motion } from 'framer-motion'
 import { format } from 'date-fns';
 import NLoadingMini from '../../Shared/Loading/NLoadingMini';
+import { useUserContext } from '../../../Contexts/UserContex';
 
 
 const Routine = () => {
     const [routineImg, setRoutineImg] = useState('');
     const [updating, setUpdating] = useState(false);
-    const [user, loading] = useAuthState(auth);
     const [inside, setInside] = useState(false);
 
     const navigate = useNavigate();
 
     const inputRef = useRef();
 
-    const { isLoading: loadingUser, data: userData } = useQuery(['userdata', user],
-        () => fetch(`https://section-n-diu-server.herokuapp.com/user/${user?.email}`)
-            .then(res => res.json()))
+    const { userData } = useUserContext();
 
     const { isLoading: loadingRoutine, data: routine } = useQuery(['routine'],
-        () => fetch(`https://section-n-diu-server.herokuapp.com/routine`)
+        () => fetch(`https://section-n-server.vercel.app/routine`)
             .then(res => res && res.json()))
 
     useEffect(() => {
         setRoutineImg(routine?.routineData?.routineImg)
     }, [routine])
+
+
 
     const uploadRoutine = async (e) => {
         const image = e.target.files[0];
@@ -51,7 +51,7 @@ const Routine = () => {
                             date: today
                         }
 
-                        axios.put('https://section-n-diu-server.herokuapp.com/routine', routineData)
+                        axios.put('https://section-n-server.vercel.app/routine', routineData)
                             .then(response => {
                                 if (response.status === 200) {
                                     setRoutineImg(res?.data?.data?.url);

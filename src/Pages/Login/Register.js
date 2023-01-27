@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { useAuthState, useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { useForm } from 'react-hook-form';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import auth from '../../firebase.init';
@@ -36,6 +36,11 @@ const Register = () => {
 
     const token = useToken();
 
+    if (token) {
+        setUpdating(false)
+        navigate(from, { replace: true });
+    }
+
 
     const onSubmit = async (data) => {
         const email = data.email;
@@ -46,13 +51,10 @@ const Register = () => {
             setUpdateError("")
             await createUserWithEmailAndPassword(auth, email, password);
             await updateProfile(auth.currentUser, { displayName, photoURL: 'https://i.ibb.co/pzpVdPV/no-user-image-icon-3.jpg' })
-            navigate(from, { replace: true });
 
         } catch (err) {
             console.log(err);
             setUpdateError(err)
-        }
-        finally {
             setUpdating(false)
         }
     }

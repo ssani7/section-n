@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { signOut } from 'firebase/auth';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import auth from '../firebase.init';
 
@@ -15,11 +15,12 @@ export function UserProvider({ children }) {
     const [userData, setUserData] = useState()
     const [loadingData, setLoadingData] = useState(loading);
 
-    async function getUserData() {
+
+    const getUserData = useCallback(async () => {
         if (user?.email) {
             try {
                 setLoadingData(true);
-                const res = await axios.get(`https://section-n-diu-server.herokuapp.com/user/${user?.email}`)
+                const res = await axios.get(`https://section-n-server.vercel.app/user/${user?.email}`)
 
                 if (res.status === 401 || res.status === 403) {
                     return signOut(auth);
@@ -38,12 +39,12 @@ export function UserProvider({ children }) {
             setUserData('')
             setLoadingData(false)
         }
-    }
+    }, [user?.email, loading])
+
 
     useEffect(() => {
         getUserData()
-    }, [user, loading])
-
+    }, [user?.email, user?.photoURL, loading, getUserData])
 
 
     const value = {

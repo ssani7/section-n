@@ -35,7 +35,6 @@ import VerifyAcc from './Pages/User/Settiings/VerifyAcc';
 import { UserProvider } from './Contexts/UserContex';
 
 function App() {
-  // const [theme, setTheme] = useState(localStorage.getItem('theme'));
   const [theme, setTheme] = useTheme();
 
   return (

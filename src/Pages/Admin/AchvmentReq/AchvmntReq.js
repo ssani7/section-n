@@ -4,7 +4,7 @@ import NLoading from '../../Shared/Loading/NLoading';
 import AchvmntReqRow from './AchvmntReqRow';
 
 const AchvmntReq = () => {
-    const { isLoading, data: requests, refetch } = useQuery('stars', () => fetch('https://section-n-diu-server.herokuapp.com/achievements/requests').then(res => res.json()));
+    const { isLoading, data: requests, refetch } = useQuery('stars', () => fetch('https://section-n-server.vercel.app/achievements/requests').then(res => res.json()));
 
     if (isLoading) return <NLoading />
 

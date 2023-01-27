@@ -10,7 +10,7 @@ const useAdmin = () => {
 
     useEffect(() => {
         if (!loading) {
-            axios.get(`https://section-n-diu-server.herokuapp.com/user/role/${user?.email}`)
+            axios.get(`https://section-n-server.vercel.app/user/role/${user?.email}`)
                 .then(res => {
                     setAdmin(res.data);
                 })

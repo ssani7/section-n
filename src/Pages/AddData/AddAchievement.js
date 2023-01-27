@@ -33,7 +33,7 @@ const AddAchievement = () => {
                     const image = data.data.url;
                     const achievementData = { name, id, achievement: title, image, sender, senderDp, approved: isAdmin };
 
-                    axios.post('https://section-n-diu-server.herokuapp.com/achievements', achievementData)
+                    axios.post('https://section-n-server.vercel.app/achievements', achievementData)
                         .then(res => {
                             console.log(res.data)
                             if (res.status === 403 || res.status === 401) {

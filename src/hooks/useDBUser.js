@@ -14,7 +14,7 @@ const useDBUser = () => {
         if (user?.email) {
             try {
                 setLoadingData(true);
-                const res = await axios.get(`https://section-n-diu-server.herokuapp.com/user/${user?.email}`)
+                const res = await axios.get(`https://section-n-server.vercel.app/user/${user?.email}`)
 
                 if (res.status === 401 || res.status === 403) {
                     return signOut(auth);
