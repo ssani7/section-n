@@ -13,7 +13,6 @@ import noReact from '../../../images/icons/laughing.png'
 import { useRef } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useParams } from 'react-router-dom';
-import { InView } from 'react-intersection-observer';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { format } from 'date-fns';
@@ -21,6 +20,8 @@ import auth from '../../../firebase.init';
 import { ghostInput } from '../../User/Settiings/EditPortfolio';
 import Footer from '../../Shared/Footer';
 import NLoading from '../../Shared/Loading/NLoading';
+import { useEffect } from 'react';
+import useLongPress from '../../../hooks/useLongPress';
 
 
 const Memes = () => {
@@ -29,14 +30,10 @@ const Memes = () => {
     const [loadingData, setLoadingData] = useState({});
     const [user, loading] = useAuthState(auth);
 
-    const [openReact, setOpenReact] = useState({
-
-    })
-
+    const [openReact, setOpenReact] = useState({})
     const today = new Date();
 
     const { postId } = useParams();
-
 
     const mediaRef = useRef();
     const scrollRef = useRef([]);
@@ -96,58 +93,32 @@ const Memes = () => {
         },
     ]);
 
+    const { action,
+        setAction,
+        handleOnClick,
+        handleOnMouseUp,
+        handleOnMouseDown,
+        handleOnTouchStart,
+        handleOnTouchEnd, id } = useLongPress({
+            onClick: () => {
+                const newPosts = [...posts];
+                const newPost = newPosts.find(p => p._id === id);
+                const reactIndex = newPost.reactions.findIndex(r => r.email === user.email)
 
-    // longpress
-    const [action, setAction] = useState('');
-
-    const timerRef = useRef();
-    const isLongPress = useRef(false);
-
-    if (loading) return <NLoading />
-
-    function handleOnClick(_id) {
-        if (isLongPress.current) {
-            setAction(`longpress_${_id}`);
-            setOpenReact({ ...openReact, [_id]: true });
-        }
-        else {
-            setAction(`click_${_id}`);
-            const newPosts = [...posts];
-            const newPost = newPosts.find(p => p._id === _id);
-            const reactIndex = newPost.reactions.findIndex(r => r.email === user.email)
-            // newPost.reactions[reactIndex] = { email: user.email, react:  }
-            if (reactIndex > -1) {
-                newPost.reactions.splice(reactIndex, 1);
+                if (reactIndex > -1) {
+                    newPost.reactions.splice(reactIndex, 1);
+                }
+                setPost(newPosts);
+                setOpenReact({ ...openReact, [id]: false });
+                setAction("")
             }
-            setPost(newPosts);
-            setOpenReact({ ...openReact, [_id]: false });;
+        })
+
+    useEffect(() => {
+        if (action === "LongPress") {
+            setOpenReact({ ...openReact, [id]: true });
         }
-    }
-    function handleOnMouseUp() {
-        clearTimeout(timerRef.current);
-        setAction("");
-
-    }
-    function handleOnMouseDown(_id) {
-        setTimer(_id);
-    }
-    function handleOnTouchStart(_id) {
-        setTimer(_id);
-    }
-    function handleOnTouchEnd() {
-        clearTimeout(timerRef.current);
-        setAction("");
-    }
-
-    function setTimer(_id) {
-        isLongPress.current = false;
-        timerRef.current = setTimeout(() => {
-            isLongPress.current = true;
-            setAction(`longpress${_id}`);
-            setOpenReact({ ...openReact, [_id]: true });
-        }, 300);
-    }
-
+    }, [action, id])
 
     const reactions = [
         { name: "like", icon: like },
@@ -169,7 +140,8 @@ const Memes = () => {
             newPost.reactions.push({ email: user.email, react: react })
         }
         setPost(newPosts);
-        setOpenReact({ ...openReact, [id]: false });;
+        setOpenReact({ ...openReact, [id]: false });
+        setAction("")
     }
 
     if (postId && postId < posts.length) {
@@ -242,6 +214,7 @@ const Memes = () => {
         }
     }
 
+    if (loading) return <NLoading />
 
     return (
         <div className='pt-20 bg-base-100'>
@@ -336,10 +309,11 @@ const Memes = () => {
                                 {
                                     <div
                                         onClick={() => handleOnClick(post._id)}
-                                        onMouseUp={() => handleOnMouseUp()}
+                                        onMouseUp={() => handleOnMouseUp(post._id)}
                                         onMouseDown={() => handleOnMouseDown(post._id)}
                                         onTouchStart={() => handleOnTouchStart(post._id)}
-                                        onTouchEnd={() => handleOnTouchEnd()}
+                                        onTouchEnd={() => handleOnTouchEnd(post._id)}
+
                                         className="select-none transition duration-200 cursor-pointer md:hover:scale-110 active:scale-90">
                                         <img
                                             className='w-14 h-14 md:w-20 md:h-20  md:mr-3 cursor-pointer pointer-events-none object-contain rounded-full'
@@ -355,7 +329,8 @@ const Memes = () => {
                                     checked={openReact[post._id]}
                                     className='hidden' />
 
-                                <div className={`absolute z-30 flex w-fit left-0 rounded-2xl items-center justify-center bg-white bottom-full p-2 md:px-5 mb-4 transition duration-75 ${openReact[post._id] ? "visible translate-y-0" : "invisible translate-y-5"}`}>
+                                <div
+                                    className={`absolute z-30 flex w-fit left-0 rounded-2xl items-center justify-center bg-white bottom-full p-2 md:px-5 mb-4 transition duration-75 ${openReact[post._id] ? "visible translate-y-0" : "invisible translate-y-5"}`}>
                                     {
                                         reactions?.map((reaction, i) => (
                                             <div className={`react-container${i} cursor-pointer`}>

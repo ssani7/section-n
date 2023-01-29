@@ -1,52 +1,50 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
-const useLongPress = () => {
+const useLongPress = ({ onClick }) => {
     const [action, setAction] = useState('');
+    const [id, setId] = useState('');
 
     const timerRef = useRef();
     const isLongPress = useRef(false);
 
-    function handleOnClick() {
-        if (isLongPress.current) {
-            setAction("longpress");
-        }
-        else {
-            setAction("click");
-        }
-    }
-    function handleOnMouseUp() {
-        clearTimeout(timerRef.current);
-        setAction("");
 
+    function handleOnClick(_id) {
+        if (isLongPress.current) return setAction("LongPress")
+
+        if (typeof onClick === 'function') onClick()
     }
-    function handleOnMouseDown() {
-        setTimer();
+    function handleOnMouseUp(_id) {
+        clearTimeout(timerRef.current);
     }
-    function handleOnTouchStart() {
-        setTimer();
+
+    function handleOnMouseDown(_id) {
+        setTimer(_id, true);
+    }
+    function handleOnTouchStart(_id) {
+        setTimer(_id, true);
     }
     function handleOnTouchEnd() {
         clearTimeout(timerRef.current);
-        setAction("");
     }
 
-    function setTimer() {
-        isLongPress.current = false;
+    function setTimer(_id, task, time = 300) {
+        isLongPress.current = !task;
         timerRef.current = setTimeout(() => {
-            isLongPress.current = true;
-            setAction("longpress");
-        }, 500);
+            isLongPress.current = task;
+            setAction(task ? "LongPress" : "")
+            setId(_id)
+        }, time);
     }
 
     return {
         action,
-        handlers: {
-            onClick: handleOnClick,
-            onMouseUp: handleOnMouseUp,
-            onMouseDown: handleOnMouseDown,
-            onTouchStart: handleOnTouchStart,
-            onTouchEnd: handleOnTouchEnd
-        }
+        id,
+        setAction,
+        handleOnClick,
+        handleOnMouseUp,
+        handleOnMouseDown,
+        handleOnTouchStart,
+        handleOnTouchEnd
     }
 };
 
