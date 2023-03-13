@@ -3,8 +3,8 @@ import { useQuery } from 'react-query';
 import { useInView } from 'react-intersection-observer';
 import { motion } from 'framer-motion'
 import { useNavigate, useParams } from 'react-router-dom';
-import Footer from '../Shared/Footer';
-import NLoadingMini from '../Shared/Loading/NLoadingMini';
+import NLoadingMini from '../../Shared/Loading/NLoadingMini';
+import Footer from '../../Shared/Footer/Footer';
 
 
 const Stars = () => {

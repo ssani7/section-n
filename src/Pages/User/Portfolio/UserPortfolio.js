@@ -12,8 +12,8 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { toast } from 'react-toastify'
-import Footer from '../../Shared/Footer';
 import NLoading from '../../Shared/Loading/NLoading';
+import Footer from '../../Shared/Footer/Footer';
 
 const container = {
     hidden: { opacity: 0, scale: 0 },
@@ -46,9 +46,9 @@ const UserPortfolio = () => {
 
     const { email, options } = useParams();
 
-    // useEffect(() => {
-    //     window.scrollTo(0, 0)
-    // }, [])
+    useEffect(() => {
+        window.scrollTo(0, 0)
+    }, [])
 
     const { isLoading: loading, data: userData } = useQuery(['user', email], () => fetch(`https://section-n-server.vercel.app/user/${email}`).then(res => res.json()))
 
@@ -58,7 +58,6 @@ const UserPortfolio = () => {
     if (loading) return <NLoading />
 
     const { portfolio } = userData;
-    console.log(portfolio)
 
 
     const onSubmit = data => {

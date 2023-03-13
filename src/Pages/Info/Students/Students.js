@@ -8,7 +8,7 @@ import NLoading from '../../Shared/Loading/NLoading';
 
 const Students = () => {
     const navigate = useNavigate();
-    const { isLoading, data: students } = useQuery(["students"], () => fetch("https://section-n-server.vercel.app/students").then(res => res.json()));
+    const { isLoading, data: students } = useQuery(["students"], () => fetch("https://section-n-server.vercel.app/user/students").then(res => res.json()));
 
     useEffect(() => {
         window.scrollTo(0, 0)

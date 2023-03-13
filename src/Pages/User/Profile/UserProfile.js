@@ -118,27 +118,23 @@ const UserProfile = () => {
                                         }
                                     </>)
                             }
-
-
-
                         </div>
 
-
                         <div className='md:mt-10 mt-3 w-fit mx-auto md:mx-0'>
-                            <a target='_blank' href={
+                            <a target={`${userFromDb.fb ? "_blank" : "_self"}`} href={
                                 (userFromDb?.fb) || (option === "self" ? "/settings" : undefined)
                             }
                                 rel="noreferrer" className={`${userFromDb?.fb || "tooltip tooltip-right md:tooltip"} w-fit`} data-tip={`${option === "self" ? "Add your Facebook profile link" : "User's Facebook profile link not submitted"} `}>
                                 <FontAwesomeIcon className={`h-4 md:h-8 mr-3 mt-2 md:mr-7 xl:h-10 hover:text-blue-600 hover:scale-125 cursor-pointer transition-all`} icon={faFacebookF} />
                             </a>
 
-                            <a target='_blank'
+                            <a target={`${userFromDb.linkedin ? "_blank" : "_self"}`}
                                 href={(userFromDb?.linkedin) || (option === "self" ? "/settings" : undefined)}
                                 rel="noreferrer" className={`${userFromDb?.linkedin || "tooltip tooltip-right md:tooltip"} w-fit`} data-tip={`${option === "self" ? "Add your LinkedIn profile link" : "User's LinkedIn profile link not submitted"} `}>
                                 <FontAwesomeIcon className={`h-4 md:h-8 mr-3 mt-2 md:mr-7 xl:h-10 hover:text-blue-600 hover:scale-125 cursor-pointer transition-all`} icon={faLinkedin} />
                             </a>
 
-                            <a target='_blank'
+                            <a target={`${userFromDb.twitter ? "_blank" : "_self"}`}
                                 href={(userFromDb?.twitter) || (option === "self" ? "/settings" : undefined)}
                                 rel="noreferrer" className={`${userFromDb?.twitter || "tooltip tooltip-right md:tooltip"} w-fit`} data-tip={`${option === "self" ? "Add your Twitter profile link" : "User's Twitter profile link not submitted"} `}>
                                 <FontAwesomeIcon className={`h-4 md:h-8 mr-3 mt-2 md:mr-7 xl:h-10 hover:text-blue-600 hover:scale-125 cursor-pointer transition-all`} icon={faTwitter} />

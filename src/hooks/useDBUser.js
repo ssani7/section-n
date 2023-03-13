@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import auth from '../firebase.init';
 
+
+
 const useDBUser = () => {
     const [userFromDb, setUserFromDb] = useState();
     const [user, loading] = useAuthState(auth);

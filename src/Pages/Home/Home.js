@@ -2,13 +2,13 @@ import React, { useEffect } from 'react';
 import Banner from './Banner';
 import CountUp from 'react-countup';
 import { useInView } from 'react-intersection-observer';
-import Footer from '../Shared/Footer';
-import Stars from './Stars';
 import { useQuery } from 'react-query';
-import Events from './Events';
 import { useNavigate } from 'react-router-dom';
 import Routine from '../Info/Routine/Routine';
 import useToken from '../../hooks/useToken';
+import Footer from '../Shared/Footer/Footer';
+import Stars from '../Info/Achievements/Stars';
+import Events from '../Info/Events/Events';
 
 const Home = () => {
     const navigate = useNavigate();
@@ -19,7 +19,7 @@ const Home = () => {
     const preview = [
         { name: 'Students', number: 50, path: "students" },
         { name: 'Achievements', number: achievementCount?.count, path: "achievements/all" },
-        { name: 'Completed Credit', number: 20, path: "courses" },
+        { name: 'Completed Credit', number: 37, path: "courses" },
     ];
 
     const { ref, inView } = useInView({
@@ -39,7 +39,7 @@ const Home = () => {
             <Banner />
 
             {/* count summary */}
-            <div className='grid grid-cols-3 mx-auto w-full' ref={ref}>
+            <div className='flex justify-between px-20 w-full' ref={ref}>
                 {
                     preview.map((info, i) =>
                         <CountUp

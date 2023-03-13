@@ -33,7 +33,7 @@ const VerifyAcc = () => {
     const onSubmit = async (data) => {
         setFetching(true)
 
-        await axios.put(`https://section-n-server.vercel.app/verifyUser?id=${data?.id}&email=${userData?.email}`)
+        await axios.put(`https://section-n-server.vercel.app/user/verify?id=${data?.id}&email=${userData?.email}`)
             .then(res => {
                 if (res.data.modifiedCount > 0) {
                     setFetching(false);
@@ -68,7 +68,7 @@ const VerifyAcc = () => {
     }
     return (
         <div className='w-full text-center'>
-            <h2>Verify yourself as a member of Section: N</h2>
+            <h2 className='text-2xl font-bold text-center'>Verify yourself as a member of Section: N</h2>
             <form className='pt-12 max-w-xs md:max-w-2xl mx-auto' onSubmit={handleSubmit(onSubmit)}>
                 <div className="form-control w-full h-24">
                     <label className="label">

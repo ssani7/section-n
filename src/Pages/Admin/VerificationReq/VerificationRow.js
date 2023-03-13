@@ -8,7 +8,7 @@ const VerificationRow = ({ user, refetch }) => {
 
     const removeReq = () => {
         setRemoving(true);
-        axios.put(`https://section-n-server.vercel.app/verification/delete/${user._id}`)
+        axios.put(`https://section-n-server.vercel.app/user/verification/reject/${user._id}`)
             .then(res => {
                 if (res.data.modifiedCount > 0) {
                     setRemoving(false);
@@ -20,7 +20,7 @@ const VerificationRow = ({ user, refetch }) => {
 
     const acceptReq = () => {
         setAccepting(true);
-        axios.put(`https://section-n-server.vercel.app/verification/approve/${user._id}`)
+        axios.put(`https://section-n-server.vercel.app/user/verification/approve/${user._id}`)
             .then(res => {
                 if (res.data.modifiedCount > 0) {
                     setAccepting(false);

@@ -3,25 +3,25 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { useState } from 'react';
 import ReactPlayer from 'react-player'
-import haha from '../../../images/icons/laughing.png'
-import like from '../../../images/icons/like.png'
-import sad from '../../../images/icons/sad.png'
-import angry from '../../../images/icons/angry.png'
-import love from '../../../images/icons/heart.png'
-import dislike from '../../../images/icons/dislike.png'
-import noReact from '../../../images/icons/laughing.png'
+import haha from '../../images/icons/laughing.png'
+import like from '../../images/icons/like.png'
+import sad from '../../images/icons/sad.png'
+import angry from '../../images/icons/angry.png'
+import love from '../../images/icons/heart.png'
+import dislike from '../../images/icons/dislike.png'
+import noReact from '../../images/icons/laughing.png'
 import { useRef } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { format } from 'date-fns';
-import auth from '../../../firebase.init';
-import { ghostInput } from '../../User/Settiings/EditPortfolio';
-import Footer from '../../Shared/Footer';
-import NLoading from '../../Shared/Loading/NLoading';
+import auth from '../../firebase.init';
+import { ghostInput } from '../User/Settiings/EditPortfolio';
+import NLoading from '../Shared/Loading/NLoading';
 import { useEffect } from 'react';
-import useLongPress from '../../../hooks/useLongPress';
+import useLongPress from '../../hooks/useLongPress';
+import Footer from '../Shared/Footer/Footer';
 
 
 const Memes = () => {
@@ -93,33 +93,6 @@ const Memes = () => {
         },
     ]);
 
-    const { action,
-        setAction,
-        handleOnClick,
-        handleOnMouseUp,
-        handleOnMouseDown,
-        handleOnTouchStart,
-        handleOnTouchEnd, id } = useLongPress({
-            onClick: () => {
-                const newPosts = [...posts];
-                const newPost = newPosts.find(p => p._id === id);
-                const reactIndex = newPost.reactions.findIndex(r => r.email === user.email)
-
-                if (reactIndex > -1) {
-                    newPost.reactions.splice(reactIndex, 1);
-                }
-                setPost(newPosts);
-                setOpenReact({ ...openReact, [id]: false });
-                setAction("")
-            }
-        })
-
-    useEffect(() => {
-        if (action === "LongPress") {
-            setOpenReact({ ...openReact, [id]: true });
-        }
-    }, [action, id])
-
     const reactions = [
         { name: "like", icon: like },
         { name: "love", icon: love },
@@ -128,6 +101,27 @@ const Memes = () => {
         { name: "angry", icon: angry },
         // { name: "dislike", icon: dislike },
     ]
+
+    const { action, setAction, handleOnClick, handleOnMouseUp, handleOnMouseDown, handleOnTouchStart, handleOnTouchEnd, id } = useLongPress({
+        onClick: () => {
+            const newPosts = [...posts];
+            const newPost = newPosts.find(p => p._id === id);
+            const reactIndex = newPost.reactions.findIndex(r => r.email === user.email)
+            if (reactIndex > -1) {
+                newPost.reactions.splice(reactIndex, 1);
+            }
+            setPost(newPosts);
+            setOpenReact({ ...openReact, [id]: false });
+            setAction("")
+        }
+    })
+
+    useEffect(() => {
+        if (action === "LongPress") {
+            setOpenReact({ ...openReact, [id]: true });
+        }
+    }, [action, id])
+
 
     const handleChangeReact = (id, react) => {
         const newPosts = [...posts];
@@ -144,9 +138,12 @@ const Memes = () => {
         setAction("")
     }
 
-    if (postId && postId < posts.length) {
-        window.scrollTo(0, scrollRef?.current[postId]?.offsetTop - 100);
-    }
+    useEffect(() => {
+        if (postId && postId < posts.length) {
+            window.scrollTo(0, scrollRef?.current[postId]?.offsetTop - 100);
+        }
+    }, [postId, posts.length])
+
 
     async function handleMedia(e) {
         const formData = new FormData();
@@ -159,7 +156,6 @@ const Memes = () => {
                 formData.append("upload_preset", "section-N-diu-memes");
 
                 const response = await axios.post(`https://api.cloudinary.com/v1_1/ssani7/auto/upload`, formData);
-                console.log(response)
 
                 if (response.status === 200) {
                     setMedia({
@@ -191,7 +187,7 @@ const Memes = () => {
         setLoadingData({ ...loadingData, postingMeme: true });
 
         const meme = {
-            email: user.email,
+            email: user?.email,
             date: format(today, "PP"),
             media: media,
             caption: caption

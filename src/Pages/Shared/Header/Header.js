@@ -28,7 +28,8 @@ const Header = ({ theme, setTheme }) => {
         return (
             <div>
                 <Link
-                    style={{ textDecoration: match ? "underline" : "none" }}
+                    // style={match && { textDecoration: "underline" }}
+                    className={`${match && "text-primary"}`}
                     to={to}
                     {...props}
                 >
@@ -127,12 +128,12 @@ const Header = ({ theme, setTheme }) => {
                         <FontAwesomeIcon icon={faAngleDown} className={`ml-2 group-hover:scale-105 transition-all ${collapse && "rotate-180"}`} />
                     </span>
 
-                    <ul className={`absolute text-sm bg-base-100 flex flex-col mt-4 rounded-xl h-auto cursor-pointer p-2 shadow-lg transform transition-all ${collapse || "invisible scale-0"}`}>
-                        <Link to='/courses'>
+                    <ul className={`absolute text-base bg-base-100 flex flex-col mt-4 rounded-xl h-auto cursor-pointer p-2 shadow-lg transform transition-all ${collapse || "invisible scale-0"}`}>
+                        <CustomLink to='/courses/current'>
                             <li onClick={() => setCollapse(false)} className='hover:badge-ghost active:bg-primary px-4 py-2 rounded-lg'>
                                 <span>Courses</span>
                             </li>
-                        </Link>
+                        </CustomLink>
 
                         <CustomLink to='/slides'>
                             <li onClick={() => setCollapse(false)} className='hover:badge-ghost  active:bg-primary px-4 py-2 rounded-lg'>Slides</li>
@@ -192,7 +193,7 @@ const Header = ({ theme, setTheme }) => {
                                                     </Link>
                                             }
                                         </li>
-                                        <li><Link to='/settings'><span>Settings</span></Link></li>
+                                        <li><Link to='/settings'>Settings</Link></li>
                                         {
                                             isAdmin && <li><Link to='/manageData'>Manage Data
                                                 <span className="badge">Admin</span>

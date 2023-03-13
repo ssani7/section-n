@@ -4,7 +4,7 @@ import { useInView } from 'react-intersection-observer';
 import { useQuery } from 'react-query';
 import { useState } from 'react';
 import { useEffect } from 'react';
-import Loading from '../Shared/Loading/Loading';
+import Loading from '../../Shared/Loading/Loading';
 
 
 

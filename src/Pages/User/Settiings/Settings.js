@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import useDBUser from '../../../hooks/useDBUser';
-import Footer from '../../Shared/Footer';
+import Footer from '../../Shared/Footer/Footer';
 import NLoading from '../../Shared/Loading/NLoading';
 
 
 
 const Settings = () => {
-    const [checked, setChecked] = useState(true);
+    const [checked, setChecked] = useState(false);
     const [userData, loading] = useDBUser();
 
     useEffect(() => {
@@ -34,7 +34,7 @@ const Settings = () => {
                     </ul>
                 </div>
 
-                <label htmlFor="settings-drawer" className={`btn btn-accent btn-circle drawer-button lg:hidden fixed bottom-10 left-4 z-40 transform transition-all ${checked ? "rotate-180" : "rotate-0"}`}>❯</label>
+                <label htmlFor="settings-drawer" className={`btn btn-primary btn-circle drawer-button lg:hidden fixed bottom-10 left-4 z-40 transform transition-all ${checked ? "rotate-180" : "rotate-0"}`}>❯</label>
                 <div className="h-screen absolute">
                 </div>
             </div>

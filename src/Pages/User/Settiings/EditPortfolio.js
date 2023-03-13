@@ -278,7 +278,7 @@ const EditPortfolio = () => {
         console.log(portfolioData);
 
         setUpdating({ task: "uploading" })
-        await axios.post(`https://section-n-server.vercel.app/portfolio?id=${userData?._id}&verification=${userData?.verification}`, portfolioData)
+        await axios.post(`https://section-n-server.vercel.app/user/portfolio/update?id=${userData?._id}&verification=${userData?.verification}`, portfolioData)
             .then(res => {
                 setUpdating({ task: "" });
                 if (res.data.modifiedCount > 0) toast.success("Updated Portfolio");

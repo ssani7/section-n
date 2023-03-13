@@ -3,15 +3,13 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { Link, Outlet } from 'react-router-dom';
-import Footer from '../../Shared/Footer';
+import Footer from '../../Shared/Footer/Footer';
 import NLoading from '../../Shared/Loading/NLoading';
 
 
 const Courses = () => {
-    const [checked, setChecked] = useState(true);
+    const [checked, setChecked] = useState(false);
     const { isLoading, data: semesters } = useQuery('semesters', () => fetch("https://section-n-server.vercel.app/courses").then(res => res.json()))
-
-    // const [semester, setSemester] = useState(semesters?.length > 0 ? semesters[semesters.length - 1] : {});
 
     useEffect(() => {
         window.scrollTo(0, 0)
@@ -24,11 +22,11 @@ const Courses = () => {
             <div className="drawer drawer-mobile h-full relative">
                 <input checked={checked} onChange={(e) => setChecked(e.target.checked)} id="course-drawer" type="checkbox" className="drawer-toggle"
                 />
-                <div className="drawer-content flex flex-col items-center bg-base-100">
+                <div className="drawer-content flex flex-col items-center bg-base-100 px-2 ">
                     <Outlet />
 
                 </div>
-                <div className="drawer-side border-r">
+                <div className="drawer-side border-r border-primary h-full">
                     <label htmlFor="course-drawer" className="drawer-overlay"></label>
                     <ul className="menu p-4 overflow-y-auto w-80 bg-base-100 text-base-content">
                         {
@@ -43,7 +41,7 @@ const Courses = () => {
                     </ul>
                 </div>
             </div>
-            <label htmlFor="course-drawer" className={`btn btn-accent btn-circle drawer-button lg:hidden fixed bottom-10 left-4 z-40 transform transition-all ${checked ? "rotate-180" : "rotate-0"}`}>❯</label>
+            <label htmlFor="course-drawer" className={`btn btn-primary btn-circle drawer-button lg:hidden fixed bottom-10 left-4 z-40 transform transition-all ${checked ? "rotate-180" : "rotate-0"}`}>❯</label>
             <Footer />
         </div>
     );

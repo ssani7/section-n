@@ -3,23 +3,19 @@ import { Route, Routes } from 'react-router-dom';
 import Home from './Pages/Home/Home';
 import Register from './Pages/Login/Register';
 import Login from './Pages/Login/Login';
-import Dummy from './Pages/Home/dummy';
 import RequireAuth from './Pages/Login/RequireAuth';
 import useTheme from './hooks/useTheme';
-import AddAchievement from './Pages/AddData/AddAchievement';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Header from './Pages/Shared/Header/Header';
 import NotFound from './Pages/Shared/NotFound/NotFound';
 import RequireAdmin from './Pages/Login/RequireAdmin';
-import ContactCR from './Pages/Shared/ContactCR';
 import UserProfile from './Pages/User/Profile/UserProfile'
-import Stars from './Pages/Home/Stars';
 import RequireVerified from './Pages/Login/RequireVerified';
-import Slides from './Pages/Info/Slides';
+import Slides from './Pages/Info/Slides/Slides';
 import Students from './Pages/Info/Students/Students';
 import ManageData from './Pages/Admin/ManageData';
-import Memes from './Pages/Info/Students/Memes';
+import Memes from './Pages/Memes/Memes';
 import UserPortfolio from './Pages/User/Portfolio/UserPortfolio';
 import EditPortfolio from './Pages/User/Settiings/EditPortfolio';
 import AchvmntReq from './Pages/Admin/AchvmentReq/AchvmntReq';
@@ -33,6 +29,9 @@ import EditProfile from './Pages/User/Settiings/EditProfile';
 import Settings from './Pages/User/Settiings/Settings';
 import VerifyAcc from './Pages/User/Settiings/VerifyAcc';
 import { UserProvider } from './Contexts/UserContex';
+import ContactCR from './Pages/Shared/Footer/ContactCR';
+import Stars from './Pages/Info/Achievements/Stars';
+import AddAchievement from './Pages/Info/Achievements/AddAchievement';
 
 function App() {
   const [theme, setTheme] = useTheme();
@@ -53,17 +52,11 @@ function App() {
           <Route path='/register' element={<Register />}></Route>
           <Route path='/login' element={<Login />}></Route>
           <Route path='/contactCR' element={<ContactCR />}></Route>
-          <Route path='/courses' element={<Courses />}>
+          <Route path='/courses/:semesterName' element={<Courses />}>
             <Route index element={<SemesterView />}></Route>
-            <Route index path="/courses/:semesterName" element={<SemesterView />}></Route>
+            <Route path="semesterName" element={<SemesterView />}></Route>
           </Route>
-
-          <Route path='/memes/:postId' element={<RequireVerified><Memes /></RequireVerified>}></Route>
-
-          <Route path='/memes' element={<RequireVerified><Memes /></RequireVerified>}></Route>
-
           <Route path='/addAchievement' element={<RequireAuth><AddAchievement /></RequireAuth>}></Route>
-
           <Route path='/manageData' element={<RequireAdmin><ManageData /></RequireAdmin>}>
             <Route index element={<AddAchievement />}></Route>
             <Route path='achvReq' element={<AchvmntReq />}></Route>
@@ -78,9 +71,13 @@ function App() {
           </Route>
           <Route path='/portfolio' element={<RequireVerified> <Portfolio /></RequireVerified>}></Route>
           <Route path='/editPortfolio' element={<RequireAuth><EditPortfolio /></RequireAuth>}></Route>
+
+          {/* memes */}
+          <Route path='/memes/:postId' element={<RequireVerified><Memes /></RequireVerified>}></Route>
+          <Route path='/memes' element={<RequireVerified><Memes /></RequireVerified>}></Route>
+
           <Route path='*' element={<NotFound />}></Route>
 
-          <Route path='/dummy' element={<Dummy />}></Route>
         </Routes>
       </UserProvider>
       <ToastContainer

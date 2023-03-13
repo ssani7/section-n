@@ -9,12 +9,14 @@ import { updateProfile, updateEmail, updatePassword } from "firebase/auth";
 import NLoading from '../../Shared/Loading/NLoading';
 import auth from '../../../firebase.init';
 import { useUserContext } from '../../../Contexts/UserContex';
+import { uploadImg } from '../../../hooks/useUpload';
 
 const EditProfile = () => {
     const [updating, setUpdating] = useState(false);
-    const [imgLoading, setImgLoading] = useState(false);
     const [visible, setvisible] = useState(false);
     const [password, setPassword] = useState('');
+    const [emError, setEmError] = useState()
+    const [passError, setPassError] = useState()
     const [currentUser, setCurrentUser] = useState({
         displayName: "",
         photoURL: "",
@@ -34,9 +36,6 @@ const EditProfile = () => {
         setCurrentUser(userData)
     }, [userData])
 
-    const [emError, setEmError] = useState()
-    const [passError, setPassError] = useState()
-
     const { register,
         handleSubmit,
         formState: { errors },
@@ -49,10 +48,29 @@ const EditProfile = () => {
         shouldUnregister: true
     });
 
-    async function updateUserDb(oldUser, newUser) {
+    useEffect(() => {
+        if (password) {
+            register("password", {
+                validate: {
+                    size: p => p.length >= 6 || 'minimum 6 chatacter password required',
+                    character: p => /[a-zA-Z]/.test(p) || 'Must contain a character',
+                    number: p => /\d/.test(p) || 'Must contain a number',
+                    special: p => /[ `!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~]/.test(p) || 'Must contain a special character',
+                }
+            })
+
+        }
+        else if (!password) {
+            reset({ ...getValues(), password: undefined });
+            unregister("password");
+        }
+
+    }, [password, unregister, getValues, register, reset]);
+
+    async function updateUserDb(_id, verification, studentID, data) {
         try {
             setUpdating(true);
-            const res = await axios.put(`https://section-n-server.vercel.app/user/update/${oldUser?._id}/${oldUser?.verification}/${newUser?.id || undefined}`, newUser, {
+            const res = await axios.put(`https://section-n-server.vercel.app/user/update/${_id}/${verification}/${studentID || undefined}`, data, {
                 headers: {
                     "content-type": "application/json"
                 }
@@ -77,70 +95,27 @@ const EditProfile = () => {
 
     }
 
-    useEffect(() => {
-        if (password) {
-            register("password", {
-                validate: {
-                    size: p => p.length >= 6 || 'minimum 6 chatacter password required',
-                    character: p => /[a-zA-Z]/.test(p) || 'Must contain a character',
-                    number: p => /\d/.test(p) || 'Must contain a number',
-                    special: p => /[ `!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~]/.test(p) || 'Must contain a special character',
-                }
-            })
-
-        }
-        else if (!password) {
-            reset({ ...getValues(), password: undefined });
-            unregister("password");
-        }
-
-    }, [password, unregister, getValues, register, reset]);
-
-    async function handleImage(e) {
-        const formData = new FormData();
-        formData.append('image', e.target.files[0]);
-        const imageApiKey = "906bfdafb7a4a5b92021d570714ff50f";
-
-        if (e.target.files[0]) {
-            try {
-                setImgLoading(true)
-                const imgResponse = await axios.post(`https://api.imgbb.com/1/upload?key=${imageApiKey}`, formData)
-                if (imgResponse.status === 200) {
-                    const photoURL = imgResponse.data.data.url;
-                    setCurrentUser({ ...currentUser, photoURL });
-                }
-            } catch (error) {
-                console.log(error);
-                return toast.error(error.message)
-            }
-            finally {
-                setImgLoading(false)
-            }
-
-        }
-    }
-
     const onSubmit = async (data) => {
         setUpdating(true);
-
         let updateCount = 0;
         let passUpdate = 0;
         let updatedUser = {};
 
         if (currentUser.photoURL !== userData?.photoURL) {
             try {
-                await updateProfile(auth.currentUser, { photoURL: currentUser?.photoURL });
-                updatedUser = { ...updatedUser, photoURL: currentUser?.photoURL };
+                const url = await uploadImg(data.image[0])
+                await updateProfile(auth.currentUser, { photoURL: url });
+                updatedUser = { ...updatedUser, photoURL: url };
                 ++updateCount;
 
             } catch (error) {
+                console.log(error);
                 return toast.error(error.message)
             }
         }
 
         if (currentUser?.email !== userData?.email) {
             try {
-                setUpdating(true)
                 await updateEmail(auth.currentUser, currentUser.email)
                 updatedUser = { ...updatedUser, email: currentUser?.email }
                 ++updateCount;
@@ -148,9 +123,6 @@ const EditProfile = () => {
             } catch (error) {
                 setEmError(error.message)
                 return toast.error(error.message)
-            }
-            finally {
-                setUpdating(false)
             }
 
         }
@@ -167,17 +139,16 @@ const EditProfile = () => {
         }
 
         if (userData?.varsity !== currentUser?.varsity || userData?.degree !== currentUser?.degree || userData?.id !== currentUser?.id || userData?.blood !== currentUser?.blood || userData?.fb !== currentUser?.fb || userData?.linkedin !== currentUser?.linkedin || userData?.twitter !== currentUser?.twitter) {
-            updatedUser = currentUser
+            const { photoURL, displayName, email, ...rest } = currentUser;
+            updatedUser = { ...updatedUser, ...rest }
             ++updateCount;
         }
 
         if (password) {
-            console.log(password);
             const confirm = window.confirm("Confirm to change password?!");
             if (confirm) {
                 try {
                     ++passUpdate
-                    setUpdating(true)
                     await updatePassword(auth.currentUser, password);
                     reset()
                     toast.success("Changed Password")
@@ -185,16 +156,13 @@ const EditProfile = () => {
 
                 } catch (error) {
                     setPassError(error)
-                    toast.error(error.message)
-                }
-                finally {
-                    setUpdating(false)
+                    return toast.error(error.message)
                 }
             }
         }
 
         if (updateCount > 0) {
-            updateUserDb(userData, updatedUser)
+            updateUserDb(userData._id, userData.verification, userData.id, updatedUser)
         }
         else if (passUpdate === 0) {
             toast.warn("Nothing To Update")
@@ -208,15 +176,12 @@ const EditProfile = () => {
 
     if (loadingData) return <NLoading />
 
+
     return (
         <div className='bg-base-100 mx-auto w-full flex flex-col mb-20 md:mb-0'>
             <div className='flex flex-col md:flex-row w-full h-full px-5 md:items-center'>
                 <div className='w-auto h-auto max-h-screen md:max-w-sm 2xl:max-w-xl rounded-3xl mx-auto'>
-                    {
-                        imgLoading
-                            ? <div className="w-16 h-16 border-b-2 border-info-content rounded-full animate-spin"></div>
-                            : <img src={currentUser?.photoURL} alt="" className='w-full h-full rounded-3xl object-cover' />
-                    }
+                    <img src={currentUser?.photoURL} alt="" className='w-full h-full rounded-3xl object-cover' />
 
                 </div>
 
@@ -228,7 +193,8 @@ const EditProfile = () => {
                                 <span className="label-text">Shundor Ekta Pic Den </span>
                             </label>
                             <input type="file" className="input input-bordered w-full" {...register("image", {
-                                onChange: e => handleImage(e)
+                                onChange: e => setCurrentUser({ ...currentUser, photoURL: URL.createObjectURL(e.target.files[0]) })
+                                // onChange: e => handleUpload(e.target.files[0])
                             })} />
                             {errors?.image && <span className='text-error text-sm text-center'>{errors?.image?.message}</span>}
                         </div>

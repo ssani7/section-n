@@ -13,7 +13,7 @@ const SemesterView = () => {
     const [unlockedIndex, setUnlocked] = useState();
 
     const { isLoading, data: semester } = useQuery(['semester', semesterName],
-        () => fetch(`https://section-n-server.vercel.app/courses/${semesterName || "Fall-2022"}`).then(res => res.json()));
+        () => fetch(`https://section-n-server.vercel.app/courses/${semesterName}`).then(res => res.json()));
 
     const container = {
         hidden: { opacity: 1, scale: 0 },
@@ -48,27 +48,32 @@ const SemesterView = () => {
     }
 
     return (
-        <div className='w-full'>
+        <div className='w-full h-screen lg:h-full overflow-y-auto'>
             <h1 className='text-center md:text-2xl font-bold mb-12'>{semester?.semester}</h1>
 
             {
-                semester?.courses.length > 0
+                semester?.courses?.length > 0
                     ? semester?.courses?.map((course, i) => (
-                        <motion.div className='flex flex-col-reverse md:flex-row items-center justify-evenly border rounded-lg  mx-auto p-12'
+                        <motion.div className='flex flex-col-reverse md:flex-row items-center justify-evenly border rounded-lg border-primary  mx-auto p-7 my-2'
                             key={i}
                             variants={container}
                             initial="hidden"
                             animate="visible">
                             <div variants={item} className='md:w-3/5 mt-6 md:mt-0'>
-                                <motion.p variants={item} className='md:text-xl font-bold'>Course Title : {course.courseTitle}</motion.p>
-                                <motion.p variants={item} className='md:text-xl font-bold'>Course Name : {course.courseName}</motion.p>
-                                <motion.p variants={item} className='md:text-xl font-bold'>Course Credit : {course.courseCredit}</motion.p>
-                                <motion.p variants={item} className='md:text-xl font-bold'>Course Teacher : {course.courseTeacher} ({course.courseTeacherTitle})</motion.p>
-                                <motion.a variants={item} className='link md:text-xl font-bold' href={course.courseLink} target="_blank" rel="noreferrer">Course Link</motion.a>
+                                <motion.p variants={item} className='md:text-xl font-bold my-3 poppins'>Course Title : {course.courseTitle}</motion.p>
+                                <motion.p variants={item} className='md:text-xl font-bold my-3'>Course Name : {course.courseName}</motion.p>
+                                <motion.p variants={item} className='md:text-xl font-bold my-3'>Course Credit : {course.courseCredit}</motion.p>
+                                <motion.p variants={item} className='md:text-xl font-bold my-3'>Course Teacher : {course.courseTeacher} ({course.courseTeacherTitle})</motion.p>
+                                {
+                                    course?.courseLink
+                                        ? <motion.a variants={item} className={`link md:text-xl font-bold my-3`} href={course?.courseLink} target="_blank" rel="noreferrer">Course Link</motion.a>
+                                        : <motion.p variants={item} className={`md:text-xl font-bold my-3`}>Course Link : Not Yet Available</motion.p>
+
+                                }
                                 <motion.div variants={item} className=''>
                                     {
                                         (unlockedIndex === i)
-                                            ? <p className='md:text-lg font-bold'>
+                                            ? <p className='md:text-lg font-bold my-3'>
                                                 Enrollment Key : {course.enrollmentKey}
                                             </p>
                                             : <button onClick={() => handleUnlock(i)} className='btn btn-sm btn-primary normal-case mt-3'>
@@ -82,7 +87,7 @@ const SemesterView = () => {
                                 <img className='h-full w-full object-cover rounded-xl' src={course.teacherPhoto || 'https://i.ibb.co/pzpVdPV/no-user-image-icon-3.jpg'} alt="" />
                             </motion.div>
                         </motion.div>))
-                    : <h2 className='font-bold text-center md:text-2xl'> No Courses yet</h2>
+                    : <h2 className='font-bold my-3 text-center md:text-2xl'> No Courses yet</h2>
             }
         </div>
     );

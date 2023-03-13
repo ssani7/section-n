@@ -4,7 +4,7 @@ import NLoading from '../../Shared/Loading/NLoading';
 import VerificationRow from './VerificationRow';
 
 const VerificationReq = () => {
-    const { isLoading, data: users, refetch } = useQuery('stars', () => fetch('https://section-n-server.vercel.app/verifyReq').then(res => res.json()));
+    const { isLoading, data: users, refetch } = useQuery('stars', () => fetch('https://section-n-server.vercel.app/user/verificationList').then(res => res.json()));
 
 
     if (isLoading) return <NLoading />

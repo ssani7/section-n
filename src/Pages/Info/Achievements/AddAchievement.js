@@ -1,10 +1,10 @@
 import axios from 'axios';
 import React from 'react';
 import { useForm } from "react-hook-form";
-import useAdmin from '../../hooks/useAdmin';
+import useAdmin from '../../../hooks/useAdmin';
 import { toast } from 'react-toastify';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import auth from '../../firebase.init';
+import auth from '../../../firebase.init';
 import { useState } from 'react';
 
 const AddAchievement = () => {

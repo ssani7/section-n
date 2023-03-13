@@ -15,19 +15,20 @@ module.exports = {
           neutral: "#3d4451",
           "base-100": "#F1F5F8",
           'accent-content': '#ffffff',
-          "text-base": "#ffffff"
+          "text-base": "#ffffff",
         },
       },
       {
         darkTheme: {
-          primary: "#45B8DE",
+          primary: "#296e85",
           secondary: "#f6d860",
-          accent: "#37cdbe",
+          accent: "#0A2647",
           neutral: "#3d4451",
           "base-100": "#202020",
-          "base-200": "#181818",
+          // "base-300": "#6c7882",
           'accent-content': '#ffffff',
-          "text-base": "#ffffff"
+          "text-base": "#ffffff",
+          "primary-content": "#ffffff"
         }
       }
     ],
