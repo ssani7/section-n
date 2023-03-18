@@ -12,7 +12,6 @@ import NotFound from './Pages/Shared/NotFound/NotFound';
 import RequireAdmin from './Pages/Login/RequireAdmin';
 import UserProfile from './Pages/User/Profile/UserProfile'
 import RequireVerified from './Pages/Login/RequireVerified';
-import Slides from './Pages/Info/Slides/Slides';
 import Students from './Pages/Info/Students/Students';
 import ManageData from './Pages/Admin/ManageData';
 import Memes from './Pages/Memes/Memes';
@@ -32,6 +31,9 @@ import { UserProvider } from './Contexts/UserContex';
 import ContactCR from './Pages/Shared/Footer/ContactCR';
 import Stars from './Pages/Info/Achievements/Stars';
 import AddAchievement from './Pages/Info/Achievements/AddAchievement';
+import Semesters from './Pages/Info/Slides/Gdrive/Semesters';
+import CourseView from './Pages/Info/Slides/Gdrive/CourseView';
+import Slides from './Pages/Info/Slides/Gdrive/Slides';
 
 function App() {
   const [theme, setTheme] = useTheme();
@@ -44,7 +46,6 @@ function App() {
           <Route path='/' element={<Home />}></Route>
           <Route path='/home' element={<Home />}></Route>
           <Route path='/students' element={<Students />}></Route>
-          <Route path='/slides' element={<Slides />}></Route>
           <Route path='/userProfile/:email/:option' element={<UserProfile />}></Route>
           <Route path='/userPortfolio/:email/:option' element={<UserPortfolio />}></Route>
           <Route path='/project/:email/:index' element={<Project />}></Route>
@@ -71,6 +72,10 @@ function App() {
           </Route>
           <Route path='/portfolio' element={<RequireVerified> <Portfolio /></RequireVerified>}></Route>
           <Route path='/editPortfolio' element={<RequireAuth><EditPortfolio /></RequireAuth>}></Route>
+
+          <Route path='/slides' element={<Semesters />}></Route >
+          <Route path='/slides/semester/:name/:id' element={<CourseView />}></Route>
+          <Route path='/slides/courses/:name/:id' element={<Slides />}></Route>
 
           {/* memes */}
           <Route path='/memes/:postId' element={<RequireVerified><Memes /></RequireVerified>}></Route>

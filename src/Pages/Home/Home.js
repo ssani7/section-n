@@ -39,7 +39,7 @@ const Home = () => {
             <Banner />
 
             {/* count summary */}
-            <div className='flex justify-between px-20 w-full' ref={ref}>
+            <div className='flex justify-between md:px-20 w-full' ref={ref}>
                 {
                     preview.map((info, i) =>
                         <CountUp
