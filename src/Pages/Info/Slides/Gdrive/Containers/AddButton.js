@@ -1,17 +1,26 @@
 import { faFileCirclePlus, faFolderPlus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import axios from 'axios';
 
-const AddButton = () => {
+const AddButton = ({ folderId }) => {
 	const [moadalOpen, setModalOpen] = useState(false);
 	const [options, setOptions] = useState('');
+	const [folderName, setFolderName] = useState('');
 	const fileUpRef = useRef();
+
+	async function createFolder() {
+		try {
+			const { data } = await axios.post('http://localhost:5000/createFolder', { parent: folderId, name: folderName });
+			console.log(data);
+		} catch (error) {}
+	}
 	return (
 		<>
 			<input type="checkbox" id="first-modal" checked={moadalOpen} className="modal-toggle" />
 			<div className="modal">
 				<div className="modal-box h-1/3 w-full max-w-sm md:max-w-xl relative flex flex-col items-center justify-center">
-					<label htmlFor="first-modal" onClick={() => setModalOpen(false)} className="btn btn-xs md:btn-sm btn-circle absolute right-1 top-1">
+					<label htmlFor="first-modal" onClick={() => setModalOpen(false)} className="btn btn-outline btn-error btn-xs md:btn-sm absolute right-2 top-2">
 						✕
 					</label>
 					<div className="w-full flex justify-evenly items-center">
@@ -32,8 +41,10 @@ const AddButton = () => {
 					</div>
 					{options === 'folder' && (
 						<div className="w-full flex flex-col items-center gap-3 mt-5">
-							<input type="text" placeholder="Folder Name" className="input input-bordered input-md w-full" />
-							<button className="btn btn-primary btn-xs sm:btn-sm md:btn-md lg:btn-lg">Add Folder</button>
+							<input type="text" placeholder="Folder Name" className="input input-bordered input-md w-full" onChange={(e) => setFolderName(e.target.value)} />
+							<button onClick={() => createFolder()} className="btn btn-primary btn-xs sm:btn-sm md:btn-md lg:btn-lg">
+								Add Folder
+							</button>
 						</div>
 					)}
 				</div>
