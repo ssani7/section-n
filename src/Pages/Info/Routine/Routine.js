@@ -100,7 +100,7 @@ const Routine = () => {
                                     }
                                 }}
                                 onLoad={() => setUpdating(false)}
-                                className='h-96 w-auto max-w-full md:w-2/5 md:h-auto md:max-h-full object-contain mx-auto'
+                                className='h-96 w-auto max-w-full md:w-3/5 md:h-auto md:max-h-full object-contain mx-auto'
                                 src={routineImg} alt="" />
 
 
