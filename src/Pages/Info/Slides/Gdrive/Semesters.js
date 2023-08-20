@@ -7,7 +7,7 @@ import AddButton from './Containers/AddButton';
 
 const Slides = () => {
 	const { isLoading, data } = useQuery(['semesters'], () =>
-		fetch('http://localhost:5000/getSemesters', {
+		fetch('https://section-n-server.vercel.app/getSemesters', {
 			retry: false,
 			cacheTime: 0,
 		}).then((res) => res.json())
@@ -32,7 +32,7 @@ const Slides = () => {
 				))}
 			</div>
 
-			<AddButton folderId={data.folderId} />
+			{/* <AddButton folderId={data.folderId} /> */}
 		</div>
 	);
 };

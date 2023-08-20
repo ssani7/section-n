@@ -18,7 +18,7 @@ const CourseView = () => {
 
 	useEffect(() => {
 		setLoading(true);
-		axios.get(`http://localhost:5000/getCourses/${courseId}`).then((res) => {
+		axios.get(`https://section-n-server.vercel.app/getCourses/${courseId}`).then((res) => {
 			setCourses(res.data);
 			setLoading(false);
 		});
@@ -34,7 +34,7 @@ const CourseView = () => {
 					<FileView data={semester} link={'/slides/courses/'} />
 				))}
 
-				<AddButton folderId={courseId} />
+				{/* <AddButton folderId={courseId} /> */}
 			</div>
 		</div>
 	);

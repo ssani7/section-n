@@ -3,6 +3,7 @@ import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import NLoading from "../../../Shared/Loading/NLoading";
 import SlideView from "./Containers/SlideView";
+import AddButton from "./Containers/AddButton";
 // import NoFile from '../../../../images/No_data_re_kwbl.png'
 
 const Slides = () => {
@@ -27,6 +28,7 @@ const Slides = () => {
           <SlideView file={file} />
         ))}
       </div>
+				{/* <AddButton folderId={"courseId"} /> */}
     </div>
   );
 };

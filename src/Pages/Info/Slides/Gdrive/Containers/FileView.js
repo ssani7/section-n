@@ -12,7 +12,7 @@ const FileView = ({ data, link }) => {
   useEffect(() => {
     const getUser = async () => {
       const result = await axios.get(
-        `http://localhost:5000/user/student/${data?.description}`
+        `https://section-n-server.vercel.app/user/student/${data?.description}`
       );
       setUploader(result.data);
     };
@@ -21,7 +21,7 @@ const FileView = ({ data, link }) => {
 
   return (
     <div
-      className="w-16 md:w-32 cursor-pointer mx-auto"
+      className="w-16 md:w-32 cursor-pointer mx-auto mx"
       onClick={() => navigate(link + `${data.name}/` + data.id)}
     >
       <div className="relative w-full h-20 md:h-28 md:w-28">

@@ -16,7 +16,7 @@ const SlideView = ({ file }) => {
     const getUser = async () => {
       setLoadingUploader(true);
       const result = await axios.get(
-        `http://localhost:5000/user/student/${file?.description}`
+        `https://section-n-server.vercel.app/user/student/${file?.description}`
       );
       setUploader(result.data);
       setLoadingUploader(false);
@@ -27,8 +27,6 @@ const SlideView = ({ file }) => {
   return (
     <div
       key={file.id}
-      onFocus={() => console.log("focus")}
-      onBlur={() => console.log("blur")}
       className="relative rounded-t-md cursor-pointer w-48 h-52 md:h-full md:w-72 mb-5 flex flex-col items-center mx-auto"
     >
       <div className="relative w-full">
