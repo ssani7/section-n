@@ -1,9 +1,8 @@
 import React from 'react';
 import { useQuery } from 'react-query';
-import NLoading from '../../../Shared/Loading/NLoading';
+import NLoading from '../../../../components/shared/Loading/NLoading';
 import EmptyPic from '../../../../images/2953962.png';
 import FileView from './Containers/FileView';
-import AddButton from './Containers/AddButton';
 
 const Slides = () => {
 	const { isLoading, data } = useQuery(['semesters'], () =>
