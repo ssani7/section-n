@@ -5,6 +5,7 @@ import Footer from '../../components/shared/Footer/Footer';
 import Stars from '../Info/Achievements/Stars';
 import Events from '../Info/Events/Events';
 import Routine from '../Info/Routine/Routine';
+import RoutineGenerate from '../../components/UI/RoutineGenerate';
 
 const Home = () => {
 	useEffect(() => {
@@ -20,6 +21,8 @@ const Home = () => {
 			<Events />
 
 			<Routine />
+
+			<RoutineGenerate />
 
 			<Stars />
 
